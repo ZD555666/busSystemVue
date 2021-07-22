@@ -7,8 +7,8 @@ spring:
             # 主库数据源
             master:
                 url: jdbc:mysql://rds-ggg-vpc.mysql.rds.aliyuncs.com:3306/ry-vue?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: gjw
-                password: 123guan!@#
+                username: demo
+                password: demoDEMO123
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
