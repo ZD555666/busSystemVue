@@ -1,46 +1,37 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="公交车x路" prop="busno">
-        <el-input
-          v-model="queryParams.busno"
-          placeholder="请输入公交车x路"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="车牌号" prop="licenseplate">
+      <el-form-item label="车牌" prop="licenseplate">
         <el-input
           v-model="queryParams.licenseplate"
-          placeholder="请输入车牌号"
+          placeholder="请输入车牌"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="公交车参数" prop="busparam">
+      <el-form-item label="维修记录" prop="repairrecord">
         <el-input
-          v-model="queryParams.busparam"
-          placeholder="请输入公交车参数"
+          v-model="queryParams.repairrecord"
+          placeholder="请输入维修记录"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="公交车参数" prop="attr1">
+      <el-form-item label="维修记录" prop="attr1">
         <el-input
           v-model="queryParams.attr1"
-          placeholder="请输入公交车参数"
+          placeholder="请输入维修记录"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="公交车参数" prop="attr2">
+      <el-form-item label="维修记录" prop="attr2">
         <el-input
           v-model="queryParams.attr2"
-          placeholder="请输入公交车参数"
+          placeholder="请输入维修记录"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -60,7 +51,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['bus:businfo:add']"
+          v-hasPermi="['busRepair:busrepair:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -71,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['bus:businfo:edit']"
+          v-hasPermi="['busRepair:busrepair:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -82,7 +73,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['bus:businfo:remove']"
+          v-hasPermi="['busRepair:busrepair:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -93,20 +84,19 @@
           size="mini"
 		  :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['bus:businfo:export']"
+          v-hasPermi="['busRepair:busrepair:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="businfoList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="busrepairList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="公交车id主键" align="center" prop="busid" />
-      <el-table-column label="公交车x路" align="center" prop="busno" />
-      <el-table-column label="车牌号" align="center" prop="licenseplate" />
-      <el-table-column label="公交车参数" align="center" prop="busparam" />
-      <el-table-column label="公交车参数" align="center" prop="attr1" />
-      <el-table-column label="公交车参数" align="center" prop="attr2" />
+      <el-table-column label="维修id主键" align="center" prop="repairid" />
+      <el-table-column label="车牌" align="center" prop="licenseplate" />
+      <el-table-column label="维修记录" align="center" prop="repairrecord" />
+      <el-table-column label="维修记录" align="center" prop="attr1" />
+      <el-table-column label="维修记录" align="center" prop="attr2" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -114,19 +104,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['bus:businfo:edit']"
+            v-hasPermi="['busRepair:busrepair:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['bus:businfo:remove']"
+            v-hasPermi="['busRepair:busrepair:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -135,23 +125,20 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改详细信息对话框 -->
+    <!-- 添加或修改车辆维修对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="公交车x路" prop="busno">
-          <el-input v-model="form.busno" placeholder="请输入公交车x路" />
+        <el-form-item label="车牌" prop="licenseplate">
+          <el-input v-model="form.licenseplate" placeholder="请输入车牌" />
         </el-form-item>
-        <el-form-item label="车牌号" prop="licenseplate">
-          <el-input v-model="form.licenseplate" placeholder="请输入车牌号" />
+        <el-form-item label="维修记录" prop="repairrecord">
+          <el-input v-model="form.repairrecord" placeholder="请输入维修记录" />
         </el-form-item>
-        <el-form-item label="公交车参数" prop="busparam">
-          <el-input v-model="form.busparam" placeholder="请输入公交车参数" />
+        <el-form-item label="维修记录" prop="attr1">
+          <el-input v-model="form.attr1" placeholder="请输入维修记录" />
         </el-form-item>
-        <el-form-item label="公交车参数" prop="attr1">
-          <el-input v-model="form.attr1" placeholder="请输入公交车参数" />
-        </el-form-item>
-        <el-form-item label="公交车参数" prop="attr2">
-          <el-input v-model="form.attr2" placeholder="请输入公交车参数" />
+        <el-form-item label="维修记录" prop="attr2">
+          <el-input v-model="form.attr2" placeholder="请输入维修记录" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -163,10 +150,10 @@
 </template>
 
 <script>
-import { listBusinfo, getBusinfo, delBusinfo, addBusinfo, updateBusinfo, exportBusinfo } from "@/api/bus/businfo";
+import { listBusrepair, getBusrepair, delBusrepair, addBusrepair, updateBusrepair, exportBusrepair } from "@/api/busMax/busRepair/busrepair";
 
 export default {
-  name: "Businfo",
+  name: "Busrepair",
   data() {
     return {
       // 遮罩层
@@ -183,8 +170,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 详细信息表格数据
-      businfoList: [],
+      // 车辆维修表格数据
+      busrepairList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -193,9 +180,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        busno: null,
         licenseplate: null,
-        busparam: null,
+        repairrecord: null,
         attr1: null,
         attr2: null
       },
@@ -210,11 +196,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询详细信息列表 */
+    /** 查询车辆维修列表 */
     getList() {
       this.loading = true;
-      listBusinfo(this.queryParams).then(response => {
-        this.businfoList = response.rows;
+      listBusrepair(this.queryParams).then(response => {
+        this.busrepairList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -227,10 +213,9 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        busid: null,
-        busno: null,
+        repairid: null,
         licenseplate: null,
-        busparam: null,
+        repairrecord: null,
         attr1: null,
         attr2: null
       };
@@ -248,7 +233,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.busid)
+      this.ids = selection.map(item => item.repairid)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -256,30 +241,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加详细信息";
+      this.title = "添加车辆维修";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const busid = row.busid || this.ids
-      getBusinfo(busid).then(response => {
+      const repairid = row.repairid || this.ids
+      getBusrepair(repairid).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改详细信息";
+        this.title = "修改车辆维修";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.busid != null) {
-            updateBusinfo(this.form).then(response => {
+          if (this.form.repairid != null) {
+            updateBusrepair(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addBusinfo(this.form).then(response => {
+            addBusrepair(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -290,13 +275,13 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const busids = row.busid || this.ids;
-      this.$confirm('是否确认删除详细信息编号为"' + busids + '"的数据项?', "警告", {
+      const repairids = row.repairid || this.ids;
+      this.$confirm('是否确认删除车辆维修编号为"' + repairids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delBusinfo(busids);
+          return delBusrepair(repairids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -305,13 +290,13 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有详细信息数据项?', "警告", {
+      this.$confirm('是否确认导出所有车辆维修数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
           this.exportLoading = true;
-          return exportBusinfo(queryParams);
+          return exportBusrepair(queryParams);
         }).then(response => {
           this.download(response.msg);
           this.exportLoading = false;

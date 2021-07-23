@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.busRepair.mapper.TRepairMapper">
+    
+    <resultMap type="TRepair" id="TRepairResult">
+        <result property="repairid"    column="repairId"    />
+        <result property="licenseplate"    column="licensePlate"    />
+        <result property="repairrecord"    column="repairRecord"    />
+        <result property="attr1"    column="attr1"    />
+        <result property="attr2"    column="attr2"    />
+    </resultMap>
+
+    <sql id="selectTRepairVo">
+        select repairId, licensePlate, repairRecord, attr1, attr2 from t_repair
+    </sql>
+
+    <select id="selectTRepairList" parameterType="TRepair" resultMap="TRepairResult">
+        <include refid="selectTRepairVo"/>
+        <where>  
+            <if test="licenseplate != null  and licenseplate != ''"> and licensePlate = #{licenseplate}</if>
+            <if test="repairrecord != null  and repairrecord != ''"> and repairRecord = #{repairrecord}</if>
+            <if test="attr1 != null  and attr1 != ''"> and attr1 = #{attr1}</if>
+            <if test="attr2 != null  and attr2 != ''"> and attr2 = #{attr2}</if>
+        </where>
+    </select>
+    
+    <select id="selectTRepairById" parameterType="Long" resultMap="TRepairResult">
+        <include refid="selectTRepairVo"/>
+        where repairId = #{repairid}
+    </select>
+        
+    <insert id="insertTRepair" parameterType="TRepair" useGeneratedKeys="true" keyProperty="repairid">
+        insert into t_repair
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="licenseplate != null">licensePlate,</if>
+            <if test="repairrecord != null">repairRecord,</if>
+            <if test="attr1 != null">attr1,</if>
+            <if test="attr2 != null">attr2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="licenseplate != null">#{licenseplate},</if>
+            <if test="repairrecord != null">#{repairrecord},</if>
+            <if test="attr1 != null">#{attr1},</if>
+            <if test="attr2 != null">#{attr2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTRepair" parameterType="TRepair">
+        update t_repair
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="licenseplate != null">licensePlate = #{licenseplate},</if>
+            <if test="repairrecord != null">repairRecord = #{repairrecord},</if>
+            <if test="attr1 != null">attr1 = #{attr1},</if>
+            <if test="attr2 != null">attr2 = #{attr2},</if>
+        </trim>
+        where repairId = #{repairid}
+    </update>
+
+    <delete id="deleteTRepairById" parameterType="Long">
+        delete from t_repair where repairId = #{repairid}
+    </delete>
+
+    <delete id="deleteTRepairByIds" parameterType="String">
+        delete from t_repair where repairId in 
+        <foreach item="repairid" collection="array" open="(" separator="," close=")">
+            #{repairid}
+        </foreach>
+    </delete>
+</mapper>
