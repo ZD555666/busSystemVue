@@ -205,6 +205,13 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!-- 城市线路配置-->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-road</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -215,6 +222,7 @@
         <module>ruoyi-quartz</module>
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
+        <module>ruoyi-road</module>
     </modules>
     <packaging>pom</packaging>
 
