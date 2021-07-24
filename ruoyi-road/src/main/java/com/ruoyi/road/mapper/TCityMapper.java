@@ -2,6 +2,7 @@ package com.ruoyi.road.mapper;
 
 import java.util.List;
 import com.ruoyi.road.domain.TCity;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 城市配置Mapper接口
@@ -9,6 +10,7 @@ import com.ruoyi.road.domain.TCity;
  * @author ruoyi
  * @date 2021-07-24
  */
+@Mapper
 public interface TCityMapper 
 {
     /**
