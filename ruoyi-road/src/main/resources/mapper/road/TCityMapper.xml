@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.road.mapper.TCityMapper">
+    
+    <resultMap type="TCity" id="TCityResult">
+        <result property="cityid"    column="cityId"    />
+        <result property="cityname"    column="cityName"    />
+    </resultMap>
+
+    <sql id="selectTCityVo">
+        select cityId, cityName from t_city
+    </sql>
+
+    <select id="selectTCityList" parameterType="TCity" resultMap="TCityResult">
+        <include refid="selectTCityVo"/>
+        <where>  
+            <if test="cityname != null  and cityname != ''"> and cityName like concat('%', #{cityname}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectTCityById" parameterType="Integer" resultMap="TCityResult">
+        <include refid="selectTCityVo"/>
+        where cityId = #{cityid}
+    </select>
+        
+    <insert id="insertTCity" parameterType="TCity" useGeneratedKeys="true" keyProperty="cityid">
+        insert into t_city
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityname != null">cityName,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityname != null">#{cityname},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTCity" parameterType="TCity">
+        update t_city
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityname != null">cityName = #{cityname},</if>
+        </trim>
+        where cityId = #{cityid}
+    </update>
+
+    <delete id="deleteTCityById" parameterType="Integer">
+        delete from t_city where cityId = #{cityid}
+    </delete>
+
+    <delete id="deleteTCityByIds" parameterType="String">
+        delete from t_city where cityId in 
+        <foreach item="cityid" collection="array" open="(" separator="," close=")">
+            #{cityid}
+        </foreach>
+    </delete>
+</mapper>
