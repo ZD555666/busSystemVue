@@ -58,4 +58,9 @@ public interface TWxUserMapper
      * @return 结果
      */
     public int deleteTWxUserByIds(Long[] ids);
+
+    TWxUser queryWxUserByOpId(String openId);
+
+    int updWxUserByOpId(TWxUser user);
+
 }

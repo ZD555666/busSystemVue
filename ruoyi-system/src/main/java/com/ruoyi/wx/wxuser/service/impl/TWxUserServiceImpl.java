@@ -90,4 +90,14 @@ public class TWxUserServiceImpl implements ITWxUserService
     {
         return tWxUserMapper.deleteTWxUserById(id);
     }
+
+    @Override
+    public TWxUser queryWxUserByOpId(String openId) {
+        return tWxUserMapper.queryWxUserByOpId(openId);
+    }
+
+    @Override
+    public int updWxUserByOpId(TWxUser user) {
+        return tWxUserMapper.updWxUserByOpId(user);
+    }
 }

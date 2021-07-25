@@ -15,10 +15,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="avatarurl"    column="avatarUrl"    />
         <result property="unionid"    column="unionId"    />
         <result property="isauth"    column="isAuth"    />
+        <result property="phone"    column="phone"    />
     </resultMap>
 
     <sql id="selectTWxUserVo">
-        select id, openId, nickName, gender, city, province, country, avatarUrl, unionId, isAuth from t_wx_user
+        select id, openId, nickName, gender, city, province, country, avatarUrl, unionId, isAuth,phone from t_wx_user
     </sql>
 
     <select id="selectTWxUserList" parameterType="TWxUser" resultMap="TWxUserResult">
@@ -33,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="avatarurl != null  and avatarurl != ''"> and avatarUrl = #{avatarurl}</if>
             <if test="unionid != null  and unionid != ''"> and unionId = #{unionid}</if>
             <if test="isauth != null "> and isAuth = #{isauth}</if>
+            <if test="phone != null "> and phone = #{phone}</if>
         </where>
     </select>
     
@@ -53,7 +55,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="avatarurl != null">avatarUrl,</if>
             <if test="unionid != null">unionId,</if>
             <if test="isauth != null">isAuth,</if>
-         </trim>
+            <if test="phone != null">phone,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="openid != null">#{openid},</if>
             <if test="nickname != null">#{nickname},</if>
@@ -64,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="avatarurl != null">#{avatarurl},</if>
             <if test="unionid != null">#{unionid},</if>
             <if test="isauth != null">#{isauth},</if>
+            <if test="phone != null">#{phone},</if>
          </trim>
     </insert>
 
@@ -79,6 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="avatarurl != null">avatarUrl = #{avatarurl},</if>
             <if test="unionid != null">unionId = #{unionid},</if>
             <if test="isauth != null">isAuth = #{isauth},</if>
+            <if test="phone != null">phone = #{phone},</if>
         </trim>
         where id = #{id}
     </update>
@@ -93,4 +98,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="queryWxUserByOpId" resultType="TWxUser">
+        select *
+        from t_wx_user where openId = #{openid};
+    </select>
+
+    <update id="updWxUserByOpId" parameterType="TWxUser">
+        update t_wx_user
+        set nickName = #{nickname},gender=#{gender}
+        where openId=#{openid};
+    </update>
+
 </mapper>

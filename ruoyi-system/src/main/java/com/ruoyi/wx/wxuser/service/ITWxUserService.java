@@ -58,4 +58,9 @@ public interface ITWxUserService
      * @return 结果
      */
     public int deleteTWxUserById(Long id);
+
+    TWxUser queryWxUserByOpId(String openId);
+
+    int updWxUserByOpId(TWxUser user);
+
 }
