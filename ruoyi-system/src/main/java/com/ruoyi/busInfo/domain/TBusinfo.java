@@ -1,4 +1,4 @@
-package com.ruoyi.road.domain;
+package com.ruoyi.busInfo.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -6,10 +6,10 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 详细信息对象 t_businfo
+ * 车辆信息对象 t_businfo
  * 
- * @author gjw
- * @date 2021-07-22
+ * @author lvy
+ * @date 2021-07-23
  */
 public class TBusinfo extends BaseEntity
 {
