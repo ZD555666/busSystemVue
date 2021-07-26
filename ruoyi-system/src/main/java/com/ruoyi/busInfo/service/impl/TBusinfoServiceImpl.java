@@ -1,17 +1,17 @@
-package com.ruoyi.road.service.impl;
+package com.ruoyi.busInfo.service.impl;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.road.mapper.TBusinfoMapper;
-import com.ruoyi.road.domain.TBusinfo;
-import com.ruoyi.road.service.ITBusinfoService;
+import com.ruoyi.busInfo.mapper.TBusinfoMapper;
+import com.ruoyi.busInfo.domain.TBusinfo;
+import com.ruoyi.busInfo.service.ITBusinfoService;
 
 /**
- * 详细信息Service业务层处理
+ * 车辆信息Service业务层处理
  * 
- * @author gjw
- * @date 2021-07-22
+ * @author lvy
+ * @date 2021-07-23
  */
 @Service
 public class TBusinfoServiceImpl implements ITBusinfoService 
@@ -20,10 +20,10 @@ public class TBusinfoServiceImpl implements ITBusinfoService
     private TBusinfoMapper tBusinfoMapper;
 
     /**
-     * 查询详细信息
+     * 查询车辆信息
      * 
-     * @param busid 详细信息ID
-     * @return 详细信息
+     * @param busid 车辆信息ID
+     * @return 车辆信息
      */
     @Override
     public TBusinfo selectTBusinfoById(Long busid)
@@ -32,10 +32,10 @@ public class TBusinfoServiceImpl implements ITBusinfoService
     }
 
     /**
-     * 查询详细信息列表
+     * 查询车辆信息列表
      * 
-     * @param tBusinfo 详细信息
-     * @return 详细信息
+     * @param tBusinfo 车辆信息
+     * @return 车辆信息
      */
     @Override
     public List<TBusinfo> selectTBusinfoList(TBusinfo tBusinfo)
@@ -44,9 +44,9 @@ public class TBusinfoServiceImpl implements ITBusinfoService
     }
 
     /**
-     * 新增详细信息
+     * 新增车辆信息
      * 
-     * @param tBusinfo 详细信息
+     * @param tBusinfo 车辆信息
      * @return 结果
      */
     @Override
@@ -56,9 +56,9 @@ public class TBusinfoServiceImpl implements ITBusinfoService
     }
 
     /**
-     * 修改详细信息
+     * 修改车辆信息
      * 
-     * @param tBusinfo 详细信息
+     * @param tBusinfo 车辆信息
      * @return 结果
      */
     @Override
@@ -68,9 +68,9 @@ public class TBusinfoServiceImpl implements ITBusinfoService
     }
 
     /**
-     * 批量删除详细信息
+     * 批量删除车辆信息
      * 
-     * @param busids 需要删除的详细信息ID
+     * @param busids 需要删除的车辆信息ID
      * @return 结果
      */
     @Override
@@ -80,9 +80,9 @@ public class TBusinfoServiceImpl implements ITBusinfoService
     }
 
     /**
-     * 删除详细信息信息
+     * 删除车辆信息信息
      * 
-     * @param busid 详细信息ID
+     * @param busid 车辆信息ID
      * @return 结果
      */
     @Override
