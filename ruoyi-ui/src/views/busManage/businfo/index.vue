@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="公交车x路" prop="busno">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="88px">
+      <el-form-item label="公交车-路" prop="busno">
         <el-input
           v-model="queryParams.busno"
-          placeholder="请输入公交车x路"
+          placeholder="请输入几路公交车"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -28,24 +28,24 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="公交车参数" prop="attr1">
-        <el-input
-          v-model="queryParams.attr1"
-          placeholder="请输入公交车参数"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="公交车参数" prop="attr2">
-        <el-input
-          v-model="queryParams.attr2"
-          placeholder="请输入公交车参数"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="公交车参数" prop="attr1">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.attr1"-->
+<!--          placeholder="请输入公交车参数"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="公交车参数" prop="attr2">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.attr2"-->
+<!--          placeholder="请输入公交车参数"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -101,8 +101,8 @@
 
     <el-table v-loading="loading" :data="businfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="公交车id主键" align="center" prop="busid" />
-      <el-table-column label="公交车x路" align="center" prop="busno" />
+      <el-table-column label="序号" align="center" prop="busid" />
+      <el-table-column label="公交车-路" align="center" prop="busno" />
       <el-table-column label="车牌号" align="center" prop="licenseplate" />
       <el-table-column label="公交车参数" align="center" prop="busparam" />
       <el-table-column label="公交车参数" align="center" prop="attr1" />

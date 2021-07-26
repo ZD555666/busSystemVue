@@ -1,7 +1,9 @@
 package com.ruoyi.busInfo.mapper;
 
-import java.util.List;
 import com.ruoyi.busInfo.domain.TBusinfo;
+
+import java.util.List;
+
 
 /**
  * 车辆信息Mapper接口

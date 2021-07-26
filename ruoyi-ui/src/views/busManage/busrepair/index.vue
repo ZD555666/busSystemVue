@@ -18,24 +18,24 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="维修记录" prop="attr1">
-        <el-input
-          v-model="queryParams.attr1"
-          placeholder="请输入维修记录"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="维修记录" prop="attr2">
-        <el-input
-          v-model="queryParams.attr2"
-          placeholder="请输入维修记录"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+<!--      </el-form-item>-->
+<!--      <el-form-item label="维修记录" prop="attr1">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.attr1"-->
+<!--          placeholder="请输入维修记录"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="维修记录" prop="attr2">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.attr2"-->
+<!--          placeholder="请输入维修记录"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -92,11 +92,11 @@
 
     <el-table v-loading="loading" :data="busrepairList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="维修id主键" align="center" prop="repairid" />
+      <el-table-column label="序号" align="center" prop="repairid" />
       <el-table-column label="车牌" align="center" prop="licenseplate" />
       <el-table-column label="维修记录" align="center" prop="repairrecord" />
-      <el-table-column label="维修记录" align="center" prop="attr1" />
-      <el-table-column label="维修记录" align="center" prop="attr2" />
+<!--      <el-table-column label="维修记录" align="center" prop="attr1" />-->
+<!--      <el-table-column label="维修记录" align="center" prop="attr2" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -133,12 +133,12 @@
         </el-form-item>
         <el-form-item label="维修记录" prop="repairrecord">
           <el-input v-model="form.repairrecord" placeholder="请输入维修记录" />
-        </el-form-item>
-        <el-form-item label="维修记录" prop="attr1">
-          <el-input v-model="form.attr1" placeholder="请输入维修记录" />
-        </el-form-item>
-        <el-form-item label="维修记录" prop="attr2">
-          <el-input v-model="form.attr2" placeholder="请输入维修记录" />
+<!--        </el-form-item>-->
+<!--        <el-form-item label="维修记录" prop="attr1">-->
+<!--          <el-input v-model="form.attr1" placeholder="请输入维修记录" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="维修记录" prop="attr2">-->
+<!--          <el-input v-model="form.attr2" placeholder="请输入维修记录" />-->
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
