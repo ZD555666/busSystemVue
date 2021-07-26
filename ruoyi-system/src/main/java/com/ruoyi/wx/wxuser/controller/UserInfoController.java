@@ -1,9 +1,22 @@
 package com.ruoyi.wx.wxuser.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.ruoyi.common.utils.HttpClientUtil;
+import com.ruoyi.wx.wxuser.domain.TWxUser;
+import com.ruoyi.wx.wxuser.service.ITWxUserService;
+import com.ruoyi.wx.wxuser.service.SendMsgService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author gjw
@@ -12,14 +25,96 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/wx")
-public class UserInfoController {
+public class UserInfoController extends BaseController {
 
-    @RequestMapping("/getOpenId")
-    public AjaxResult getOpenId(@RequestParam String code){
+    @Autowired
+    private ITWxUserService tWxUserService;
 
-        System.out.println(code);
-        return AjaxResult.success();
+    @Autowired
+    @Qualifier("sendMsgServiceImpl")
+    private SendMsgService sendMsgService;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @GetMapping("/getOpenId")
+    public AjaxResult getOpenId(@RequestParam String code) {
+        final String appId = "wxf881ad7f711270e6";
+        final String appSecret = "3487fac5574cee41c546937ad0c2cb03";
+        String url = "https://api.weixin.qq.com/sns/jscode2session";
+        Map<String, String> param = new HashMap<>();
+        param.put("appid", appId);
+        param.put("secret", appSecret);
+        param.put("js_code", code);
+        param.put("grant_type", "authorization_code");
+        String wxResult = HttpClientUtil.doGet(url, param);
+        JSONObject jsonObject = JSONObject.parseObject(wxResult);
+        // 获取参数返回的
+        String session_key = jsonObject.get("session_key").toString();
+        String open_id = jsonObject.get("openid").toString();
+        System.out.println(session_key + "," + open_id);
+        TWxUser user = tWxUserService.queryWxUserByOpId(open_id);
+        if (user != null) {
+            jsonObject.put("isRegis", true);
+            System.err.println(user+"!!!!!!!!!");
+            redisTemplate.opsForValue().set(user.getOpenid(), JSONObject.toJSONString(user));
+        }
+        return AjaxResult.success(jsonObject);
     }
 
+
+    @PostMapping("/sendSms")
+    public AjaxResult sendSms(@RequestBody HashMap<String, String> map) {
+
+        String code = redisTemplate.opsForValue().get(map.get("phone"));
+        if (code != null) return AjaxResult.error("验证码已存在");
+
+        code = UUID.randomUUID().toString().substring(0, 4);
+        String isSend = sendMsgService.sendPhoneMsg(map.get("phone"), "SMS_219749033", code);
+        if (isSend.equals("OK")) {
+            redisTemplate.opsForValue().set(map.get("phone"), code, 1, TimeUnit.MINUTES);
+            return AjaxResult.success("发送成功");
+        } else {
+            return AjaxResult.error("发送失败");
+        }
+    }
+
+    @PostMapping("/subSms")
+    public AjaxResult subSms(@RequestBody HashMap<String, Object> map) {
+        String code = redisTemplate.opsForValue().get(map.get("phone"));
+        if (code == null) return AjaxResult.error("未发送验证码或已失效，请重新发送");
+        if (code.equals(map.get("sms"))) {
+            Object userInfo = map.get("userInfo");
+            TWxUser wxUser = JSONObject.parseObject((String) userInfo, TWxUser.class);
+            wxUser.setOpenid((String) map.get("opid"));
+            wxUser.setPhone((String) map.get("phone"));
+            TWxUser user = tWxUserService.queryWxUserByOpId(wxUser.getOpenid());
+            if (user == null) {
+                tWxUserService.insertTWxUser(wxUser);
+                redisTemplate.opsForValue().set(wxUser.getOpenid(), JSONObject.toJSONString(wxUser));
+            }else {
+                redisTemplate.opsForValue().set(wxUser.getOpenid(), JSONObject.toJSONString(user));
+            }
+
+            return AjaxResult.success("验证成功");
+        } else {
+            return AjaxResult.error("验证码错误");
+        }
+    }
+
+    @PostMapping("/getLoginUserInfo")
+    public AjaxResult getLoginUserInfo(@RequestBody HashMap<String, Object> map) {
+        System.err.println(map.get("opId"));
+        String res = redisTemplate.opsForValue().get(map.get("opId"));
+        System.err.println(res+"1111111111111111");
+        return AjaxResult.success("获取成功", JSONObject.parseObject(res));
+    }
+
+    @PostMapping("/saveInfo")
+    public AjaxResult saveInfo(@RequestBody TWxUser saveUser) {
+        System.out.println(saveUser+"=======>>>>>");
+        redisTemplate.opsForValue().set(saveUser.getOpenid(), JSONObject.toJSONString(saveUser));
+        return AjaxResult.success(tWxUserService.updWxUserByOpId(saveUser) == 1 ? "保存成功" : "保存失败");
+    }
 
 }

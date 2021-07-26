@@ -1,6 +1,15 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="id" prop="id">
+        <el-input
+          v-model="queryParams.id"
+          placeholder="请输入id"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="标识" prop="openid">
         <el-input
           v-model="queryParams.openid"
@@ -19,7 +28,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="性别，0男，1女" prop="gender">
+      <el-form-item label="性别，1男，0女" prop="gender">
         <el-input
           v-model="queryParams.gender"
           placeholder="请输入性别，0男，1女"
@@ -82,6 +91,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="手机号" prop="phone">
+        <el-input
+          v-model="queryParams.phone"
+          placeholder="请输入手机号"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -137,16 +155,17 @@
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="是否授权" align="center" prop="id" />
+      <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="标识" align="center" prop="openid" />
       <el-table-column label="昵称" align="center" prop="nickname" />
-      <el-table-column label="性别，0男，1女" align="center" prop="gender" />
+      <el-table-column label="性别，1男，0女" align="center" prop="gender" />
       <el-table-column label="城市" align="center" prop="city" />
       <el-table-column label="省份" align="center" prop="province" />
       <el-table-column label="国家" align="center" prop="country" />
       <el-table-column label="头像" align="center" prop="avatarurl" />
       <el-table-column label="开放平台标识符" align="center" prop="unionid" />
       <el-table-column label="是否授权" align="center" prop="isauth" />
+      <el-table-column label="手机号" align="center" prop="phone" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -178,13 +197,16 @@
     <!-- 添加或修改小程序用户对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="id" prop="id">
+          <el-input v-model="form.id" placeholder="请输入id" />
+        </el-form-item>
         <el-form-item label="标识" prop="openid">
           <el-input v-model="form.openid" placeholder="请输入标识" />
         </el-form-item>
         <el-form-item label="昵称" prop="nickname">
           <el-input v-model="form.nickname" placeholder="请输入昵称" />
         </el-form-item>
-        <el-form-item label="性别，0男，1女" prop="gender">
+        <el-form-item label="性别，1男，0女" prop="gender">
           <el-input v-model="form.gender" placeholder="请输入性别，0男，1女" />
         </el-form-item>
         <el-form-item label="城市" prop="city">
@@ -204,6 +226,9 @@
         </el-form-item>
         <el-form-item label="是否授权" prop="isauth">
           <el-input v-model="form.isauth" placeholder="请输入是否授权" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="form.phone" placeholder="请输入手机号" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -245,6 +270,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        id: null,
         openid: null,
         nickname: null,
         gender: null,
@@ -253,14 +279,15 @@ export default {
         country: null,
         avatarurl: null,
         unionid: null,
-        isauth: null
+        isauth: null,
+        phone: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        isauth: [
-          { required: true, message: "是否授权不能为空", trigger: "blur" }
+        id: [
+          { required: true, message: "id不能为空", trigger: "blur" }
         ]
       }
     };
@@ -295,7 +322,8 @@ export default {
         country: null,
         avatarurl: null,
         unionid: null,
-        isauth: null
+        isauth: null,
+        phone: null
       };
       this.resetForm("form");
     },
