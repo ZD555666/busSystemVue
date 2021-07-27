@@ -5,7 +5,9 @@ import user from './modules/user'
 import tagsView from './modules/tagsView'
 import permission from './modules/permission'
 import settings from './modules/settings'
+import baiduUser from './modules/baiduUser'
 import getters from './getters'
+
 
 Vue.use(Vuex)
 
@@ -15,7 +17,8 @@ const store = new Vuex.Store({
     user,
     tagsView,
     permission,
-    settings
+    settings,
+    baiduUser
   },
   getters
 })
