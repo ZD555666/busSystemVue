@@ -5,15 +5,15 @@ import com.ruoyi.wx.wxuser.domain.TWxUser;
 
 /**
  * 小程序用户Service接口
- * 
+ *
  * @author gjw
  * @date 2021-07-24
  */
-public interface ITWxUserService 
+public interface ITWxUserService
 {
     /**
      * 查询小程序用户
-     * 
+     *
      * @param id 小程序用户ID
      * @return 小程序用户
      */
@@ -21,7 +21,7 @@ public interface ITWxUserService
 
     /**
      * 查询小程序用户列表
-     * 
+     *
      * @param tWxUser 小程序用户
      * @return 小程序用户集合
      */
@@ -29,7 +29,7 @@ public interface ITWxUserService
 
     /**
      * 新增小程序用户
-     * 
+     *
      * @param tWxUser 小程序用户
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface ITWxUserService
 
     /**
      * 修改小程序用户
-     * 
+     *
      * @param tWxUser 小程序用户
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface ITWxUserService
 
     /**
      * 批量删除小程序用户
-     * 
+     *
      * @param ids 需要删除的小程序用户ID
      * @return 结果
      */
@@ -53,7 +53,7 @@ public interface ITWxUserService
 
     /**
      * 删除小程序用户信息
-     * 
+     *
      * @param id 小程序用户ID
      * @return 结果
      */
@@ -62,5 +62,7 @@ public interface ITWxUserService
     TWxUser queryWxUserByOpId(String openId);
 
     int updWxUserByOpId(TWxUser user);
+
+    int queryMoneyByOpId(String opId);
 
 }
