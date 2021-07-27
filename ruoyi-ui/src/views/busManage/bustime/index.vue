@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="88px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="80px">
       <el-form-item label="x路公交车" prop="busno">
         <el-input
           v-model="queryParams.busno"
@@ -10,46 +10,46 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车牌号" prop="licenseplate">
+      <el-form-item label="时间间隔" prop="timeinterval">
         <el-input
-          v-model="queryParams.licenseplate"
-          placeholder="请输入车牌号"
+          v-model="queryParams.timeinterval"
+          placeholder="请输入时间间隔"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="公交车状态" prop="busstate">
+      <el-form-item label="发车时间" prop="startime">
         <el-input
-          v-model="queryParams.busstate"
-          placeholder="请输入公交车状态"
+          v-model="queryParams.startime"
+          placeholder="请输入发车时间"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="公交车状态参数" prop="busparam">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.busparam"-->
-<!--          placeholder="请输入公交车状态参数"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="公交车参数" prop="attr1">-->
+      <el-form-item label="到站时间" prop="endtime">
+        <el-input
+          v-model="queryParams.endtime"
+          placeholder="请输入到站时间"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+<!--      <el-form-item label="到站时间" prop="attr1">-->
 <!--        <el-input-->
 <!--          v-model="queryParams.attr1"-->
-<!--          placeholder="请输入公交车参数"-->
+<!--          placeholder="请输入到站时间"-->
 <!--          clearable-->
 <!--          size="small"-->
 <!--          @keyup.enter.native="handleQuery"-->
 <!--        />-->
 <!--      </el-form-item>-->
-<!--      <el-form-item label="公交车参数" prop="attr2">-->
+<!--      <el-form-item label="到站时间" prop="attr2">-->
 <!--        <el-input-->
 <!--          v-model="queryParams.attr2"-->
-<!--          placeholder="请输入公交车参数"-->
+<!--          placeholder="请输入到站时间"-->
 <!--          clearable-->
 <!--          size="small"-->
 <!--          @keyup.enter.native="handleQuery"-->
@@ -69,7 +69,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['busManage:businfo:add']"
+          v-hasPermi="['busTime:bustime:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -80,7 +80,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['busManage:businfo:edit']"
+          v-hasPermi="['busTime:bustime:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -91,7 +91,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['busManage:businfo:remove']"
+          v-hasPermi="['busTime:bustime:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -102,21 +102,21 @@
           size="mini"
 		  :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['busManage:businfo:export']"
+          v-hasPermi="['busTime:bustime:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="businfoList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="bustimeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="busid" />
-      <el-table-column label="公交车-路" align="center" prop="busno" />
-      <el-table-column label="车牌号" align="center" prop="licenseplate" />
-      <el-table-column label="公交车状态参数" align="center" prop="busparam" />
-      <el-table-column label="公交车状态" align="center" prop="busstate" />
-<!--      <el-table-column label="公交车参数" align="center" prop="attr1" />-->
-<!--      <el-table-column label="公交车参数" align="center" prop="attr2" />-->
+      <el-table-column label="序号" align="center" prop="scheduleid" />
+      <el-table-column label="x路公交车" align="center" prop="busno" />
+      <el-table-column label="时间间隔" align="center" prop="timeinterval" />
+      <el-table-column label="发车时间" align="center" prop="startime" />
+      <el-table-column label="到站时间" align="center" prop="endtime" />
+<!--      <el-table-column label="到站时间" align="center" prop="attr1" />-->
+<!--      <el-table-column label="到站时间" align="center" prop="attr2" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -124,14 +124,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['busManage:businfo:edit']"
+            v-hasPermi="['busTime:bustime:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['busManage:businfo:remove']"
+            v-hasPermi="['busTime:bustime:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -145,26 +145,28 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改车辆信息对话框 -->
+    <!-- 添加或修改公交车时刻对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="公交车x路" prop="busno">
-          <el-input v-model="form.busno" placeholder="请输入公交车x路" />
+      <el-form ref="form" :model="form" :rules="rules" label-width="90px">
+        <el-form-item label="x路公交车" prop="busno">
+          <el-input v-model="form.busno" placeholder="请输入x路公交车" />
         </el-form-item>
-        <el-form-item label="车牌号" prop="licenseplate">
-          <el-input v-model="form.licenseplate" placeholder="请输入车牌号" />
+        <el-form-item label="时间间隔" prop="timeinterval">
+          <el-input v-model="form.timeinterval" placeholder="请输入时间间隔" />
         </el-form-item>
-<!--        <el-form-item label="公交车状态" prop="busstate">-->
-<!--          <el-input v-model="form.busstate" placeholder="请输入公交车状态" />-->
+        <el-form-item label="发车时间" prop="startime">
+          <el-input v-model="form.startime" placeholder="请输入发车时间" />
+        </el-form-item>
+        <el-form-item label="到站时间" prop="endtime">
+          <el-input v-model="form.endtime" placeholder="请输入到站时间" />
+        </el-form-item>
+<!--        <el-form-item label="到站时间" prop="attr1">-->
+<!--          <el-input v-model="form.attr1" placeholder="请输入到站时间" />-->
 <!--        </el-form-item>-->
-        <el-form-item label="公交车状态参数" prop="busparam">
-          <el-input v-model="form.busparam" placeholder="请输入公交车状态参数" />
-        </el-form-item>
-<!--        <el-form-item label="公交车状态" prop="attr2">-->
-<!--          <el-input v-model="form.attr2" placeholder="请输入公交车状态" />-->
+<!--        <el-form-item label="到站时间" prop="attr2">-->
+<!--          <el-input v-model="form.attr2" placeholder="请输入到站时间" />-->
 <!--        </el-form-item>-->
       </el-form>
-
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -174,10 +176,10 @@
 </template>
 
 <script>
-import { listBusinfo, getBusinfo, delBusinfo, addBusinfo, updateBusinfo, exportBusinfo } from "@/api/busMax/busManage/businfo";
+import { listBustime, getBustime, delBustime, addBustime, updateBustime, exportBustime } from "@/api/busMax/busTime/bustime";
 
 export default {
-  name: "Businfo",
+  name: "Bustime",
   data() {
     return {
       // 遮罩层
@@ -194,8 +196,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 车辆信息表格数据
-      businfoList: [],
+      // 公交车时刻表格数据
+      bustimeList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -205,9 +207,9 @@ export default {
         pageNum: 1,
         pageSize: 10,
         busno: null,
-        licenseplate: null,
-        busstate: null,
-        busparam:null,
+        timeinterval: null,
+        startime: null,
+        endtime: null,
         attr1: null,
         attr2: null
       },
@@ -215,6 +217,9 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        busno: [
+          { required: true, message: "公交车x路不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -222,11 +227,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询车辆信息列表 */
+    /** 查询公交车时刻列表 */
     getList() {
       this.loading = true;
-      listBusinfo(this.queryParams).then(response => {
-        this.businfoList = response.rows;
+      listBustime(this.queryParams).then(response => {
+        this.bustimeList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -239,11 +244,11 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        busid: null,
+        scheduleid: null,
         busno: null,
-        licenseplate: null,
-        busstate: null,
-        busparam:null,
+        timeinterval: null,
+        startime: null,
+        endtime: null,
         attr1: null,
         attr2: null
       };
@@ -261,7 +266,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.busid)
+      this.ids = selection.map(item => item.scheduleid)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -269,30 +274,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加车辆信息";
+      this.title = "添加公交车时刻";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const busid = row.busid || this.ids
-      getBusinfo(busid).then(response => {
+      const scheduleid = row.scheduleid || this.ids
+      getBustime(scheduleid).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改车辆信息";
+        this.title = "修改公交车时刻";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.busid != null) {
-            updateBusinfo(this.form).then(response => {
+          if (this.form.scheduleid != null) {
+            updateBustime(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addBusinfo(this.form).then(response => {
+            addBustime(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -303,13 +308,13 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const busids = row.busid || this.ids;
-      this.$confirm('是否确认删除车辆信息编号为"' + busids + '"的数据项?', "警告", {
+      const scheduleids = row.scheduleid || this.ids;
+      this.$confirm('是否确认删除公交车时刻编号为"' + scheduleids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delBusinfo(busids);
+          return delBustime(scheduleids);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -318,13 +323,13 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有车辆信息数据项?', "警告", {
+      this.$confirm('是否确认导出所有公交车时刻数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
           this.exportLoading = true;
-          return exportBusinfo(queryParams);
+          return exportBustime(queryParams);
         }).then(response => {
           this.download(response.msg);
           this.exportLoading = false;

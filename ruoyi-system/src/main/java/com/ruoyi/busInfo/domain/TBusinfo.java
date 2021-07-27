@@ -30,6 +30,16 @@ public class TBusinfo extends BaseEntity
     @Excel(name = "公交车参数")
     private Long busparam;
 
+    private String busstate;
+
+    public String getBusstate() {
+        return busstate;
+    }
+
+    public void setBusstate(String busstate) {
+        this.busstate = busstate;
+    }
+
     /** $column.columnComment */
     @Excel(name = "公交车参数")
     private String attr1;
