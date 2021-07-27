@@ -9,12 +9,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="busno"    column="busNo"    />
         <result property="licenseplate"    column="licensePlate"    />
         <result property="busparam"    column="busParam"    />
+        <result property="busstate"    column="busState"    />
         <result property="attr1"    column="attr1"    />
         <result property="attr2"    column="attr2"    />
     </resultMap>
 
     <sql id="selectTBusinfoVo">
-        select busId, busNo, licensePlate, busParam, attr1, attr2 from t_businfo
+-- select *from t_businfo
+select * from t_businfo left join t_param_bus on t_businfo.busParam=t_param_bus.busParam
     </sql>
 
     <select id="selectTBusinfoList" parameterType="TBusinfo" resultMap="TBusinfoResult">
@@ -23,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="busno != null  and busno != ''"> and busNo = #{busno}</if>
             <if test="licenseplate != null  and licenseplate != ''"> and licensePlate = #{licenseplate}</if>
             <if test="busparam != null "> and busParam = #{busparam}</if>
-            <if test="attr1 != null  and attr1 != ''"> and attr1 = #{attr1}</if>
+            <if test="busstate != null  and busstate != ''"> and busstate = #{busstate}</if>
             <if test="attr2 != null  and attr2 != ''"> and attr2 = #{attr2}</if>
         </where>
     </select>
