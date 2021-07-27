@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wx.wxuser.mapper.WxMoneyMapper">
+    <insert id="insertMoneyByOpId">
+        insert ignore into t_wx_money (openId,money)
+        values (#{openId},0);
+    </insert>
+    <select id="queryMoneyByOpId" resultType="Integer">
+        select money
+        from t_wx_money
+        where openId = #{openId};
+    </select>
+</mapper>

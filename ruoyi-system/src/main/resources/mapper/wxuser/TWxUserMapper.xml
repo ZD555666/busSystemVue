@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wx.wxuser.mapper.TWxUserMapper">
-    
+
     <resultMap type="TWxUser" id="TWxUserResult">
         <result property="id"    column="id"    />
         <result property="openid"    column="openId"    />
@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectTWxUserList" parameterType="TWxUser" resultMap="TWxUserResult">
         <include refid="selectTWxUserVo"/>
-        <where>  
+        <where>
             <if test="openid != null  and openid != ''"> and openId = #{openid}</if>
             <if test="nickname != null  and nickname != ''"> and nickName like concat('%', #{nickname}, '%')</if>
             <if test="gender != null "> and gender = #{gender}</if>
@@ -37,12 +37,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="phone != null "> and phone = #{phone}</if>
         </where>
     </select>
-    
+
     <select id="selectTWxUserById" parameterType="Long" resultMap="TWxUserResult">
         <include refid="selectTWxUserVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertTWxUser" parameterType="TWxUser" useGeneratedKeys="true" keyProperty="id">
         insert into t_wx_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -93,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteTWxUserByIds" parameterType="String">
-        delete from t_wx_user where id in 
+        delete from t_wx_user where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -109,5 +109,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         set nickName = #{nickname},gender=#{gender}
         where openId=#{openid};
     </update>
+
+    <select id="queryMoneyByOpId" resultType="Integer">
+        select t2.money
+        from t_wx_user t1,t_wx_money t2 where t1.openId=t2.openId and t1.openId=#{openId};
+    </select>
 
 </mapper>

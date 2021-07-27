@@ -7,6 +7,7 @@ import com.ruoyi.common.utils.HttpClientUtil;
 import com.ruoyi.wx.wxuser.domain.TWxUser;
 import com.ruoyi.wx.wxuser.service.ITWxUserService;
 import com.ruoyi.wx.wxuser.service.SendMsgService;
+import com.ruoyi.wx.wxuser.service.WxMoneyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,6 +30,9 @@ public class UserInfoController extends BaseController {
 
     @Autowired
     private ITWxUserService tWxUserService;
+
+    @Autowired
+    private WxMoneyService moneyService;
 
     @Autowired
     @Qualifier("sendMsgServiceImpl")
@@ -91,6 +95,7 @@ public class UserInfoController extends BaseController {
             TWxUser user = tWxUserService.queryWxUserByOpId(wxUser.getOpenid());
             if (user == null) {
                 tWxUserService.insertTWxUser(wxUser);
+                moneyService.insertMoneyByOpId(wxUser.getOpenid());
                 redisTemplate.opsForValue().set(wxUser.getOpenid(), JSONObject.toJSONString(wxUser));
             }else {
                 redisTemplate.opsForValue().set(wxUser.getOpenid(), JSONObject.toJSONString(user));
@@ -115,6 +120,11 @@ public class UserInfoController extends BaseController {
         System.out.println(saveUser+"=======>>>>>");
         redisTemplate.opsForValue().set(saveUser.getOpenid(), JSONObject.toJSONString(saveUser));
         return AjaxResult.success(tWxUserService.updWxUserByOpId(saveUser) == 1 ? "保存成功" : "保存失败");
+    }
+
+    @GetMapping("queryBalance")
+    public AjaxResult queryBalance(@RequestParam("opId") String opId){
+        return AjaxResult.success(moneyService.queryMoneyByOpId(opId));
     }
 
 }

@@ -43,6 +43,7 @@ public class TBusinfoController extends BaseController
         startPage();
         List<TBusinfo> list = tBusinfoService.selectTBusinfoList(tBusinfo);
         return getDataTable(list);
+
     }
 
     /**
