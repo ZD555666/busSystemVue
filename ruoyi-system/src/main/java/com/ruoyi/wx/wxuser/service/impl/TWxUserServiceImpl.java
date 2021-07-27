@@ -9,19 +9,19 @@ import com.ruoyi.wx.wxuser.service.ITWxUserService;
 
 /**
  * 小程序用户Service业务层处理
- * 
+ *
  * @author gjw
  * @date 2021-07-24
  */
 @Service
-public class TWxUserServiceImpl implements ITWxUserService 
+public class TWxUserServiceImpl implements ITWxUserService
 {
     @Autowired
     private TWxUserMapper tWxUserMapper;
 
     /**
      * 查询小程序用户
-     * 
+     *
      * @param id 小程序用户ID
      * @return 小程序用户
      */
@@ -33,7 +33,7 @@ public class TWxUserServiceImpl implements ITWxUserService
 
     /**
      * 查询小程序用户列表
-     * 
+     *
      * @param tWxUser 小程序用户
      * @return 小程序用户
      */
@@ -45,7 +45,7 @@ public class TWxUserServiceImpl implements ITWxUserService
 
     /**
      * 新增小程序用户
-     * 
+     *
      * @param tWxUser 小程序用户
      * @return 结果
      */
@@ -57,7 +57,7 @@ public class TWxUserServiceImpl implements ITWxUserService
 
     /**
      * 修改小程序用户
-     * 
+     *
      * @param tWxUser 小程序用户
      * @return 结果
      */
@@ -69,7 +69,7 @@ public class TWxUserServiceImpl implements ITWxUserService
 
     /**
      * 批量删除小程序用户
-     * 
+     *
      * @param ids 需要删除的小程序用户ID
      * @return 结果
      */
@@ -81,7 +81,7 @@ public class TWxUserServiceImpl implements ITWxUserService
 
     /**
      * 删除小程序用户信息
-     * 
+     *
      * @param id 小程序用户ID
      * @return 结果
      */
@@ -99,5 +99,10 @@ public class TWxUserServiceImpl implements ITWxUserService
     @Override
     public int updWxUserByOpId(TWxUser user) {
         return tWxUserMapper.updWxUserByOpId(user);
+    }
+
+    @Override
+    public int queryMoneyByOpId(String opId) {
+        return tWxUserMapper.queryMoneyByOpId(opId);
     }
 }
