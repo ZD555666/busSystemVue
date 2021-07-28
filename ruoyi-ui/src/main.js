@@ -33,9 +33,6 @@ import VueMeta from 'vue-meta'
 import Vue from 'vue';
 import BaiduMap from 'vue-baidu-map'
 
-Vue.use(BaiduMap, {
-  ak: this.$store.getters.akForWeb //百度地图api ak码
-})
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
