@@ -2,6 +2,8 @@ package com.ruoyi.wx.wxuser.service;
 
 import com.ruoyi.wx.wxuser.domain.WxRecord;
 
+import java.util.List;
+
 /**
  * @version 1.0
  * @author: gjw
@@ -11,5 +13,7 @@ import com.ruoyi.wx.wxuser.domain.WxRecord;
 public interface WxRecordService {
 
     int insertRecord(WxRecord record);
+
+    List<WxRecord> queryIncomeRecordByOpId(String opId, int isAdd);
 
 }

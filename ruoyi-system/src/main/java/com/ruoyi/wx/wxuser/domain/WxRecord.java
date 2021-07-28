@@ -1,5 +1,6 @@
 package com.ruoyi.wx.wxuser.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public class WxRecord implements Serializable {
     private String openId;
     private Integer isAdd;
     private int record;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date recordTime;
     private int restMoney;
 

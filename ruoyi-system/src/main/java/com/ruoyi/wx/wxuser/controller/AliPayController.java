@@ -4,13 +4,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradeCloseRequest;
 import com.alipay.api.request.AlipayTradePrecreateRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.response.AlipayTradeCloseResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.OrderUtil;
 import com.ruoyi.wx.config.AlipayConfig;
 import com.ruoyi.wx.config.PayResponse;
-import com.ruoyi.wx.config.ScheduledConfig;
 import com.ruoyi.wx.wxuser.domain.WxAliPay;
 import com.ruoyi.wx.wxuser.domain.WxRecord;
 import com.ruoyi.wx.wxuser.service.WxAliPayService;
@@ -81,24 +84,55 @@ public class AliPayController {
         System.err.println(qrCode);
         System.err.println(response.getBody());
         aliPayService.insertPayInfo(new WxAliPay().setOpenId(opId).
-                setOut_trade_no(orderNo).setSubject(subject).setTotal_amount(amount*100).
+                setOut_trade_no(orderNo).setSubject(subject).setTotal_amount(amount * 100).
                 setStore_id(PayResponse.store_id).setPayState(PayResponse.WAIT_BUYER_PAY));
         JSONObject json = new JSONObject();
-        json.put("qrCode",qrCode);
-        json.put("orderNo",orderNo);
+        json.put("qrCode", qrCode);
+        json.put("orderNo", orderNo);
         return AjaxResult.success(json);
     }
 
     @RequestMapping("/queryPay")
     @ResponseBody
-    public String queryPay() {
-//        String opId = (String) map.get("opId");
-//        Integer amount = (Integer) map.get("amount");
-//        int money = Integer.valueOf(redisTemplate.opsForValue().get("money")) + amount;
-//        int i = moneyService.updMoneyByOpId(opId, money * 100);
-//        if (i > 0)
-//            recordService.insertRecord(new WxRecord().setOpenId(opId).setIsAdd(0).setRecord(amount).setRecordTime(new Date()));
-        return "123";
+    public AjaxResult queryPay(@RequestBody HashMap<String, Object> map) throws AlipayApiException {
+        String opId = (String) map.get("opId");
+        String orderNo = (String) map.get("orderNo");
+        Integer amount = (Integer) map.get("amount");
+        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY,
+                AlipayConfig.format, AlipayConfig.charset, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.sign_type);
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+        request.setBizContent("{" +
+                "\"out_trade_no\":\"" + orderNo + "\"," +
+                "      \"query_options\":[" +
+                "        \"trade_settle_info\"" +
+                "      ]" +
+                "  }");
+        AlipayTradeQueryResponse response = alipayClient.execute(request);
+        if (response.isSuccess() && response.getTradeStatus().equals(PayResponse.TRADE_SUCCESS)) {
+            System.err.println("调用成功");
+            int money = moneyService.queryMoneyByOpId(opId);
+            int i = moneyService.updMoneyByOpId(opId, money + (amount * 100));
+            if (i > 0 && money != money + (amount * 100)) {
+                recordService.insertRecord(new WxRecord().setOpenId(opId).setIsAdd(0).setRecord(amount * 100).setRecordTime(new Date()));
+            }
+        } else {
+            System.err.println("调用失败");
+        }
+        aliPayService.updPayStateByOpId(opId, orderNo, response.getTradeStatus());
+        return AjaxResult.success(response.getTradeStatus());
+    }
+
+    @RequestMapping("delPay")
+    public AjaxResult delPay(@RequestBody HashMap<String, Object> map) throws AlipayApiException {
+        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY,
+                AlipayConfig.format, AlipayConfig.charset, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.sign_type);
+        AlipayTradeCloseRequest request = new AlipayTradeCloseRequest();
+        request.setBizContent("{" +
+                "\"out_trade_no\":\"" + map.get("orderNo") + "\"" +
+                "  }");
+        AlipayTradeCloseResponse response = alipayClient.execute(request);
+        System.out.println(response.getSubMsg());
+        return AjaxResult.success(response.getMsg());
     }
 
 
