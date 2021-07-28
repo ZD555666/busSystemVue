@@ -5,10 +5,15 @@
 <mapper namespace="com.ruoyi.wx.wxuser.mapper.AliPayMapper">
     <insert id="insertPayInfo" parameterType="WxAliPay">
         insert into t_wx_alipay (out_trade_no, total_amount, subject, store_id, openId, payState)
-        values (#{out_trade_no},#{total_amount},#{subject},#{store_id},#{openId},#{payState});
+        values (#{out_trade_no}, #{total_amount}, #{subject}, #{store_id}, #{openId}, #{payState});
     </insert>
 
-
+    <update id="updPayStateByOpId">
+        update t_wx_alipay
+        set payState = #{payState}
+        where openId = #{openId}
+          and out_trade_no = #{out_trade_no};
+    </update>
 
 
 </mapper>

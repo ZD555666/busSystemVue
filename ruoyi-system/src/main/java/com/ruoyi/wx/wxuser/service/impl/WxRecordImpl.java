@@ -6,6 +6,8 @@ import com.ruoyi.wx.wxuser.service.WxRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @version 1.0
  * @author: gjw
@@ -21,5 +23,10 @@ public class WxRecordImpl implements WxRecordService {
     @Override
     public int insertRecord(WxRecord record) {
         return wxRecordMapper.insertRecord(record);
+    }
+
+    @Override
+    public List<WxRecord> queryIncomeRecordByOpId(String opId, int isAdd) {
+        return wxRecordMapper.queryIncomeRecordByOpId(opId, isAdd);
     }
 }

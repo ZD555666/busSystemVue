@@ -22,4 +22,9 @@ public class WxAliPayImpl implements WxAliPayService {
     public int insertPayInfo(WxAliPay aliPay) {
         return aliPayMapper.insertPayInfo(aliPay);
     }
+
+    @Override
+    public int updPayStateByOpId(String opId,String orderNo, String payState) {
+        return aliPayMapper.updPayStateByOpId(opId, orderNo, payState);
+    }
 }

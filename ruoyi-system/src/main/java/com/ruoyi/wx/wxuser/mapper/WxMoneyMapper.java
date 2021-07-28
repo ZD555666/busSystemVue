@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface WxMoneyMapper {
 
-    int insertMoneyByOpId(String opId,int money);
+    int insertMoneyByOpId(@Param("openId") String opId,@Param("money") int money);
 
     int queryMoneyByOpId(String opId);
 

@@ -8,6 +8,7 @@ import com.ruoyi.wx.wxuser.domain.TWxUser;
 import com.ruoyi.wx.wxuser.service.ITWxUserService;
 import com.ruoyi.wx.wxuser.service.SendMsgService;
 import com.ruoyi.wx.wxuser.service.WxMoneyService;
+import com.ruoyi.wx.wxuser.service.WxRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,6 +40,9 @@ public class UserInfoController extends BaseController {
     private SendMsgService sendMsgService;
 
     @Autowired
+    private WxRecordService recordService;
+
+    @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @GetMapping("/getOpenId")
@@ -60,7 +64,7 @@ public class UserInfoController extends BaseController {
         TWxUser user = tWxUserService.queryWxUserByOpId(open_id);
         if (user != null) {
             jsonObject.put("isRegis", true);
-            System.err.println(user+"!!!!!!!!!");
+            System.err.println(user + "!!!!!!!!!");
             redisTemplate.opsForValue().set(user.getOpenid(), JSONObject.toJSONString(user));
         }
         return AjaxResult.success(jsonObject);
@@ -95,9 +99,9 @@ public class UserInfoController extends BaseController {
             TWxUser user = tWxUserService.queryWxUserByOpId(wxUser.getOpenid());
             if (user == null) {
                 tWxUserService.insertTWxUser(wxUser);
-                moneyService.insertMoneyByOpId(wxUser.getOpenid(),0);
+                moneyService.insertMoneyByOpId(wxUser.getOpenid(), 0);
                 redisTemplate.opsForValue().set(wxUser.getOpenid(), JSONObject.toJSONString(wxUser));
-            }else {
+            } else {
                 redisTemplate.opsForValue().set(wxUser.getOpenid(), JSONObject.toJSONString(user));
             }
 
@@ -111,22 +115,25 @@ public class UserInfoController extends BaseController {
     public AjaxResult getLoginUserInfo(@RequestBody HashMap<String, Object> map) {
         System.err.println(map.get("opId"));
         String res = redisTemplate.opsForValue().get(map.get("opId"));
-        System.err.println(res+"1111111111111111");
+        System.err.println(res + "1111111111111111");
         return AjaxResult.success("获取成功", JSONObject.parseObject(res));
     }
 
     @PostMapping("/saveInfo")
     public AjaxResult saveInfo(@RequestBody TWxUser saveUser) {
-        System.out.println(saveUser+"=======>>>>>");
+        System.out.println(saveUser + "=======>>>>>");
         redisTemplate.opsForValue().set(saveUser.getOpenid(), JSONObject.toJSONString(saveUser));
         return AjaxResult.success(tWxUserService.updWxUserByOpId(saveUser) == 1 ? "保存成功" : "保存失败");
     }
 
     @GetMapping("queryBalance")
-    public AjaxResult queryBalance(@RequestParam("opId") String opId){
-        int money = moneyService.queryMoneyByOpId(opId);
-        redisTemplate.opsForValue().set("money", String.valueOf(money));
-        return AjaxResult.success(money);
+    public AjaxResult queryBalance(@RequestParam("opId") String opId) {
+        return AjaxResult.success(moneyService.queryMoneyByOpId(opId));
+    }
+
+    @GetMapping("queryInCome")
+    public AjaxResult queryInCome(@RequestParam("opId") String opId) {
+        return AjaxResult.success(recordService.queryIncomeRecordByOpId(opId, 0));
     }
 
 }
