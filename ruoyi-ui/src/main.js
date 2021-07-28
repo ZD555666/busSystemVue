@@ -28,8 +28,14 @@ import FileUpload from "@/components/FileUpload"
 import ImageUpload from "@/components/ImageUpload"
 // 字典标签组件
 import DictTag from '@/components/DictTag'
-// 头部标签组件
+// 百度地图组件
 import VueMeta from 'vue-meta'
+import Vue from 'vue';
+import BaiduMap from 'vue-baidu-map'
+
+Vue.use(BaiduMap, {
+  ak: this.$store.getters.akForWeb //百度地图api ak码
+})
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts

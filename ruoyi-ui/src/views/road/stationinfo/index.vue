@@ -50,6 +50,30 @@
         <el-button
           type="primary"
           plain
+          icon="el-icon-s-flag"
+          size="mini"
+          @click="dialogVisible = true"
+        >查询经纬度
+        </el-button>
+        <el-dialog
+          title="地图选点"
+          :visible.sync="dialogVisible"
+          width="90%"
+          top="0px"
+          :before-close="handleClose">
+          <div style="width: 100%;height: 550px">
+
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          </span>
+        </el-dialog>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
@@ -154,6 +178,8 @@ export default {
   name: "Stationinfo",
   data() {
     return {
+      // 地图弹出层
+      dialogVisible: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -196,6 +222,15 @@ export default {
     this.getList();
   },
   methods: {
+    /** 地图弹出层*/
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {
+        });
+    },
     /** 查询站点信息列表 */
     getList() {
       this.loading = true;
