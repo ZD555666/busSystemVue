@@ -37,9 +37,9 @@ public class AlipayConfig {
             "Eb1oyo7/OWK2vX3p3WHA5PvdQtSgcSIo6sU4NKoIwQ/sIgsmq9HLYNs/UpXKEnR/K3BJTYb6GT9AYftQF4iPcmxHDRvDX05hNkNsN7Dvw4r0Q86" +
             "3AjjSD2o/O1odcietoxvOszp9kqeoisJLFkmllbhCUN/i7WVNIh9wto1ah0q07/FdW6MwN2VY4TuUUXWSaAmwQIDAQAB";
 
-    public static String notify_url = "http://localhost:"+port+"/notifyUrl";
+    public static String notify_url = "http://localhost:8080/wx/notifyUrl";
 
-    public static String return_url = "http://localhost:"+port+"/returnUrl";
+    public static String return_url = "http://localhost:8080/wx/returnUrl";
 
     // 签名方式
     public static String sign_type = "RSA2";

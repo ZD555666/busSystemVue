@@ -95,7 +95,7 @@ public class UserInfoController extends BaseController {
             TWxUser user = tWxUserService.queryWxUserByOpId(wxUser.getOpenid());
             if (user == null) {
                 tWxUserService.insertTWxUser(wxUser);
-                moneyService.insertMoneyByOpId(wxUser.getOpenid());
+                moneyService.insertMoneyByOpId(wxUser.getOpenid(),0);
                 redisTemplate.opsForValue().set(wxUser.getOpenid(), JSONObject.toJSONString(wxUser));
             }else {
                 redisTemplate.opsForValue().set(wxUser.getOpenid(), JSONObject.toJSONString(user));
@@ -124,7 +124,9 @@ public class UserInfoController extends BaseController {
 
     @GetMapping("queryBalance")
     public AjaxResult queryBalance(@RequestParam("opId") String opId){
-        return AjaxResult.success(moneyService.queryMoneyByOpId(opId));
+        int money = moneyService.queryMoneyByOpId(opId);
+        redisTemplate.opsForValue().set("money", String.valueOf(money));
+        return AjaxResult.success(money);
     }
 
 }

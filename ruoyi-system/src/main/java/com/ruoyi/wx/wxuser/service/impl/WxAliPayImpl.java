@@ -1,0 +1,25 @@
+package com.ruoyi.wx.wxuser.service.impl;
+
+import com.ruoyi.wx.wxuser.domain.WxAliPay;
+import com.ruoyi.wx.wxuser.mapper.AliPayMapper;
+import com.ruoyi.wx.wxuser.service.WxAliPayService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * @version 1.0
+ * @author: gjw
+ * @date: 2021/7/28 16:34
+ * @desc:
+ */
+@Service
+public class WxAliPayImpl implements WxAliPayService {
+
+    @Autowired
+    private AliPayMapper aliPayMapper;
+
+    @Override
+    public int insertPayInfo(WxAliPay aliPay) {
+        return aliPayMapper.insertPayInfo(aliPay);
+    }
+}

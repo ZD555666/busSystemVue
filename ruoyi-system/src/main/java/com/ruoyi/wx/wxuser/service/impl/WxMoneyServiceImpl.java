@@ -18,12 +18,17 @@ public class WxMoneyServiceImpl implements WxMoneyService {
     private WxMoneyMapper wxMoneyMapper;
 
     @Override
-    public int insertMoneyByOpId(String opId) {
-        return wxMoneyMapper.insertMoneyByOpId(opId);
+    public int insertMoneyByOpId(String opId, int money) {
+        return wxMoneyMapper.insertMoneyByOpId(opId, money);
     }
 
     @Override
     public int queryMoneyByOpId(String opId) {
         return wxMoneyMapper.queryMoneyByOpId(opId);
+    }
+
+    @Override
+    public int updMoneyByOpId(String opId, int money) {
+        return wxMoneyMapper.updMoneyByOpId(opId, money);
     }
 }

@@ -2,6 +2,8 @@ import request from '@/utils/request'
 
 // 查询小程序用户列表
 export function listUser(query) {
+
+  console.log(process.env.VUE_APP_BASE_API)
   return request({
     url: '/wxuser/user/list',
     method: 'get',

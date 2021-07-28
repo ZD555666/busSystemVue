@@ -8,7 +8,9 @@ package com.ruoyi.wx.wxuser.service;
  */
 public interface WxMoneyService {
 
-    int insertMoneyByOpId(String opId);
+    int insertMoneyByOpId(String opId, int money);
 
     int queryMoneyByOpId(String opId);
+
+    int updMoneyByOpId(String opId, int money);
 }
