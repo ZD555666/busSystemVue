@@ -2,6 +2,7 @@ package com.ruoyi.wx.wxuser.mapper;
 
 import java.util.List;
 import com.ruoyi.wx.wxuser.domain.TWxUser;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 小程序用户Mapper接口
@@ -9,6 +10,7 @@ import com.ruoyi.wx.wxuser.domain.TWxUser;
  * @author gjw
  * @date 2021-07-24
  */
+@Mapper
 public interface TWxUserMapper
 {
     /**

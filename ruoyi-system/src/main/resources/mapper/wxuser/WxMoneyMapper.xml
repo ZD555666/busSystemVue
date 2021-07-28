@@ -5,11 +5,16 @@
 <mapper namespace="com.ruoyi.wx.wxuser.mapper.WxMoneyMapper">
     <insert id="insertMoneyByOpId">
         insert ignore into t_wx_money (openId,money)
-        values (#{openId},0);
+        values (#{openId},#{money});
     </insert>
     <select id="queryMoneyByOpId" resultType="Integer">
         select money
         from t_wx_money
         where openId = #{openId};
     </select>
+    <update id="updMoneyByOpId">
+        update t_wx_money
+        set money = #{money}
+        where openId=#{openId};
+    </update>
 </mapper>

@@ -44,8 +44,8 @@ Vue.prototype.handleTree = handleTree
 
 Vue.prototype.msgSuccess = function (msg) {
   this.$message({ showClose: true, message: msg, type: "success" });
-}
 
+}
 Vue.prototype.msgError = function (msg) {
   this.$message({ showClose: true, message: msg, type: "error" });
 }
