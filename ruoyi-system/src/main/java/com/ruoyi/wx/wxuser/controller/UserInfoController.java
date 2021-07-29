@@ -126,14 +126,37 @@ public class UserInfoController extends BaseController {
         return AjaxResult.success(tWxUserService.updWxUserByOpId(saveUser) == 1 ? "保存成功" : "保存失败");
     }
 
-    @GetMapping("queryBalance")
+    @GetMapping("/queryBalance")
     public AjaxResult queryBalance(@RequestParam("opId") String opId) {
         return AjaxResult.success(moneyService.queryMoneyByOpId(opId));
     }
 
-    @GetMapping("queryInCome")
+    @GetMapping("/queryInCome")
     public AjaxResult queryInCome(@RequestParam("opId") String opId) {
         return AjaxResult.success(recordService.queryIncomeRecordByOpId(opId, 0));
     }
 
+    @GetMapping("/reqScanCode")
+    public AjaxResult reqScanCode(@RequestParam String opId) {
+        String code = UUID.randomUUID().toString().substring(0, 18);
+        String redisCode = redisTemplate.opsForValue().get(opId + "scan");
+        if (redisCode != null) return AjaxResult.success(redisCode);
+        redisTemplate.opsForValue().set(opId + "scan", "/wx/scanCode/" + opId + "/" + code, 1, TimeUnit.MINUTES);
+        return AjaxResult.success("/wx/scanCode/" + opId + "/" + code);
+    }
+
+    @GetMapping("scanCode/{opId}/{code}")
+    public AjaxResult scanCode(@PathVariable("opId") String opId, @PathVariable("code") String code) {
+        String redisCode = redisTemplate.opsForValue().get(opId + "scan");
+        String substring = redisCode.substring(redisCode.length() - 18, redisCode.length());
+        JSONObject json = JSONObject.parseObject(redisTemplate.opsForValue().get(opId));
+        if (code.equals(substring) && json.get("openid").equals(opId)) {
+            int money = moneyService.queryMoneyByOpId((String) json.get("openid"));
+            int i = moneyService.updMoneyByOpId((String) json.get("openid"), money - (1 * 100));//扣一块钱
+            return i > 0 ? AjaxResult.success("paySuccess") : AjaxResult.error("payError");
+        } else {
+            return AjaxResult.error("payError");
+        }
+
+    }
 }

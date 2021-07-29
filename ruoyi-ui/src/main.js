@@ -30,7 +30,6 @@ import ImageUpload from "@/components/ImageUpload"
 import DictTag from '@/components/DictTag'
 // 百度地图组件
 import VueMeta from 'vue-meta'
-import Vue from 'vue';
 import BaiduMap from 'vue-baidu-map'
 
 
