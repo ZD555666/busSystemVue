@@ -5,6 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.HttpClientUtil;
 import com.ruoyi.wx.wxuser.domain.TWxUser;
+import com.ruoyi.wx.wxuser.domain.WxRecord;
 import com.ruoyi.wx.wxuser.service.ITWxUserService;
 import com.ruoyi.wx.wxuser.service.SendMsgService;
 import com.ruoyi.wx.wxuser.service.WxMoneyService;
@@ -14,10 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -153,10 +151,21 @@ public class UserInfoController extends BaseController {
         if (code.equals(substring) && json.get("openid").equals(opId)) {
             int money = moneyService.queryMoneyByOpId((String) json.get("openid"));
             int i = moneyService.updMoneyByOpId((String) json.get("openid"), money - (1 * 100));//扣一块钱
-            return i > 0 ? AjaxResult.success("paySuccess") : AjaxResult.error("payError");
+            if (i > 0) {
+                recordService.insertRecord(new WxRecord().setOpenId(opId).setIsAdd(1).setRecord(1 * 100).setRecordTime(new Date()));
+                return AjaxResult.success("paySuccess");
+            } else {
+                return AjaxResult.error("payError");
+            }
         } else {
             return AjaxResult.error("payError");
         }
-
     }
+
+    @GetMapping("/queryOutCome")
+    public AjaxResult queryOutCome(@RequestParam("opId") String opId) {
+        return AjaxResult.success(recordService.queryIncomeRecordByOpId(opId, 1));
+    }
+
+
 }

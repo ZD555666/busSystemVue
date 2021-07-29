@@ -24,7 +24,12 @@ public class WxAliPayImpl implements WxAliPayService {
     }
 
     @Override
-    public int updPayStateByOpId(String opId,String orderNo, String payState) {
+    public int updPayStateByOpId(String opId, String orderNo, String payState) {
         return aliPayMapper.updPayStateByOpId(opId, orderNo, payState);
+    }
+
+    @Override
+    public String queryPayState(String out_trade_no, String openId, int total_amount) {
+        return aliPayMapper.queryPayState(out_trade_no, openId, total_amount);
     }
 }

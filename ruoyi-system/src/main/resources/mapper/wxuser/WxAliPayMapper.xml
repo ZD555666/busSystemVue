@@ -15,5 +15,12 @@
           and out_trade_no = #{out_trade_no};
     </update>
 
+    <select id="queryPayState" resultType="String">
+        select payState
+        from t_wx_alipay
+        where openId = #{openId}
+          and out_trade_no = #{out_trade_no}
+          and total_amount = #{total_amount};
+    </select>
 
 </mapper>

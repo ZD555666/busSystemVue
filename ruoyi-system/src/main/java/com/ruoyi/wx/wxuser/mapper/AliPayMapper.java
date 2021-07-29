@@ -17,4 +17,6 @@ public interface AliPayMapper {
 
     int updPayStateByOpId(@Param("openId") String opId, @Param("out_trade_no") String orderNo, @Param("payState") String payState);
 
+    String queryPayState(@Param("out_trade_no") String out_trade_no,@Param("openId") String openId,@Param("total_amount") int total_amount);
+
 }

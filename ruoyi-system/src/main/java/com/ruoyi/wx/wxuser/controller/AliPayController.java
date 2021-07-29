@@ -113,7 +113,9 @@ public class AliPayController {
             int money = moneyService.queryMoneyByOpId(opId);
             int i = moneyService.updMoneyByOpId(opId, money + (amount * 100));
             if (i > 0 && money != money + (amount * 100)) {
-                recordService.insertRecord(new WxRecord().setOpenId(opId).setIsAdd(0).setRecord(amount * 100).setRecordTime(new Date()));
+                String payState = aliPayService.queryPayState(orderNo, opId, amount*100);
+                if (!PayResponse.TRADE_SUCCESS.equals(payState))
+                    recordService.insertRecord(new WxRecord().setOpenId(opId).setIsAdd(0).setRecord(amount * 100).setRecordTime(new Date()));
             }
         } else {
             System.err.println("调用失败");

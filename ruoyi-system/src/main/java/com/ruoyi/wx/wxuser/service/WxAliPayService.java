@@ -1,7 +1,6 @@
 package com.ruoyi.wx.wxuser.service;
 
 import com.ruoyi.wx.wxuser.domain.WxAliPay;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * @version 1.0
@@ -14,5 +13,7 @@ public interface WxAliPayService {
     int insertPayInfo(WxAliPay aliPay);
 
     int updPayStateByOpId(String opId,String orderNo, String payState);
+
+    String queryPayState(String out_trade_no,String openId,int total_amount);
 
 }
