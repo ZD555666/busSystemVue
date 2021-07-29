@@ -1,5 +1,4 @@
 import Vue from 'vue'
-
 import Cookies from 'js-cookie'
 
 import Element from 'element-ui'
@@ -28,15 +27,33 @@ import FileUpload from "@/components/FileUpload"
 import ImageUpload from "@/components/ImageUpload"
 // 字典标签组件
 import DictTag from '@/components/DictTag'
-// 百度地图组件
+
 import VueMeta from 'vue-meta'
-import Vue from 'vue';
+
+// 百度地图api
 import BaiduMap from 'vue-baidu-map'
+import {BmGeolocation, BmlMarkerClusterer, BmLocalSearch} from "vue-baidu-map/components";
 
 Vue.use(BaiduMap, {
-  ak: this.$store.getters.akForWeb //百度地图api ak码
+  ak: 'kNpAEcc1tXTkS1eQVzRtVwtwdC6c9TLq'
 })
+Vue.component('bm-marker-clusterer', BmlMarkerClusterer)
+Vue.component('bm-local-search', BmLocalSearch)
+Vue.component('bm-geolocation', BmGeolocation)
 
+
+// 百度地图数据可视化组件vue-mapvgl
+import VueBMap from 'vue-bmap-gl';
+import 'vue-bmap-gl/dist/style.css'
+import VueMapvgl from 'vue-mapvgl';
+
+
+Vue.use(VueBMap);
+Vue.use(VueMapvgl);
+VueBMap.initBMapApiLoader({
+  ak: 'kNpAEcc1tXTkS1eQVzRtVwtwdC6c9TLq',
+  v: '1.0'
+})
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
