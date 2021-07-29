@@ -62,7 +62,9 @@
           top="0px"
           :before-close="handleClose">
           <div style="width: 100%;height: 550px">
-
+<!--            查询坐标容器 -->
+                <getLocation></getLocation>
+<!--            查询坐标容器 -->
           </div>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
@@ -173,9 +175,10 @@
 
 <script>
 import { listStationinfo, getStationinfo, delStationinfo, addStationinfo, updateStationinfo, exportStationinfo } from "@/api/road/stationinfo";
-
+import getLocation from './getLocation.vue';
 export default {
   name: "Stationinfo",
+  components: {getLocation},
   data() {
     return {
       // 地图弹出层
@@ -218,10 +221,13 @@ export default {
       }
     };
   },
+  mounted() {
+  },
   created() {
     this.getList();
   },
   methods: {
+
     /** 地图弹出层*/
     handleClose(done) {
       this.$confirm('确认关闭？')
@@ -269,7 +275,7 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
+    /** 多选框选中数据 */
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.stationid)
       this.single = selection.length!==1
@@ -343,3 +349,12 @@ export default {
   }
 };
 </script>
+
+<style>
+.bm-view {
+  width: 100%;
+  height: 300px;
+}
+</style>
+
+
