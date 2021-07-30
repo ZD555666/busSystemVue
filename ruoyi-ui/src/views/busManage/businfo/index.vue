@@ -129,6 +129,14 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-edit"
+            @click="busScheduling(scope.row)"
+          >
+          <router-link to="/busScheduling">排班</router-link>&emsp;
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['busManage:businfo:remove']"
@@ -175,8 +183,10 @@
 
 <script>
 import { listBusinfo, getBusinfo, delBusinfo, addBusinfo, updateBusinfo, exportBusinfo } from "@/api/busMax/busManage/businfo";
+import busScheduling from "@/views/busManage/businfo/busScheduling";
 
 export default {
+  components:{busScheduling:busScheduling},
   name: "Businfo",
   data() {
     return {
@@ -281,6 +291,21 @@ export default {
         this.title = "修改车辆信息";
       });
     },
+    busScheduling(row) {
+      const licenseplate = row.licenseplate || this.licenseplate;
+      const busno = row.busno || this.busno;
+      console.log(row.licenseplate)
+      console.log(row.busno)
+      this.$router.push('/busScheduling?' + `licenseplate=${row.licenseplate}&busno=${row.busno}`)
+      // this.$router.push({
+      //   path:'/busScheduling',
+      //   query:{
+      //     licenseplate:row.licenseplate,
+      //     busno:row.busno
+      //   }
+      // })
+
+  },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {

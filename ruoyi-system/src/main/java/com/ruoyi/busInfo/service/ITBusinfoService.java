@@ -6,7 +6,7 @@ import com.ruoyi.busInfo.domain.TBusinfo;
 /**
  * 车辆信息Service接口
  * 
- * @author lvy
+ * @author
  * @date 2021-07-23
  */
 public interface ITBusinfoService 

@@ -10,10 +10,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="时间间隔" prop="timeinterval">
+      <el-form-item label="时段" prop="timeinterval">
         <el-input
           v-model="queryParams.timeinterval"
-          placeholder="请输入时间间隔"
+          placeholder="请输入时段"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -112,9 +112,11 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="scheduleid" />
       <el-table-column label="x路公交车" align="center" prop="busno" />
-      <el-table-column label="时间间隔" align="center" prop="timeinterval" />
+      <el-table-column label="时段" align="center" prop="timeinterval" />
       <el-table-column label="发车时间" align="center" prop="startime" />
       <el-table-column label="到站时间" align="center" prop="endtime" />
+      <el-table-column label="车辆状态" align="center" prop="busstate" />
+<!--      <el-table-column label="车牌" align="center" prop="licenseplate" />-->
 <!--      <el-table-column label="到站时间" align="center" prop="attr1" />-->
 <!--      <el-table-column label="到站时间" align="center" prop="attr2" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -148,18 +150,24 @@
     <!-- 添加或修改公交车时刻对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="90px">
-        <el-form-item label="x路公交车" prop="busno">
-          <el-input v-model="form.busno" placeholder="请输入x路公交车" />
+<!--        <el-form-item label="x路公交车" prop="busno">-->
+<!--          <el-input v-model="form.busno" placeholder="请输入x路公交车" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="时段" prop="timeinterval">-->
+<!--          <el-input v-model="form.timeinterval" placeholder="请输入时段" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="发车时间" prop="startime">-->
+<!--          <el-input v-model="form.startime" placeholder="请输入发车时间" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="到站时间" prop="endtime">-->
+<!--          <el-input v-model="form.endtime" placeholder="请输入到站时间" />-->
+<!--        </el-form-item>-->
+        <el-form-item label="车辆状态" prop="busstate">
+          <el-input v-model="form.busstate" placeholder="请输入状态" />
         </el-form-item>
-        <el-form-item label="时间间隔" prop="timeinterval">
-          <el-input v-model="form.timeinterval" placeholder="请输入时间间隔" />
-        </el-form-item>
-        <el-form-item label="发车时间" prop="startime">
-          <el-input v-model="form.startime" placeholder="请输入发车时间" />
-        </el-form-item>
-        <el-form-item label="到站时间" prop="endtime">
-          <el-input v-model="form.endtime" placeholder="请输入到站时间" />
-        </el-form-item>
+<!--        <el-form-item label="车牌" prop="licenseplate">-->
+<!--          <el-input v-model="form.licenseplate" placeholder="请输入车牌" />-->
+<!--        </el-form-item>-->
 <!--        <el-form-item label="到站时间" prop="attr1">-->
 <!--          <el-input v-model="form.attr1" placeholder="请输入到站时间" />-->
 <!--        </el-form-item>-->

@@ -7,6 +7,7 @@ Vue.use(Router)
 import Layout from '@/layout'
 import ParentView from '@/components/ParentView';
 import InnerLink from '@/layout/components/InnerLink'
+import busScheduling from "@/views/busManage/businfo/busScheduling";
 
 /**
  * Note: 路由配置项
@@ -39,6 +40,7 @@ export const constantRoutes = [
       }
     ]
   },
+
   {
     path: '/login',
     component: (resolve) => require(['@/views/login'], resolve),
@@ -56,6 +58,31 @@ export const constantRoutes = [
   },
   {
     path: '',
+    component: Layout,
+    redirect: '',
+    meta: { title: '车辆排班'},
+    children: [
+      {
+        path: '/busScheduling',
+        component: (resolve) => require(['@/views/busManage/businfo/busScheduling'], resolve),
+      }
+    ]
+  },
+
+  {
+    path: '',
+    component: Layout,
+    redirect: '',
+    meta: { title: '车辆排班'},
+    children: [
+      {
+        path: '/busScheduling2',
+        component: (resolve) => require(['@/views/busManage/businfo/busScheduling2'], resolve),
+      }
+    ]
+  },
+  {
+    path: '/user',
     component: Layout,
     redirect: 'index',
     children: [
@@ -133,6 +160,8 @@ export const constantRoutes = [
       }
     ]
   },
+  // {path: '/busScheduling', name: 'busScheduling', component: busScheduling},
+
   {
     path: '/gen',
     component: Layout,
