@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wx.wxBus.mapper.RoadMapper">
+
+    <select id="selectRoad" resultType="com.ruoyi.wx.wxBus.domain.Road">
+        select distinct busNo from t_road where busNo like concat('%', #{value}, '%');
+    </select>
+
+    <select id="selectRoads" resultMap="roadList">
+        select t1.busNo,t1.travelSort,t2.stationName
+        from t_road t1
+        join t_stationinfo t2
+        on t1.stationId = t2.stationId
+        where busNo = #{busNo}
+        order by travelSort;
+    </select>
+
+    <resultMap id="roadList" type="com.ruoyi.wx.wxBus.domain.Road">
+        <result column="busNo" property="busNo"></result>
+        <result column="travelSort" property="travelSort"></result>
+        <association property="station" javaType="com.ruoyi.wx.wxBus.domain.Station">
+            <result column="stationName" property="stationName"></result>
+        </association>
+    </resultMap>
+
+
+</mapper>
