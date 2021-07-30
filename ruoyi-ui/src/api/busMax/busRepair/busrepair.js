@@ -22,8 +22,8 @@ export function addBusrepair(data) {
   return request({
     url: '/busRepair/busrepair',
     method: 'post',
-    data: data
-  })
+  data: data
+})
 }
 
 // 修改车辆维修

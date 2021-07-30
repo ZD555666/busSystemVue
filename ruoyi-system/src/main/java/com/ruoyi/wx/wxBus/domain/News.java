@@ -1,9 +1,8 @@
-package com.ruoyi.wx.wxNews.domain;
+package com.ruoyi.wx.wxBus.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @version 1.0
