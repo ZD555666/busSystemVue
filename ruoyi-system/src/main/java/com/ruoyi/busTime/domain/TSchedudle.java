@@ -30,17 +30,33 @@ public class TSchedudle extends BaseEntity
     @Excel(name = "发车时间")
     private String startime;
 
+    public String getBusstate() {
+        return busstate;
+    }
+
+    public void setBusstate(String busstate) {
+        this.busstate = busstate;
+    }
+
+    public String getLicenseplate() {
+        return licenseplate;
+    }
+
+    public void setLicenseplate(String licenseplate) {
+        this.licenseplate = licenseplate;
+    }
+
     /** 到站时间 */
     @Excel(name = "到站时间")
     private String endtime;
 
     /** $column.columnComment */
     @Excel(name = "到站时间")
-    private String attr1;
+    private String busstate;
 
     /** $column.columnComment */
     @Excel(name = "到站时间")
-    private String attr2;
+    private String licenseplate;
 
     public void setScheduleid(Long scheduleid) 
     {
@@ -87,24 +103,7 @@ public class TSchedudle extends BaseEntity
     {
         return endtime;
     }
-    public void setAttr1(String attr1) 
-    {
-        this.attr1 = attr1;
-    }
 
-    public String getAttr1() 
-    {
-        return attr1;
-    }
-    public void setAttr2(String attr2) 
-    {
-        this.attr2 = attr2;
-    }
-
-    public String getAttr2() 
-    {
-        return attr2;
-    }
 
     @Override
     public String toString() {
@@ -114,8 +113,8 @@ public class TSchedudle extends BaseEntity
             .append("timeinterval", getTimeinterval())
             .append("startime", getStartime())
             .append("endtime", getEndtime())
-            .append("attr1", getAttr1())
-            .append("attr2", getAttr2())
+            .append("busstate", getBusstate())
+            .append("licenseplate", getLicenseplate())
             .toString();
     }
 }

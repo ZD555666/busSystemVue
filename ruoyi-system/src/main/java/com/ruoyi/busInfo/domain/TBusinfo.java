@@ -8,7 +8,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 /**
  * 车辆信息对象 t_businfo
  * 
- * @author lvy
+ * @author
  * @date 2021-07-23
  */
 public class TBusinfo extends BaseEntity

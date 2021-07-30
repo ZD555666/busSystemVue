@@ -20,10 +20,13 @@ import com.ruoyi.busInfo.service.ITBusinfoService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 /**
  * 车辆信息Controller
  * 
- * @author lvy
+ * @author
  * @date 2021-07-23
  */
 @RestController
@@ -38,10 +41,14 @@ public class TBusinfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('busManage:businfo:list')")
     @GetMapping("/list")
-    public TableDataInfo list(TBusinfo tBusinfo)
+    public TableDataInfo list(TBusinfo tBusinfo, HttpServletRequest session)
     {
         startPage();
         List<TBusinfo> list = tBusinfoService.selectTBusinfoList(tBusinfo);
+        System.out.println("》》》》》》》"+list);
+
+        session.setAttribute("list",list);
+
         return getDataTable(list);
 
     }

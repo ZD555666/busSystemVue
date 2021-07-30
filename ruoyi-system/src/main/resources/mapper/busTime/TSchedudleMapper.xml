@@ -10,12 +10,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="timeinterval"    column="timeInterval"    />
         <result property="startime"    column="starTime"    />
         <result property="endtime"    column="endTime"    />
-        <result property="attr1"    column="attr1"    />
-        <result property="attr2"    column="attr2"    />
+        <result property="busstate"    column="busState"    />
+<!--        <result property="licenseplate"    column="licensePlate"    />-->
     </resultMap>
 
     <sql id="selectTSchedudleVo">
-        select scheduleId, busNo, timeInterval, starTime, endTime, attr1, attr2 from t_schedudle
+        select scheduleId, busNo, timeInterval, starTime, endTime, busState from t_schedudle
     </sql>
 
     <select id="selectTSchedudleList" parameterType="TSchedudle" resultMap="TSchedudleResult">
@@ -25,8 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeinterval != null  and timeinterval != ''"> and timeInterval = #{timeinterval}</if>
             <if test="startime != null  and startime != ''"> and starTime = #{startime}</if>
             <if test="endtime != null  and endtime != ''"> and endTime = #{endtime}</if>
-            <if test="attr1 != null  and attr1 != ''"> and attr1 = #{attr1}</if>
-            <if test="attr2 != null  and attr2 != ''"> and attr2 = #{attr2}</if>
+            <if test="busstate != null  and busstate != ''"> and busState = #{busstate}</if>
+<!--&#45;&#45;             <if test="licenseplate != null  and licenseplate != ''"> and licensePlate = #{licenseplate}</if>-->
         </where>
     </select>
     
@@ -42,16 +42,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeinterval != null">timeInterval,</if>
             <if test="startime != null">starTime,</if>
             <if test="endtime != null">endTime,</if>
-            <if test="attr1 != null">attr1,</if>
-            <if test="attr2 != null">attr2,</if>
+            <if test="busstate != null">busState,</if>
+<!--&#45;&#45;             <if test="licenseplate != null">licensePlate,</if>-->
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="busno != null and busno != ''">#{busno},</if>
             <if test="timeinterval != null">#{timeinterval},</if>
             <if test="startime != null">#{startime},</if>
             <if test="endtime != null">#{endtime},</if>
-            <if test="attr1 != null">#{attr1},</if>
-            <if test="attr2 != null">#{attr2},</if>
+            <if test="busstate != null">#{busState},</if>
+<!--&#45;&#45;             <if test="licenseplate != null">#{licensePlate},</if>-->
          </trim>
     </insert>
 
@@ -62,8 +62,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeinterval != null">timeInterval = #{timeinterval},</if>
             <if test="startime != null">starTime = #{startime},</if>
             <if test="endtime != null">endTime = #{endtime},</if>
-            <if test="attr1 != null">attr1 = #{attr1},</if>
-            <if test="attr2 != null">attr2 = #{attr2},</if>
+            <if test="busstate != null">busState = #{busstate},</if>
+<!--&#45;&#45;             <if test="licenseplate != null">licensePlate = #{licenseplate},</if>-->
         </trim>
         where scheduleId = #{scheduleid}
     </update>

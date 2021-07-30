@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 车辆信息Mapper接口
  * 
- * @author lvy
+ * @author
  * @date 2021-07-23
  */
 public interface TBusinfoMapper 
