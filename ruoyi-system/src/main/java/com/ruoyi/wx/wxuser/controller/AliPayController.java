@@ -108,6 +108,7 @@ public class AliPayController {
                 "      ]" +
                 "  }");
         AlipayTradeQueryResponse response = alipayClient.execute(request);
+        System.err.println(response.getBody());
         if (response.isSuccess() && response.getTradeStatus().equals(PayResponse.TRADE_SUCCESS)) {
             System.err.println("调用成功");
             int money = moneyService.queryMoneyByOpId(opId);
