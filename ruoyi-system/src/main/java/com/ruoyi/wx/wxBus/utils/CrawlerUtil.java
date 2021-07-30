@@ -1,13 +1,12 @@
-package com.ruoyi.wx.wxNews.utils;
+package com.ruoyi.wx.wxBus.utils;
 
-import com.ruoyi.wx.wxNews.domain.News;
+import com.ruoyi.wx.wxBus.domain.News;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
