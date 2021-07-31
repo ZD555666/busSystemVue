@@ -1,6 +1,6 @@
 package com.ruoyi.wx.wxuser.service.impl;
 
-import com.ruoyi.wx.wxuser.domain.AddressVo;
+import com.ruoyi.wx.wxuser.domain.WxStationInfo;
 import com.ruoyi.wx.wxuser.mapper.AddressMapper;
 import com.ruoyi.wx.wxuser.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,10 @@ public class AddressMapperImpl implements AddressService {
     @Autowired
     private AddressMapper addressMapper;
 
+
     @Override
-    public List<AddressVo> queryStationOrRoad(String cityName, String info) {
-        return addressMapper.queryStationOrRoad(cityName, info);
+    public List<WxStationInfo> queryNearStation(double minLng, double maxLng, double minLat, double maxLat, String cityName) {
+        return addressMapper.queryNearStation(minLng, maxLng, minLat, maxLat, cityName);
     }
 }
+

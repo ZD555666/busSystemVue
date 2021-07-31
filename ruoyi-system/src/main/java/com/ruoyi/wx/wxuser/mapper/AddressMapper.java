@@ -1,6 +1,6 @@
 package com.ruoyi.wx.wxuser.mapper;
 
-import com.ruoyi.wx.wxuser.domain.AddressVo;
+import com.ruoyi.wx.wxuser.domain.WxStationInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @Mapper
 public interface AddressMapper {
 
-    List<AddressVo> queryStationOrRoad(@Param("cityName") String cityName,@Param("info") String info);
+    List<WxStationInfo> queryNearStation(@Param("minLng") double minLng, @Param("maxLng") double maxLng, @Param("minLat") double minLat, @Param("maxLat") double maxLat, @Param("cityName") String cityName);
 
 
 }

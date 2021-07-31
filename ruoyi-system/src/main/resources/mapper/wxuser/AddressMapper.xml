@@ -4,4 +4,31 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wx.wxuser.mapper.AddressMapper">
 
+    <!--    <resultMap id="stationRoadVo" type="WxStationInfo">-->
+    <!--        <id column="sStationId" property="stationId"/>-->
+    <!--        <result column="stationName" property="stationName"/>-->
+    <!--        <result column="xPoint" property="xPoint"/>-->
+    <!--        <result column="yPoint" property="yPoint"/>-->
+    <!--        <association property="wxRoad" javaType="WxRoad">-->
+    <!--            <id column="roadId" property="roadId"/>-->
+    <!--            <result column="busNo" property="busNo"/>-->
+    <!--            <result column="cost" property="cost"/>-->
+    <!--        </association>-->
+    <!--    </resultMap>-->
+    <!--    <select id="queryNearStation" resultMap="stationRoadVo">-->
+    <!--            SELECT t2.stationId,t1.busNo,t1.cost,t2.stationName,t2.xPoint,t2.yPoint FROM t_road t1,t_stationinfo t2 WHERE-->
+    <!--            t1.stationId=t2.stationId and t2.cityId=(SELECT cityId FROM t_city WHERE cityName = #{cityName}) and t2.stationId in-->
+    <!--            (SELECT t3.stationId FROM t_stationinfo t3 WHERE xPoint &gt; #{minLng} and xPoint &lt; #{maxLng} and yPoint &gt; #{minLat} and-->
+    <!--            yPoint &lt; #{maxLat})-->
+    <!--    </select>-->
+    <select id="queryNearStation" resultType="WxStationInfo">
+        SELECT stationId, stationName,xPoint,yPoint
+        FROM t_stationinfo
+        WHERE cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
+          and xPoint &gt; #{minLng}
+          and xPoint &lt; #{maxLng}
+          and yPoint &gt; #{minLat}
+          and yPoint &lt; #{maxLat}
+    </select>
+
 </mapper>

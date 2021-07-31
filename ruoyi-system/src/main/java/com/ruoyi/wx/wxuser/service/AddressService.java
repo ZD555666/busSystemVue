@@ -1,8 +1,6 @@
 package com.ruoyi.wx.wxuser.service;
 
-import com.ruoyi.wx.wxuser.domain.AddressVo;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import com.ruoyi.wx.wxuser.domain.WxStationInfo;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
  */
 public interface AddressService {
 
-    List<AddressVo> queryStationOrRoad(String cityName, String info);
+    List<WxStationInfo> queryNearStation(double minLng, double maxLng, double minLat, double maxLat, String cityName);
 
 
 }

@@ -5,24 +5,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * @author gjw
  * @version 1.0
- * @author: gjw
- * @date: 2021/7/30 16:55
- * @desc:
+ * @date 2021/7/31 18:20
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddressVo {
+public class WxRoad {
 
+    private int roadId;
     private int stationId;
     private String busNo;
     private int cost;
-    private String travelTIme;
+    private String travelTime;
+    private int travelSort;
     private int cityId;
-    private String stationName;
-    private String xPoint;
-    private String yPoint;
-    private String point;
 
 }
