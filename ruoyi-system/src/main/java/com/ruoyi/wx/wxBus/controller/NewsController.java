@@ -1,12 +1,11 @@
-package com.ruoyi.wx.wxNews.controller;
+package com.ruoyi.wx.wxBus.controller;
 
-import com.ruoyi.wx.wxNews.domain.News;
-import com.ruoyi.wx.wxNews.utils.CrawlerUtil;
+import com.ruoyi.wx.wxBus.domain.News;
+import com.ruoyi.wx.wxBus.utils.CrawlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
