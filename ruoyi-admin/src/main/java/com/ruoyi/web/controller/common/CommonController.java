@@ -18,6 +18,8 @@ import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.framework.config.ServerConfig;
 
+import java.math.BigDecimal;
+
 /**
  * 通用请求处理
  * 
@@ -40,6 +42,7 @@ public class CommonController
     @GetMapping("common/download")
     public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request)
     {
+
         try
         {
             if (!FileUtils.checkAllowDownload(fileName))

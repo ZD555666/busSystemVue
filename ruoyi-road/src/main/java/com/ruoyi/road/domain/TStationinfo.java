@@ -1,7 +1,5 @@
 package com.ruoyi.road.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
@@ -28,11 +26,11 @@ public class TStationinfo extends BaseEntity
 
     /** 经度 */
     @Excel(name = "经度")
-    private String xpoint;
+    private double xpoint;
 
     /** 纬度 */
     @Excel(name = "纬度")
-    private String ypoint;
+    private double ypoint;
 
     /** 经纬度 */
     @Excel(name = "经纬度")
@@ -82,25 +80,23 @@ public class TStationinfo extends BaseEntity
         return stationname;
     }
 
-    public void setXpoint(String xpoint) 
-    {
-        this.xpoint = xpoint;
-    }
-    public String getXpoint() 
-    {
+    public double getXpoint() {
         return xpoint;
     }
 
-    public void setYpoint(String ypoint) 
-    {
-        this.ypoint = ypoint;
+    public void setXpoint(double xpoint) {
+        this.xpoint = xpoint;
     }
-    public String getYpoint() 
-    {
+
+    public double getYpoint() {
         return ypoint;
     }
 
-    public void setPoint(String point) 
+    public void setYpoint(double ypoint) {
+        this.ypoint = ypoint;
+    }
+
+    public void setPoint(String point)
     {
         this.point = point;
     }
@@ -143,8 +139,8 @@ public class TStationinfo extends BaseEntity
                 "stationid=" + stationid +
                 ", cityid=" + cityid +
                 ", stationname='" + stationname + '\'' +
-                ", xpoint='" + xpoint + '\'' +
-                ", ypoint='" + ypoint + '\'' +
+                ", xpoint=" + xpoint +
+                ", ypoint=" + ypoint +
                 ", point='" + point + '\'' +
                 ", city=" + city +
                 '}';

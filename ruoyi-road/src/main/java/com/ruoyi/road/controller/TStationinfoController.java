@@ -44,9 +44,6 @@ public class TStationinfoController extends BaseController
     {
         startPage();
         List<TStationinfo> list = tStationinfoService.selectTStationinfoList(tStationinfo,tCity);
-        System.out.println("3333333333333333333");
-        System.out.println(tStationinfo);
-        System.out.println(tCity);
         return getDataTable(list);
     }
 

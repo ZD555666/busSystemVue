@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.road.mapper.TRoadMapper">
+    <select id="selectAllRoad" parameterType="com.ruoyi.road.domain.domains.RoadInfo" resultType="com.ruoyi.road.domain.domains.RoadInfo">
+        SELECT DISTINCT b.cityName, a.busNo, a.travelTime, a.cost, a.cityId
+        FROM t_road a,
+             t_city b
+        <where>
+            a.cityId = b.cityId
+            <if test="cityName != null  and cityName != ''">and b.cityName like concat('%', #{cityName}, '%')</if>
+            <if test="busNo != null  and busNo != ''">and a.busNo like concat('%', #{busNo}, '%')</if>
+            ORDER BY a.busNo
+        </where>
+    </select>
+
+    <select id="selectBusByRoad" parameterType="com.ruoyi.road.domain.TBus" resultType="com.ruoyi.road.domain.TBus">
+        SELECT busNo, licensePlate
+        FROM t_businfo
+        <where>
+            <if test="busNo != null  and busNo != ''">AND busNo= #{busNo}</if>
+        </where>
+    </select>
+
+    <select id="selectScheduleByRoad" parameterType="com.ruoyi.road.domain.TSchedule" resultType="com.ruoyi.road.domain.TSchedule">
+        SELECT busNo,timeInterval,starTime,endTime
+        FROM t_schedule
+        <where>
+            <if test="busNo != null  and busNo != ''">AND busNo= #{busNo}</if>
+        </where>
+        ORDER BY starTime
+    </select>
+</mapper>

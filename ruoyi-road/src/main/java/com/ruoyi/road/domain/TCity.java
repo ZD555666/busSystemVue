@@ -22,6 +22,7 @@ public class TCity extends BaseEntity
     @Excel(name = "城市名称")
     private String cityname;
 
+
     public void setCityid(Integer cityid) 
     {
         this.cityid = cityid;
