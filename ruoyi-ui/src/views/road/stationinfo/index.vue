@@ -52,6 +52,32 @@
           plain
           icon="el-icon-s-flag"
           size="mini"
+          @click="showStation = true"
+        >查看已有站点
+        </el-button>
+        <el-dialog
+          title="当前已有站点显示"
+          :visible.sync="showStation"
+          width="90%"
+          top="0px"
+          :before-close="mapStationClose">
+          <div style="width: 100%;height: 550px">
+            <!--            查看站点容器 -->
+            <showStation></showStation>
+            <!--            查看站点容器 -->
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="showStation = false">取 消</el-button>
+            <el-button type="primary" @click="showStation = false">确 定</el-button>
+          </span>
+        </el-dialog>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-location-information"
+          size="mini"
           @click="dialogVisible = true"
         >查询经纬度
         </el-button>
@@ -62,9 +88,9 @@
           top="0px"
           :before-close="handleClose">
           <div style="width: 100%;height: 550px">
-<!--            查询坐标容器 -->
-                <getLocation></getLocation>
-<!--            查询坐标容器 -->
+            <!--            查询坐标容器 -->
+            <getLocation></getLocation>
+            <!--            查询坐标容器 -->
           </div>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
@@ -176,12 +202,15 @@
 <script>
 import { listStationinfo, getStationinfo, delStationinfo, addStationinfo, updateStationinfo, exportStationinfo } from "@/api/road/stationinfo";
 import getLocation from './getLocation.vue';
+import showStation from './showStation'
 export default {
   name: "Stationinfo",
-  components: {getLocation},
+  components: {getLocation, showStation},
   data() {
     return {
-      // 地图弹出层
+      //地图站点显示弹出层
+      showStation:false,
+      // 地图选点弹出层
       dialogVisible: false,
       // 遮罩层
       loading: true,
@@ -227,7 +256,14 @@ export default {
     this.getList();
   },
   methods: {
-
+    mapStationClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {
+        });
+    },
     /** 地图弹出层*/
     handleClose(done) {
       this.$confirm('确认关闭？')
