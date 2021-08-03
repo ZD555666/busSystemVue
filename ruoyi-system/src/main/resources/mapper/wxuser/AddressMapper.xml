@@ -22,7 +22,7 @@
     <!--            yPoint &lt; #{maxLat})-->
     <!--    </select>-->
     <select id="queryNearStation" resultType="WxStationInfo">
-        SELECT stationId, stationName,xPoint,yPoint
+        SELECT stationId, stationName, xPoint, yPoint
         FROM t_stationinfo
         WHERE cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
           and xPoint &gt; #{minLng}
@@ -30,5 +30,71 @@
           and yPoint &gt; #{minLat}
           and yPoint &lt; #{maxLat}
     </select>
+
+    <select id="queryBusNoById" resultType="WxBusRealRun">
+        SELECT t1.busNo, t2.licensePlate
+        FROM t_road t1,
+             t_bus_realrun t2
+        WHERE t1.stationId = #{stationId}
+          AND t1.busNo = t2.busNo
+          AND t1.cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
+          AND t1.direction = #{direction};
+    </select>
+
+    <select id="queryBusTo" resultType="StationRoadVo">
+        SELECT t1.travelSort, t2.stationName, t2.xPoint, t2.yPoint
+        FROM t_road t1,
+             t_stationinfo t2
+        WHERE t1.stationId = t2.stationId
+          and t1.busNo = #{busNo}
+          and t1.cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
+          and t1.direction = #{direction}
+        ORDER BY t1.travelSort
+    </select>
+
+    <select id="queryDistanceAndSpeed" resultType="StationRoadVo">
+        select t1.realXPoint,
+               t1.realYPoint,
+               t1.licensePlate,
+               t1.nowStation,
+               t1.nextStation,
+               t1.speed,
+               t2.xPoint,
+               t2.yPoint,
+               t3.travelSort
+        from t_bus_realrun t1,
+             t_stationinfo t2,
+             t_road t3
+        where t1.nextStation = t2.stationName
+          and t1.licensePlate = #{licensePlate}
+          and t3.direction = #{direction}
+          and t2.stationId = t3.stationId
+          and t3.busNo = t1.busNo
+          and t1.cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
+    </select>
+
+    <select id="querySurplusStation" resultType="Integer">
+        SELECT t2.travelSort
+        FROM t_stationinfo t1,
+             t_road t2
+        WHERE t1.stationName = #{stationName}
+          and t1.stationId = t2.stationId
+          and t2.busNo = #{busNo}
+          and t2.direction = #{direction}
+          and t1.cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
+    </select>
+
+    <select id="queryCollectByOpId" resultType="WxCollect">
+        select *
+        from t_wx_collect
+        where stationName = #{stationName}
+          and cityName = #{cityName}
+          and openId = #{openId};
+    </select>
+
+    <insert id="insertCollect">
+        insert into t_wx_collect (stationName, cityName, openId)
+        values (#{stationName}, #{cityName}, #{openId});
+    </insert>
 
 </mapper>
