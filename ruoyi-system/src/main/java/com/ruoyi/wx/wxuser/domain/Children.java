@@ -3,24 +3,23 @@ package com.ruoyi.wx.wxuser.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * @author gjw
  * @version 1.0
- * @date 2021/8/3 23:18
+ * @date 2021/8/4 15:28
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WxCollect {
+@Accessors(chain = true)
+public class Children {
 
-    private int collectId;
-    private int stationId;
-    private String stationName;
-    private String cityName;
-    private String openId;
+    private String text;
+    private int id;
     private double xPoint;
     private double yPoint;
-
+    private String cityName;
 
 }

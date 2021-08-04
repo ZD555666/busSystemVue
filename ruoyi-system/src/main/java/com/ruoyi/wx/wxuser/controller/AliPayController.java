@@ -52,7 +52,6 @@ public class AliPayController {
     private RedisTemplate<String, String> redisTemplate;
 
     @RequestMapping("/aliPay")
-    @ResponseBody
     public AjaxResult aliPay(@RequestBody HashMap<String, Object> map) {
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY,
                 AlipayConfig.format, AlipayConfig.charset, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.sign_type);
@@ -93,7 +92,6 @@ public class AliPayController {
     }
 
     @RequestMapping("/queryPay")
-    @ResponseBody
     public AjaxResult queryPay(@RequestBody HashMap<String, Object> map) throws AlipayApiException {
         String opId = (String) map.get("opId");
         String orderNo = (String) map.get("orderNo");

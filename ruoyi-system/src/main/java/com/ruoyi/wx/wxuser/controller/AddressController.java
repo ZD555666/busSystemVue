@@ -3,10 +3,7 @@ package com.ruoyi.wx.wxuser.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.NearbyUtil;
-import com.ruoyi.wx.wxuser.domain.StationRoadVo;
-import com.ruoyi.wx.wxuser.domain.WxBusRealRun;
-import com.ruoyi.wx.wxuser.domain.WxCollect;
-import com.ruoyi.wx.wxuser.domain.WxStationInfo;
+import com.ruoyi.wx.wxuser.domain.*;
 import com.ruoyi.wx.wxuser.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,10 +88,32 @@ public class AddressController {
 
     @PostMapping("doCollect")
     public AjaxResult doCollect(@RequestBody HashMap<String, Object> map) {
-        List<WxCollect> wxCollects = addressService.queryCollectByOpId((String) map.get("stationName"), (String) map.get("cityName"), (String) map.get("opId"));
+        List<WxCollect> wxCollects = addressService.queryCollectByOpId((int) map.get("stationId"), (String) map.get("stationName"), (String) map.get("cityName"), (String) map.get("opId"));
         return wxCollects.size() == 0 ?
-                AjaxResult.success(addressService.insertCollect((String) map.get("stationName"), (String) map.get("cityName"), (String) map.get("opId"))) :
+                AjaxResult.success(addressService.
+                        insertCollect((int) map.get("stationId"),
+                                (String) map.get("stationName"), (String) map.get("cityName"), (String) map.get("opId"), (double) map.get("xPoint"), (double) map.get("yPoint"))) :
                 AjaxResult.success("exist");
+    }
+
+    @PostMapping("queryMyCollect")
+    public AjaxResult queryMyCollect(@RequestBody HashMap<String, Object> map) {
+        List<String> cityNames = addressService.queryCollectCityName((String) map.get("opId"));
+        List<CollectVo> list = new ArrayList<>();
+        for (String cityName : cityNames) {
+            List<WxCollect> collects = addressService.queryCollectByOpIdAndCity((String) map.get("opId"), cityName);
+            CollectVo collectVo = new CollectVo();
+            collectVo.setText(cityName);
+            List<Children> list1 = new ArrayList();
+            for (WxCollect collect : collects) {
+                Children children = new Children();
+                children.setText(collect.getStationName()).setId(collect.getStationId()).setXPoint(collect.getXPoint()).setYPoint(collect.getYPoint()).setCityName(collect.getCityName());
+                list1.add(children);
+                collectVo.setChildren(list1);
+            }
+            list.add(collectVo);
+        }
+        return AjaxResult.success(list);
     }
 
 

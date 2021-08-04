@@ -25,8 +25,13 @@ public interface AddressMapper {
 
     int querySurplusStation(@Param("stationName") String stationName, @Param("busNo") String BusNo, @Param("cityName") String cityName, @Param("direction") int direction);
 
-    List<WxCollect> queryCollectByOpId(@Param("stationName") String stationName, @Param("cityName") String cityName, @Param("openId") String openId);
+    List<WxCollect> queryCollectByOpId(@Param("stationId") int stationId, @Param("stationName") String stationName, @Param("cityName") String cityName, @Param("openId") String openId);
 
-    int insertCollect(@Param("stationName") String stationName, @Param("cityName") String cityName, @Param("openId") String openId);
+    int insertCollect(@Param("stationId") int stationId, @Param("stationName") String stationName, @Param("cityName") String cityName, @Param("openId") String openId,
+                      @Param("xPoint") double xPoint, @Param("yPoint") double yPoint);
+
+    List<String> queryCollectCityName(String opId);
+
+    List<WxCollect> queryCollectByOpIdAndCity(@Param("openId") String opId, @Param("cityName") String cityName);
 
 }

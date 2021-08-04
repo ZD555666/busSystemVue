@@ -89,12 +89,26 @@
         from t_wx_collect
         where stationName = #{stationName}
           and cityName = #{cityName}
-          and openId = #{openId};
+          and openId = #{openId}
+          and stationId = #{stationId};
     </select>
 
     <insert id="insertCollect">
-        insert into t_wx_collect (stationName, cityName, openId)
-        values (#{stationName}, #{cityName}, #{openId});
+        insert into t_wx_collect (stationId, stationName, cityName, openId, xPoint, yPoint)
+        values (#{stationId}, #{stationName}, #{cityName}, #{openId}, #{xPoint}, #{yPoint});
     </insert>
+
+    <select id="queryCollectCityName" parameterType="String" resultType="String">
+        select distinct cityName
+        from t_wx_collect
+        where openId = #{openId};
+    </select>
+
+    <select id="queryCollectByOpIdAndCity" resultType="WxCollect">
+        select *
+        from t_wx_collect
+        where openId = #{openId}
+          and cityName = #{cityName};
+    </select>
 
 </mapper>

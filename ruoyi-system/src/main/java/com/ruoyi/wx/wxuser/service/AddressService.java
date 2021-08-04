@@ -23,8 +23,12 @@ public interface AddressService {
 
     int querySurplusStation(String stationName, String BusNo, String cityName, int direction);
 
-    List<WxCollect> queryCollectByOpId(String stationName, String cityName, String openId);
+    List<WxCollect> queryCollectByOpId(int stationId, String stationName, String cityName, String openId);
 
-    int insertCollect(String stationName, String cityName, String openId);
+    int insertCollect(int stationId, String stationName, String cityName, String openId, double xPoint, double yPoint);
+
+    List<String> queryCollectCityName(String opId);
+
+    List<WxCollect> queryCollectByOpIdAndCity(String opId, String cityName);
 
 }

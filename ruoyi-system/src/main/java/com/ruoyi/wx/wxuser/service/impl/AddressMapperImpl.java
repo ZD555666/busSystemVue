@@ -47,13 +47,23 @@ public class AddressMapperImpl implements AddressService {
     }
 
     @Override
-    public List<WxCollect> queryCollectByOpId(String stationName, String cityName, String openId) {
-        return addressMapper.queryCollectByOpId(stationName, cityName, openId);
+    public List<WxCollect> queryCollectByOpId(int stationId, String stationName, String cityName, String openId) {
+        return addressMapper.queryCollectByOpId(stationId, stationName, cityName, openId);
     }
 
     @Override
-    public int insertCollect(String stationName, String cityName, String openId) {
-        return addressMapper.insertCollect(stationName, cityName, openId);
+    public int insertCollect(int stationId, String stationName, String cityName, String openId, double xPoint, double yPoint) {
+        return addressMapper.insertCollect(stationId, stationName, cityName, openId, xPoint, yPoint);
+    }
+
+    @Override
+    public List<String> queryCollectCityName(String opId) {
+        return addressMapper.queryCollectCityName(opId);
+    }
+
+    @Override
+    public List<WxCollect> queryCollectByOpIdAndCity(String opId, String cityName) {
+        return addressMapper.queryCollectByOpIdAndCity(opId, cityName);
     }
 }
 
