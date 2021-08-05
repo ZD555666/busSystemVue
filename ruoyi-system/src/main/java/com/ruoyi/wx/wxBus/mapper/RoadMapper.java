@@ -16,7 +16,15 @@ import java.util.List;
 public interface RoadMapper {
     //查询线路是否存在
     List<Road> selectRoad(String value);
-    //查询线路及对应的方向
+
+    //查询线路及对应的方向、站点
     List<Road> selectRoads(String busNo);
 
+    //查询站点对应的线路信息
+    List<Road> selectPassRoad(int stationId);
+
+
+
+//    //查询线路对应的站点
+//    List<Road> selectStations(String busNo);
 }

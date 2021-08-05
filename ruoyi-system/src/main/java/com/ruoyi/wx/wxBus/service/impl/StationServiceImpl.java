@@ -31,4 +31,9 @@ public class StationServiceImpl implements StationService {
         List<Station> stations = stationMapper.selectStations(value);
         return stations;
     }
+
+    @Override
+    public List<Station> queryAllStation() {
+        return stationMapper.selectAllStation();
+    }
 }

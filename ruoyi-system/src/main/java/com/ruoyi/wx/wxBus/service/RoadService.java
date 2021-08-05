@@ -18,4 +18,7 @@ public interface RoadService {
 
     //查询线路及对应的方向
     List<Road> queryRoads(String busNo);
+
+    //查询站点对应的线路信息
+    List<Road> queryPassRoad(int stationId);
 }

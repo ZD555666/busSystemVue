@@ -17,4 +17,7 @@ public interface StationService {
 
     //查询站点及对应的线路车辆
     List<Station> queryStations(String value);
+
+    //查询所有站点
+    List<Station> queryAllStation();
 }
