@@ -5,11 +5,14 @@
 <mapper namespace="com.ruoyi.wx.wxBus.mapper.StationMapper">
 
     <select id="selectStation" resultType="com.ruoyi.wx.wxBus.domain.Station">
-        select stationName
+        select stationName,yPoint,xPoint
         from t_stationinfo
         where stationName like concat('%', #{value}, '%');
     </select>
 
+    <select id="selectAllStation" resultType="com.ruoyi.wx.wxBus.domain.Station">
+        select stationId,stationName,yPoint,xPoint from t_stationinfo;
+    </select>
 
 <!--    <select id="selectStations" resultMap="stationList">-->
 <!--        select t1.busNo,t2.stationName,t1.travelSort-->

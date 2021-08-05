@@ -31,4 +31,9 @@ public class RoadServiceImpl implements RoadService {
         List<Road> roads = roadMapper.selectRoads(busNo);
         return roads;
     }
+
+    @Override
+    public List<Road> queryPassRoad(int stationId) {
+        return roadMapper.selectPassRoad(stationId);
+    }
 }

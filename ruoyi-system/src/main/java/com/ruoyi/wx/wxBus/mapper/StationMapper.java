@@ -20,4 +20,7 @@ public interface StationMapper {
 
     //查询站点及对应的线路车辆
     List<Station> selectStations(String value);
+
+    //查询所有站点
+    List<Station> selectAllStation();
 }
