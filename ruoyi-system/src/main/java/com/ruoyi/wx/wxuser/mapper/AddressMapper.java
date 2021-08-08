@@ -34,4 +34,8 @@ public interface AddressMapper {
 
     List<WxCollect> queryCollectByOpIdAndCity(@Param("openId") String opId, @Param("cityName") String cityName);
 
+    List<WxHistory> queryHistoryByOpId(String openId);
+
+    int insertHistory(WxHistory history);
+
 }

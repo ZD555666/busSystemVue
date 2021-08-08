@@ -111,4 +111,15 @@
           and cityName = #{cityName};
     </select>
 
+    <select id="queryHistoryByOpId" parameterType="String" resultType="WxHistory">
+        select *
+        from t_wx_history
+        where openId = #{openId};
+    </select>
+
+    <insert id="insertHistory" parameterType="WxHistory">
+#         insert into t_wx_history (stationId, stationName, endStation, xPoint, yPoint, busNo, cityName, openId)
+#         values (#{stationId});
+    </insert>
+
 </mapper>

@@ -31,4 +31,9 @@ public interface AddressService {
 
     List<WxCollect> queryCollectByOpIdAndCity(String opId, String cityName);
 
+    List<WxHistory> queryHistoryByOpId(String openId);
+
+    int insertHistory(WxHistory history);
+
+
 }

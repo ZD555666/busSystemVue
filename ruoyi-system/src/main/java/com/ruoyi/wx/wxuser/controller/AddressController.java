@@ -6,15 +6,9 @@ import com.ruoyi.common.utils.NearbyUtil;
 import com.ruoyi.wx.wxuser.domain.*;
 import com.ruoyi.wx.wxuser.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @version 1.0
@@ -40,6 +34,12 @@ public class AddressController {
             stationInfo.setDistance(distance);
         }
         System.err.println(list);
+        Collections.sort(list, new Comparator<WxStationInfo>() {
+            @Override
+            public int compare(WxStationInfo o1, WxStationInfo o2) {
+                return new Double(o1.getDistance()).compareTo(new Double(o2.getDistance()));
+            }
+        });
         return AjaxResult.success(list);
     }
 
@@ -113,6 +113,16 @@ public class AddressController {
             }
             list.add(collectVo);
         }
+        return AjaxResult.success(list);
+    }
+
+    @PostMapping("queryHistory")
+    public AjaxResult queryHistory(@RequestBody HashMap<String, Object> map) {
+        System.err.println(map.get("opId"));
+        List<String> list = new ArrayList<>();
+        list.add("aaa");
+
+
         return AjaxResult.success(list);
     }
 

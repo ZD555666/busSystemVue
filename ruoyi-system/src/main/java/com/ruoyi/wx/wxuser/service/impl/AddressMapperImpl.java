@@ -65,5 +65,15 @@ public class AddressMapperImpl implements AddressService {
     public List<WxCollect> queryCollectByOpIdAndCity(String opId, String cityName) {
         return addressMapper.queryCollectByOpIdAndCity(opId, cityName);
     }
+
+    @Override
+    public List<WxHistory> queryHistoryByOpId(String openId) {
+        return addressMapper.queryHistoryByOpId(openId);
+    }
+
+    @Override
+    public int insertHistory(WxHistory history) {
+        return addressMapper.insertHistory(history);
+    }
 }
 
