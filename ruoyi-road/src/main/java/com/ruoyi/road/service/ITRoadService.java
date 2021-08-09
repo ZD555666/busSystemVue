@@ -3,8 +3,10 @@ package com.ruoyi.road.service;
 import java.util.List;
 
 import com.ruoyi.road.domain.TBus;
+import com.ruoyi.road.domain.TRoad;
 import com.ruoyi.road.domain.TSchedule;
 import com.ruoyi.road.domain.domains.RoadInfo;
+import com.ruoyi.road.domain.domains.RoadStationInfo;
 
 /**
  * 线路配置Service接口
@@ -22,4 +24,10 @@ public interface ITRoadService
 
     //查询x线路发车时刻表
     public List<TSchedule> selectScheduleByRoad(TSchedule schedule);
+
+    //根据线路查站点
+    public List<RoadStationInfo> selectRoadByNo(RoadStationInfo roadStation);
+
+    //新增线路
+    public int insertRoad(List<TRoad> roadList);
 }

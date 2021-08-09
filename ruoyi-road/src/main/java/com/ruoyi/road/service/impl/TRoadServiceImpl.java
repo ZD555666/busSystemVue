@@ -1,10 +1,13 @@
 package com.ruoyi.road.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ruoyi.road.domain.TBus;
+import com.ruoyi.road.domain.TRoad;
 import com.ruoyi.road.domain.TSchedule;
 import com.ruoyi.road.domain.domains.RoadInfo;
+import com.ruoyi.road.domain.domains.RoadStationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.road.mapper.TRoadMapper;
@@ -41,10 +44,9 @@ public class TRoadServiceImpl implements ITRoadService
             List<TSchedule> scheduleList=selectScheduleByRoad(schedule);
             if (scheduleList.size() != 0) {
                 int scTimes=0;
-                for (TSchedule s:scheduleList
-                     ) {
-                    int startTime = Integer.parseInt(s.getStarTime());
-                    int endTime = Integer.parseInt(s.getEndTime());
+                for (TSchedule s:scheduleList) {
+                    int startTime = s.getStarTime();
+                    int endTime = s.getEndTime();
                     int timeInterval = s.getTimeInterval();
                     scTimes += (endTime - startTime)*60 / timeInterval;
                 }
@@ -52,7 +54,23 @@ public class TRoadServiceImpl implements ITRoadService
                 r.setScheduleList(scheduleList);
             }
             //查询站点
-
+            RoadStationInfo roadStationInfo=RoadStationInfo.builder().busNo(r.getBusNo()).build();
+            List<RoadStationInfo> roadStationList=selectRoadByNo(roadStationInfo);
+            if (roadStationList.size() !=0){
+                List<RoadStationInfo> RoadStationList=new ArrayList<RoadStationInfo>();
+                List<RoadStationInfo> RoadStationReList= new ArrayList<RoadStationInfo>();
+                for (RoadStationInfo rs: roadStationList) {
+                    if (rs.getDirection()==0){
+                        RoadStationList.add(rs);
+                    }else if (rs.getDirection() == 1){
+                        RoadStationReList.add(rs);
+                    }
+                }
+                r.setRsList(RoadStationList);
+                r.setRsReList(RoadStationReList);
+                r.setRsListSize(RoadStationList.size());
+                r.setRsReListSize(RoadStationReList.size());
+            }
         });
         return roadInfoList;
     }
@@ -74,5 +92,23 @@ public class TRoadServiceImpl implements ITRoadService
     public List<TSchedule> selectScheduleByRoad(TSchedule schedule) {
         List<TSchedule> scheduleList= tRoadMapper.selectScheduleByRoad(schedule);
         return scheduleList;
+    }
+
+    /**
+     * 查询x线路对应的站点
+     */
+    @Override
+    public List<RoadStationInfo> selectRoadByNo(RoadStationInfo roadStation) {
+        List<RoadStationInfo> roadStationList=tRoadMapper.selectRoadByNo(roadStation);
+        return roadStationList;
+    }
+
+    /**
+     * 新增线路
+     */
+    @Override
+    public int insertRoad(List<TRoad> roadList) {
+        int flag= tRoadMapper.insertRoad(roadList);
+        return flag;
     }
 }

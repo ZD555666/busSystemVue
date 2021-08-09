@@ -3,6 +3,7 @@ package com.ruoyi.road.controller;
 import java.util.List;
 
 import com.ruoyi.road.domain.TCity;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,17 @@ public class TStationinfoController extends BaseController
 {
     @Autowired
     private ITStationinfoService tStationinfoService;
+
+    /**
+     * 查询所有站点信息不分页
+     */
+    @GetMapping("/stationList")
+    public List<TStationinfo> stationList() {
+        TStationinfo tStationinfo=new TStationinfo();
+        TCity tCity=new TCity();
+        List<TStationinfo> stationList = tStationinfoService.selectTStationinfoList(tStationinfo, tCity);
+        return stationList;
+    }
 
     /**
      * 查询站点信息列表

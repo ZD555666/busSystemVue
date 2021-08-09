@@ -1,6 +1,14 @@
 import request from '@/utils/request'
 
-// 查询站点信息列表
+//查询所有站点信息不分页
+export function stationList() {
+  return request({
+    url: '/road/stationinfo/stationList',
+    method: 'get'
+  })
+}
+
+// 查询站点信息列表分页
 export function listStationinfo(query) {
   return request({
     url: '/road/stationinfo/list',

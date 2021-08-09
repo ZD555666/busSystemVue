@@ -38,13 +38,13 @@ public class TSchedule {
      * 发车时间段(前)
      */
     @Excel(name = "发车时间段(前)")
-    private String starTime;
+    private Integer starTime;
 
     /**
      * 发车时间段(后)
      */
     @Excel(name = "发车时间段(后)")
-    private String endTime;
+    private Integer endTime;
 
     /**
      * 车辆状态

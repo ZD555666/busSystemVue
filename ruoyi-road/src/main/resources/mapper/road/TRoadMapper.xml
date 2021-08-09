@@ -3,6 +3,8 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.road.mapper.TRoadMapper">
+
+<!--    查询所有线路信息-->
     <select id="selectAllRoad" parameterType="com.ruoyi.road.domain.domains.RoadInfo" resultType="com.ruoyi.road.domain.domains.RoadInfo">
         SELECT DISTINCT b.cityName, a.busNo, a.travelTime, a.cost, a.cityId
         FROM t_road a,
@@ -15,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+<!--    查询对应线路所用的车子-->
     <select id="selectBusByRoad" parameterType="com.ruoyi.road.domain.TBus" resultType="com.ruoyi.road.domain.TBus">
         SELECT busNo, licensePlate
         FROM t_businfo
@@ -23,12 +26,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+<!--    查询发车时刻表-->
     <select id="selectScheduleByRoad" parameterType="com.ruoyi.road.domain.TSchedule" resultType="com.ruoyi.road.domain.TSchedule">
         SELECT busNo,timeInterval,starTime,endTime
         FROM t_schedule
         <where>
             <if test="busNo != null  and busNo != ''">AND busNo= #{busNo}</if>
         </where>
-        ORDER BY starTime
+        ORDER BY starTime ASC
     </select>
+
+<!--    查询具体班次的站点顺序-->
+    <select id="selectRoadByNo" parameterType="com.ruoyi.road.domain.domains.RoadStationInfo" resultType="com.ruoyi.road.domain.domains.RoadStationInfo">
+        SELECT a.stationId,
+               a.busNo,
+               a.cost,
+               a.travelTime,
+               a.travelSort,
+               a.direction,
+               a.cityId,
+               d.cityName,
+               b.stationName,
+               b.xPoint,
+               b.yPoint,
+               b.point
+        FROM t_road a,
+             t_stationinfo b,
+             t_city d
+        <where>
+            a.stationId = b.stationId
+            AND a.cityId = d.cityId
+            <if test="busNo != null  and busNo != ''">AND a.busNo = #{busNo}</if>
+        </where>
+        ORDER BY a.direction ASC, a.travelSort ASC
+    </select>
+    <!--    新增线路-->
+    <insert id="insertRoad" parameterType="java.util.List">
+        INSERT INTO t_road (stationId,busNo,cost,travelTime,travelSort,cityId,direction)
+        VALUES
+        <foreach collection="list" separator="," index="index" item="item">
+            (#{item.stationId}, #{item.busNo}, #{item.cost}, #{item.travelTime}, #{item.travelSort},
+            #{item.cityId},#{item.direction})
+        </foreach>
+    </insert>
 </mapper>
