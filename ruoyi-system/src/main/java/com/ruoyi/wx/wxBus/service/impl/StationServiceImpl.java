@@ -27,6 +27,11 @@ public class StationServiceImpl implements StationService {
     }
 
     @Override
+    public Station queryStationName(String value) {
+        return stationMapper.selectStationName(value);
+    }
+
+    @Override
     public List<Station> queryStations(String value) {
         List<Station> stations = stationMapper.selectStations(value);
         return stations;
