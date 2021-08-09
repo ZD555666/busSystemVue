@@ -11,6 +11,8 @@ import App from './App'
 import store from './store'
 import router from './router'
 import directive from './directive' //directive
+import axios from "axios";
+Vue.prototype.$axios = axios;
 
 import './assets/icons' // icon
 import './permission' // permission control
@@ -47,14 +49,15 @@ Vue.component('bm-geolocation', BmGeolocation)
 import VueBMap from 'vue-bmap-gl';
 import 'vue-bmap-gl/dist/style.css'
 import VueMapvgl from 'vue-mapvgl';
-
-
 Vue.use(VueBMap);
 Vue.use(VueMapvgl);
 VueBMap.initBMapApiLoader({
   ak: 'kNpAEcc1tXTkS1eQVzRtVwtwdC6c9TLq',
   v: '1.0'
 })
+
+// import Moment from 'moment'
+// Vue.prototype.$moment = moment;
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey

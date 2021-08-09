@@ -7,7 +7,7 @@ import permission from './modules/permission'
 import settings from './modules/settings'
 import baiduUser from './modules/baiduUser'
 import getters from './getters'
-
+import roadInfo from './modules/roadInfo'
 
 Vue.use(Vuex)
 
@@ -18,7 +18,8 @@ const store = new Vuex.Store({
     tagsView,
     permission,
     settings,
-    baiduUser
+    baiduUser,
+    roadInfo
   },
   getters
 })

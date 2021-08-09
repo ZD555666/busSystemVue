@@ -73,30 +73,6 @@
         </el-dialog>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-location-information"
-          size="mini"
-          @click="dialogVisible = true"
-        >查询经纬度
-        </el-button>
-        <el-dialog
-          title="地图选点"
-          :visible.sync="dialogVisible"
-          width="90%"
-          top="0px"
-          :before-close="handleClose">
-          <div style="width: 100%;height: 550px">
-            <!--            查询坐标容器 -->
-            <getLocation></getLocation>
-            <!--            查询坐标容器 -->
-          </div>
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-          </span>
-        </el-dialog>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -149,7 +125,8 @@
       <el-table-column label="城市名称" align="center" prop="city.cityname"/>
       <el-table-column label="城市id" align="center" prop="cityid" />
       <el-table-column label="站点名称" align="center" prop="stationname" />
-      <el-table-column label="经纬度" align="center" prop="point" />
+      <el-table-column label="经度" align="center" prop="xpoint" />
+      <el-table-column label="纬度" align="center" prop="ypoint" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -180,6 +157,29 @@
 
     <!-- 添加或修改站点信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-button
+        type="primary"
+        plain
+        icon="el-icon-location-information"
+        size="mini"
+        @click="dialogVisible = true"
+      style="margin: 10px" >选择经纬度
+      </el-button>
+      <el-dialog
+        title="地图选点"
+        :visible.sync="dialogVisible"
+        width="90%"
+        top="0px">
+        <div style="width: 100%;height: 550px">
+          <!--            查询坐标容器 -->
+          <getLocation></getLocation>
+          <!--            查询坐标容器 -->
+        </div>
+<!--        <span slot="footer" class="dialog-footer">-->
+<!--            <el-button @click="dialogVisible = false">取 消</el-button>-->
+<!--            <el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
+<!--        </span>-->
+      </el-dialog>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="城市id" prop="cityid">
           <el-input v-model="form.cityid" placeholder="请输入城市id" />
@@ -187,8 +187,11 @@
         <el-form-item label="站点名称" prop="stationname">
           <el-input v-model="form.stationname" placeholder="请输入站点名称" />
         </el-form-item>
-        <el-form-item label="经纬度" prop="point">
-          <el-input v-model="form.point" placeholder="请输入经纬度" />
+        <el-form-item label="经度" prop="xpoint">
+          <el-input v-model="form.xpoint"/>
+        </el-form-item>
+        <el-form-item label="纬度" prop="ypoint">
+          <el-input v-model="form.ypoint" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -280,8 +283,6 @@ export default {
         this.stationinfoList = response.rows;
         this.total = response.total;
         this.loading = false;
-        console.log("...0000000000000000");
-        console.log(response.rows);
       });
     },
     // 取消按钮

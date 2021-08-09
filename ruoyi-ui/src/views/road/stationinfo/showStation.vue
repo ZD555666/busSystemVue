@@ -1,12 +1,15 @@
 <template>
-  <div class="bmap-page-container">
-    <el-bmap vid="bmapDemo" :zoom="zoom" :center="center" class="bmap-demo">
-      <el-bmapv-view>
-        <el-bmapv-marker-list-layer :visible="visible" :data="data"></el-bmapv-marker-list-layer>
-      </el-bmapv-view>
-    </el-bmap>
-    <div>
-      <button @click.prevent="switchVisible">切换显隐</button>
+  <div class="showStation">
+    <div class="bmap-page-container">
+      <el-bmap vid="bmapDemo3" :zoom="zoom" :center="center" class="bmap-demo">
+        <el-bmapv-view>
+          <el-bmapv-icon-layer :icon="icon" :width="width" :height="height" :data="stationList"
+                               :enable-picked="true"></el-bmapv-icon-layer>
+          <el-bmapv-text-layer color="#FF0000" :stroke-color="'red'" :font-weight="600" :offset="[0,40]" :font-size="20"
+                               :data="stationList" :enable-picked="true" :auto-select="true"
+                               :on-click="(e)=>{clickMarker(e)}"></el-bmapv-text-layer>
+        </el-bmapv-view>
+      </el-bmap>
     </div>
   </div>
 </template>
@@ -18,55 +21,58 @@
 </style>
 
 <script>
+import {listStationinfo, stationList} from "@/api/road/stationinfo";
+
 module.exports = {
-  name: 'bmap-page',
+  name: 'showStation',
   data() {
     return {
+      stationList:[],
+      count: 1,
       zoom: 14,
-      center: [118.123095, 24.476071],
-      data: [
-        {
-          geometry: {
-            type: 'Point',
-            coordinates: [118.123095, 24.476071],
-          },
-          properties: {
-            text: '火车站',
-            fillSize: 50,
-            shadowSize: 100
-          }
-        },
-        {
-        geometry: {
-          type: 'Point',
-          coordinates: [118.195944, 24.5186264],
-        },
-        properties: {
-          text: '五通站',
-          fillSize: 20,
-          shadowSize: 10,
-          fontColor: 'red'
-        }
-      }, {
-        geometry: {
-          type: 'Point',
-          coordinates: [118.125051, 24.482071],
-        },
-        properties: {
-          text: '莲坂外图书城站',
-          fillSize: 50,
-          shadowSize: 100
-        }
-      }
-      ],
+      center: [118.14528, 24.49081],
+      width: 24,
+      height: 40,
+      icon: './assets/images/layer/position1.png',
+      data: [],
       visible: true
     };
+  },
+  created() {
+    this.getStationList();
   },
   mounted() {
   },
   methods: {
-    switchVisible() {
-      this.visible = !this.visible;
+    clickMarker(e) {
+      console.log(e.dataIndex);
+      // console.log(e.dataItem.geometry.coordinates[0]);
+    },
+    getStationList(){
+      stationList().then(response => {
+        var stations=[];
+        var responses = [];
+        responses= response;
+        console.log("数据库回调站点信息==============================================");
+        console.log(responses);
+        for (let i = 0; i < responses.length; i++) {
+          var station =
+            {
+              geometry: {
+                type: 'Point',
+                coordinates: [responses[i].xpoint, responses[i].ypoint],
+              },
+              properties: {
+                icon: './assets/images/layer/position1.png',
+                text: responses[i].stationname
+              }
+            }
+          stations.push(station);
+        }
+        this.stationList = stations;
+        console.log("站点信息==============================================");
+        console.log(this.stationList);
+      });
     }
   }
 };

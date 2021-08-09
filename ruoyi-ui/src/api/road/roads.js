@@ -9,10 +9,10 @@ export function listRoads(query) {
   })
 }
 
-// 查询线路配置详细
-export function getRoads(roadid) {
+//查询有配置的city
+export function cityOption(){
   return request({
-    url: '/road/roads/' + roadid,
+    url: '/road/roads/cityList',
     method: 'get'
   })
 }
@@ -20,9 +20,10 @@ export function getRoads(roadid) {
 // 新增线路配置
 export function addRoads(data) {
   return request({
-    url: '/road/roads',
-    method: 'post',
-    data: data
+    url: '/road/roads/addRoads',
+    method: 'get',
+    params: data,
+    config:{headers:{'Content-Type':'application/json;charset=UTF-8'}}
   })
 }
 
@@ -43,11 +44,3 @@ export function delRoads(roadid) {
   })
 }
 
-// 导出线路配置
-export function exportRoads(query) {
-  return request({
-    url: '/road/roads/export',
-    method: 'get',
-    params: query
-  })
-}

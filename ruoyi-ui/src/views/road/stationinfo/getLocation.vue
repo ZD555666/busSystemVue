@@ -31,6 +31,7 @@
               :scroll-wheel-zoom="true"
               @ready="createMap"
             >
+              <bm-bus keyword="92" :auto-viewport="true" location="厦门"></bm-bus>
               <!--            搜索-->
               <bm-local-search :keyword="model.address" :auto-viewport="true"
                                style="display: none"></bm-local-search>
