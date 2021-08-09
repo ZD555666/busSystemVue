@@ -18,6 +18,9 @@ public interface StationMapper {
     //查询站点
     List<Station> selectStation(String value);
 
+    //查询站点信息
+    Station selectStationName(String value);
+
     //查询站点及对应的线路车辆
     List<Station> selectStations(String value);
 
