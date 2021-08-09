@@ -126,5 +126,9 @@ public class AddressController {
         return AjaxResult.success(list);
     }
 
+    @RequestMapping("/test")
+    public AjaxResult test(){
+        return AjaxResult.success("132a");
+    }
 
 }
