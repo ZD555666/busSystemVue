@@ -1,6 +1,7 @@
 package com.ruoyi.wx.wxBus.controller;
 
 import com.ruoyi.wx.wxBus.domain.Road;
+import com.ruoyi.wx.wxBus.domain.RoadPlan;
 import com.ruoyi.wx.wxBus.domain.Station;
 import com.ruoyi.wx.wxBus.service.impl.RoadServiceImpl;
 import com.ruoyi.wx.wxBus.service.impl.StationServiceImpl;
@@ -11,7 +12,6 @@ import org.gavaghan.geodesy.GlobalCoordinates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.*;
 
 /**
@@ -20,6 +20,7 @@ import java.util.*;
  * @date: 2021/7/30 14:25
  * @desc:
  */
+
 @RestController
 @RequestMapping(value = "/wx")
 public class RoadController {
@@ -56,9 +57,17 @@ public class RoadController {
                 }
                 return result;
             }
+
         }else{
             return null;
         }
+    }
+
+    //获取对应站点的站点信息
+    @RequestMapping(value = "/getStationData")
+    public Station getStationData(String stationName){
+        Station station = stationService.queryStationName(stationName);
+        return station;
     }
 
     //获取线路对应的站点
@@ -87,7 +96,7 @@ public class RoadController {
 
     //获取线路方案
     @RequestMapping(value = "getRoadPlan")
-    public void getRoadPlan(String locationValue,
+    public List<RoadPlan> getRoadPlan(String locationValue,
                             String toWhereValue,
                             String locationLatitude,
                             String locationLongitude,
@@ -104,6 +113,10 @@ public class RoadController {
         List<Station> stations = stationService.queryAllStation();
         List<Station> startNearStation = new ArrayList<>();
         List<Station> endNearStation = new ArrayList<>();
+        List<Double> meters = new ArrayList<>();
+        Map<Double,Station> metSta = new HashMap<>();
+        List<Double> meters1 = new ArrayList<>();
+        Map<Double,Station> metSta1 = new HashMap<>();
         for(Station station : stations){
             //拿到起点附近站点
             GlobalCoordinates target1 =new GlobalCoordinates(Double.parseDouble(locationLatitude), Double.parseDouble(locationLongitude));
@@ -113,51 +126,429 @@ public class RoadController {
             GlobalCoordinates target =new GlobalCoordinates(Double.parseDouble(toWhereLatitude), Double.parseDouble(toWhereLongitude));
             GlobalCoordinates source =new GlobalCoordinates(Double.parseDouble(station.getYPoint()), Double.parseDouble(station.getXPoint()));
             double meter2 = getDistanceMeter(source, target, Ellipsoid.WGS84);
-            if(meter1 <= 5000){
-                startNearStation.add(station);
-
+            if(meter1 <= 1000){
+                System.out.println(meter1);
+                meters.add(meter1);
+                metSta.put(meter1,station);
             }
             if(meter2 <= 1000){
-                endNearStation.add(station);
+                System.out.println("......"+meter2);
+                meters1.add(meter2);
+                metSta1.put(meter2,station);
+            }
+        }
+        //获取开始和结束的三个附近站点
+        int check0 = 0;
+        int check1 = 0;
+        if(startNearStation != null){
+            Collections.sort(meters);
+            for(Double dos : meters){
+                check0++;
+                if(check0>3){
+                    break;
+                }
+                startNearStation.add(metSta.get(dos));
+            }
+        }
+        if(endNearStation != null){
+            Collections.sort(meters1);
+            for(Double dos : meters1){
+                check1++;
+                if(check1>3){
+                    break;
+                }
+                endNearStation.add(metSta1.get(dos));
             }
         }
 
-        //直达
         List<String> roads = new ArrayList<>();
-        Map<String,String> mateStation = new HashMap<>();
-        List<Road> startRoad = null;
-        List<Road> endRoad = null;
+        List<Road> startRoads = new ArrayList<>();
+        List<Road> endRoads = new ArrayList<>();
         for(Station startStation : startNearStation){
-            for(Station endStation : endNearStation){
-                startRoad = roadService.queryPassRoad(startStation.getStationId());
-                endRoad = roadService.queryPassRoad(endStation.getStationId());
-                for(Road road0 : startRoad) {
-                    for (Road road1 : endRoad) {
-                        if(road0.getBusNo().equals(road1.getBusNo())){
-                            roads.add(road0.getBusNo());
-                            mateStation.put(startStation.getStationName(),endStation.getStationName());
+            List<Road> startRoad = roadService.queryPassRoad(startStation.getStationId());
+            startRoads.addAll(startRoad);
+        }
+        for(Station endStation : endNearStation){
+            List<Road> endRoad = roadService.queryPassRoad(endStation.getStationId());
+            endRoads.addAll(endRoad);
+        }
+        for(Road road0 : startRoads){
+          for(Road road1 : endRoads){
+              if(road0.getBusNo().equals(road1.getBusNo())){
+                  roads.add(road0.getBusNo());
+              }
+          }
+        }
+        //线路去重
+        HashSet set = new HashSet(roads);
+        roads.clear();
+        roads.addAll(set);
+        List<RoadPlan> roadPlans = new ArrayList<>();
+        List<Road> startPassRoad = new ArrayList<>();
+        List<Road> endPassRoad = new ArrayList<>();
+        if(roads != null){    //直达判断
+            for(String road :roads){
+                RoadPlan roadPlan = new RoadPlan();
+                Double mix = 0.0;
+                for(Double dos : meters){
+                    if(dos != 0.0){
+                        mix = dos;
+                        break;
+                    }
+                }
+                Double mix1 = 0.0;
+                for(Double dos : meters1){
+                    if(dos != 0.0){
+                        mix1 = dos;
+                        break;
+                    }
+                }
+                Station near = new Station();
+                Station near1 = new Station();
+                for(Station station :startNearStation){
+                    List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
+                    for(Road road1 : roads2){
+                        if(road1.getBusNo().equals(road)){
+                            for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                                if(entry.getValue() == station){
+                                    if(mix > entry.getKey()){
+                                        mix = entry.getKey();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                for(Station station :endNearStation){
+                    List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
+                    for(Road road1 : roads2){
+                        if(road1.getBusNo().equals(road)){
+                            for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                                if(entry.getValue() == station){
+                                    if(mix1 > entry.getKey()){
+                                        mix1 = entry.getKey();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                    if(entry.getKey().equals(mix)){
+                       near = entry.getValue();
+                    }
+                }
+                for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                    if(entry.getKey().equals(mix1)){
+                        near1 = entry.getValue();
+                    }
+                }
+                //获取公交车运行的方向
+                List<Road> roads1 = roadService.queryRoads(road);
+                List<Road> roads2 = roadService.queryPassRoad(near.getStationId());
+                List<Road> roads3 = roadService.queryPassRoad(near1.getStationId());
+                if(roads2.get(0).getTravelSort() > roads3.get(0).getTravelSort()){
+                    roadPlan.setDirection(roads1.get(0).getStation().getStationName());
+                    roadPlan.setMomeyStation(roads2.get(0).getTravelSort() - roads3.get(0).getTravelSort());
+                }else{
+                    roadPlan.setDirection(roads1.get(roads1.size()-1).getStation().getStationName());
+                    roadPlan.setMomeyStation(roads3.get(0).getTravelSort() - roads2.get(0).getTravelSort());
+                }
+                roadPlan.setAllWalk(String.valueOf(mix+mix1).substring(0,String.valueOf(mix+mix1).lastIndexOf(".")));
+                roadPlan.setStartWalk(String.valueOf(mix).substring(0,String.valueOf(mix).lastIndexOf(".")));
+                roadPlan.setStartStation(near.getStationName());
+                roadPlan.setEndWalk(String.valueOf(mix1).substring(0,String.valueOf(mix1).lastIndexOf(".")));
+                roadPlan.setEndStation(near1.getStationName());
+                roadPlan.setBusNo(road);
+                roadPlans.add(roadPlan);
+            }
+
+        }
+        //先移除直达的线路在进行同站换乘线路的查询
+        for(Station station :startNearStation) {
+            List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
+            startPassRoad.addAll(roads2);
+        }
+        for(Station station :endNearStation) {
+            List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
+            endPassRoad.addAll(roads2);
+        }
+        if(roads != null){
+            for(String str : roads){
+                if(startPassRoad != null){
+                    Iterator<Road> iterator = startPassRoad.iterator();
+                    while(iterator.hasNext()){
+                        Road ro = iterator.next();
+                        if(ro.getBusNo().equals(str))
+                            iterator.remove();
+                    }
+                }
+                if(endPassRoad != null){
+                    Iterator<Road> iterator = endPassRoad.iterator();
+                    while(iterator.hasNext()){
+                        Road ro = iterator.next();
+                        if(ro.getBusNo().equals(str))
+                            iterator.remove();
+                    }
+                }
+            }
+        }
+        //同站换乘
+        b:for(Road road : startPassRoad){
+            List<Road> roads1 = roadService.queryRoads(road.getBusNo());
+            start:for(Road road1 : endPassRoad){
+                List<Road> roads2 = roadService.queryRoads(road1.getBusNo());
+               for(Road road2 :roads1){
+//                   GlobalCoordinates source = new GlobalCoordinates(Double.parseDouble(road2.getStation().getYPoint()), Double.parseDouble(road2.getStation().getXPoint()));
+                  end:for(Road road3 :roads2){
+                      //算出两两站点之间的距离
+//                      GlobalCoordinates target =new GlobalCoordinates(Double.parseDouble(road3.getStation().getYPoint()),Double.parseDouble(road3.getStation().getXPoint()));
+//                      double meter = getDistanceMeter(source, target, Ellipsoid.WGS84);
+                        if(road2.getStation().getStationName().equals(road3.getStation().getStationName())){
+                            RoadPlan roadPlan = new RoadPlan();
+                            Double mix = 0.0;
+                            for(Double dos : meters){
+                                if(dos != 0.0){
+                                    mix = dos;
+                                    break;
+                                }
+                            }
+                            Double mix1 = 0.0;
+                            for(Double dos : meters1){
+                                if(dos != 0.0){
+                                    mix1 = dos;
+                                    break;
+                                }
+                            }
+                            Station near = new Station();
+                            Station near1 = new Station();
+                            for(Station station :startNearStation) {
+                                List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
+                                for(Road road4 : roads3){
+                                    if(road4.getBusNo().equals(road.getBusNo())){
+                                        for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                                            if(entry.getValue() == station){
+                                                if(mix > entry.getKey()){
+                                                    mix = entry.getKey();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                            for(Station station :endNearStation) {
+                                List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
+                                for(Road road4 : roads3){
+                                    if(road4.getBusNo().equals(road1.getBusNo())){
+                                        for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                                            if(entry.getValue() == station){
+                                                if(mix1 > entry.getKey()){
+                                                    mix1 = entry.getKey();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                            for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                                if(entry.getKey().equals(mix)){
+                                    near = entry.getValue();
+                                }
+                            }
+                            for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                                if(entry.getKey().equals(mix1)){
+                                    near1 = entry.getValue();
+                                }
+                            }
+                            List<Road> rad  = roadService.queryRoads(road.getBusNo());
+                            List<Road> rad1 = roadService.queryRoads(road1.getBusNo());
+                            List<Road> rd1 = roadService.queryPassRoad(near.getStationId());
+                            List<Road> rd2 = roadService.queryPassRoad(near1.getStationId());
+                            List<Road> rd3 = roadService.queryPassRoad(road2.getStation().getStationId());
+                            List<Road> rd4 = roadService.queryPassRoad(road3.getStation().getStationId());
+                            if(rd1.get(0).getTravelSort() > rd3.get(0).getTravelSort()){
+                                roadPlan.setStartDirection(rad.get(0).getStation().getStationName());
+                            }else{
+                                roadPlan.setStartDirection(rad.get(rad.size()-1).getStation().getStationName());
+                            }
+                            if(rd2.get(0).getTravelSort() > rd4.get(0).getTravelSort()){
+                                roadPlan.setEndDirection(rad1.get(0).getStation().getStationName());
+                            }else{
+                                roadPlan.setEndDirection(rad1.get(rad1.size()-1).getStation().getStationName());
+
+                            }
+                            //总的站点数量
+                            int startMeter = rd1.get(0).getTravelSort() - rd3.get(0).getTravelSort();
+                            int endMeter = rd2.get(0).getTravelSort() - rd4.get(0).getTravelSort();
+                            int resultMeter = Math.abs(startMeter)+Math.abs(endMeter);
+                            roadPlan.setMomeyStation(resultMeter);
+                            roadPlan.setAllWalk(String.valueOf(mix+mix1).substring(0,String.valueOf(mix+mix1).lastIndexOf(".")));
+                            roadPlan.setStartWalk(String.valueOf(mix).substring(0,String.valueOf(mix).lastIndexOf(".")));
+                            roadPlan.setStartStation(near.getStationName());
+                            roadPlan.setEndWalk(String.valueOf(mix1).substring(0,String.valueOf(mix1).lastIndexOf(".")));
+                            roadPlan.setEndStation(near1.getStationName());
+                            roadPlan.setStartBus(road.getBusNo());
+                            roadPlan.setEndBus(road1.getBusNo());
+                            roadPlan.setBusNo(road.getBusNo());
+                            roadPlan.setSameStation(road2.getStation().getStationName());
+                            roadPlans.add(roadPlan);
+                            break b;
                         }
                     }
                 }
             }
         }
-        System.out.println(startNearStation.size());
-        System.out.println(endNearStation.size());
-//        System.out.println(roads);
-//        System.out.println(mateStation);
+        //非同站换乘
+        for(Road road : startPassRoad) {
+            List<Road> roads1 = roadService.queryRoads(road.getBusNo());
+            start:
+            for (Road road1 : endPassRoad) {
+                int check = 0;
+                double mi = 1000;
+                String startTurn = "";
+                String endTurn = "";
+                Road ro2 = null;
+                Road ro3 = null;
+                List<Road> roads2 = roadService.queryRoads(road1.getBusNo());
+                for (Road road2 : roads1) {
+                    GlobalCoordinates source = new GlobalCoordinates(Double.parseDouble(road2.getStation().getYPoint()), Double.parseDouble(road2.getStation().getXPoint()));
+                    end:
+                    for (Road road3 : roads2) {
+                        //算出两两站点之间的距离
+                        GlobalCoordinates target = new GlobalCoordinates(Double.parseDouble(road3.getStation().getYPoint()), Double.parseDouble(road3.getStation().getXPoint()));
+                        double meter = getDistanceMeter(source, target, Ellipsoid.WGS84);
+                        if(road2.getStation().getStationName().equals(road3.getStation().getStationName())){
+                            check++;
+                            continue start;
+                        }
+                        if(mi > meter){
+                            mi = meter;
+                            startTurn = road2.getStation().getStationName();
+                            endTurn = road3.getStation().getStationName();
+                            ro2 = road2;
+                            ro3 = road3;
+                        }
+                    }
+                }
+                if(check == 0 && mi < 1000){
+                    RoadPlan roadPlan = new RoadPlan();
+                    Double mix = 0.0;
+                    for(Double dos : meters){
+                        if(dos != 0.0){
+                            mix = dos;
+                            break;
+                        }
+                    }
+                    Double mix1 = 0.0;
+                    for(Double dos : meters1){
+                        if(dos != 0.0){
+                            mix1 = dos;
+                            break;
+                        }
+                    }
+                    Station near = new Station();
+                    Station near1 = new Station();
+                    for(Station station :startNearStation) {
+                        List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
+                        for(Road road4 : roads3){
+                            if(road4.getBusNo().equals(road.getBusNo())){
+                                for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                                    if(entry.getValue() == station){
+                                        if(mix > entry.getKey()){
+                                            mix = entry.getKey();
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
-        //同站换乘
+                    }
+                    for(Station station :endNearStation) {
+                        List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
+                        for(Road road4 : roads3){
+                            if(road4.getBusNo().equals(road1.getBusNo())){
+                                for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                                    if(entry.getValue() == station){
+                                        if(mix1 > entry.getKey()){
+                                            mix1 = entry.getKey();
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
+                    }
+                    for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                        if(entry.getKey().equals(mix)){
+                            near = entry.getValue();
+                        }
+                    }
+                    for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                        if(entry.getKey().equals(mix1)){
+                            near1 = entry.getValue();
+                        }
+                    }
+                    List<Road> rad  = roadService.queryRoads(road.getBusNo());
+                    List<Road> rad1 = roadService.queryRoads(road1.getBusNo());
+                    List<Road> rd1 = roadService.queryPassRoad(near.getStationId());
+                    List<Road> rd2 = roadService.queryPassRoad(near1.getStationId());
+                    List<Road> rd3 = roadService.queryPassRoad(ro2.getStation().getStationId());
+                    List<Road> rd4 = roadService.queryPassRoad(ro3.getStation().getStationId());
+                    if(rd1.get(0).getTravelSort() > rd3.get(0).getTravelSort()){
+                        roadPlan.setStartDirection(rad.get(0).getStation().getStationName());
+                    }else{
+                        roadPlan.setStartDirection(rad.get(rad.size()-1).getStation().getStationName());
+                    }
+                    if(rd2.get(0).getTravelSort() > rd4.get(0).getTravelSort()){
+                        roadPlan.setEndDirection(rad1.get(0).getStation().getStationName());
+                    }else{
+                        roadPlan.setEndDirection(rad1.get(rad1.size()-1).getStation().getStationName());
+
+                    }
+                    //总的站点数量
+                    int startMeter = rd1.get(0).getTravelSort() - rd3.get(0).getTravelSort();
+                    int endMeter = rd2.get(0).getTravelSort() - rd4.get(0).getTravelSort();
+                    int resultMeter = Math.abs(startMeter)+Math.abs(endMeter);
+                    roadPlan.setMomeyStation(resultMeter);
+                    roadPlan.setAllWalk(String.valueOf(mix+mix1+mi).substring(0,String.valueOf(mix+mix1+mi).lastIndexOf(".")));
+                    roadPlan.setStartWalk(String.valueOf(mix).substring(0,String.valueOf(mix).lastIndexOf(".")));
+                    roadPlan.setStartStation(near.getStationName());
+                    roadPlan.setEndWalk(String.valueOf(mix1).substring(0,String.valueOf(mix1).lastIndexOf(".")));
+                    roadPlan.setEndStation(near1.getStationName());
+                    roadPlan.setStartBus(road.getBusNo());
+                    roadPlan.setSameStation("1");
+                    roadPlan.setEndBus(road1.getBusNo());
+                    roadPlan.setBusNo(road.getBusNo());
+                    roadPlan.setStartTurn(startTurn);
+                    roadPlan.setEndTurn(endTurn);
+                    roadPlan.setMiddleWalk(String.valueOf(mi).substring(0,String.valueOf(mi).lastIndexOf(".")));
+                    roadPlans.add(roadPlan);
+
+                    break start;
+                }
+            }
+        }
+        HashSet set0 = new HashSet(roadPlans);
+        roadPlans.clear();
+        roadPlans.addAll(set0);
+        System.out.println(startNearStation);
+        System.out.println(endNearStation);
+        System.out.println(roads);
+        System.out.println(roadPlans);
+
+        return roadPlans;
 
     }
 
 
     //经纬度计算距离
-    public static double getDistanceMeter(GlobalCoordinates gpsFrom, GlobalCoordinates gpsTo, Ellipsoid ellipsoid)
-    {
+    public static double getDistanceMeter(GlobalCoordinates gpsFrom, GlobalCoordinates gpsTo, Ellipsoid ellipsoid) {
         //创建GeodeticCalculator，调用计算方法，传入坐标系、经纬度用于计算距离
         GeodeticCurve geoCurve =new GeodeticCalculator().calculateGeodeticCurve(ellipsoid, gpsFrom, gpsTo);
-
         return geoCurve.getEllipsoidalDistance();
     }
+
 }

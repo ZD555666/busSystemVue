@@ -1,7 +1,6 @@
 package com.ruoyi.wx.wxBus.service;
 
 import com.ruoyi.wx.wxBus.domain.Station;
-import jdk.internal.dynalink.linker.LinkerServices;
 
 import java.util.List;
 
@@ -14,6 +13,9 @@ import java.util.List;
 public interface StationService {
     //查询站点
     List<Station> queryStation(String value);
+
+    //查询站点信息
+    Station queryStationName(String value);
 
     //查询站点及对应的线路车辆
     List<Station> queryStations(String value);
