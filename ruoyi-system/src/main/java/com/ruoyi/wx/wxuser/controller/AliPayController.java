@@ -123,7 +123,7 @@ public class AliPayController {
         return AjaxResult.success(response.getTradeStatus());
     }
 
-    @RequestMapping("delPay")
+    @RequestMapping("/delPay")
     public AjaxResult delPay(@RequestBody HashMap<String, Object> map) throws AlipayApiException {
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY,
                 AlipayConfig.format, AlipayConfig.charset, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.sign_type);
@@ -134,6 +134,12 @@ public class AliPayController {
         AlipayTradeCloseResponse response = alipayClient.execute(request);
         System.out.println(response.getSubMsg());
         return AjaxResult.success(response.getMsg());
+    }
+
+    @RequestMapping("/notify_url")
+    public void notify_url(@RequestBody HashMap<String, Object> map){
+        System.out.println("!!!!!!!!!!!!!!!");
+        System.out.println(map);
     }
 
 
