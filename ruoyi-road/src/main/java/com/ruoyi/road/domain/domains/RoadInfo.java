@@ -2,8 +2,7 @@ package com.ruoyi.road.domain.domains;
 
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.ruoyi.road.domain.TBus;
-import com.ruoyi.road.domain.TSchedule;
-import com.ruoyi.road.domain.TStationinfo;
+import com.ruoyi.road.domain.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +28,7 @@ public class RoadInfo extends BaseEntity {
     private int cityId;
     private List<RoadStationInfo> rsList;
     private List<RoadStationInfo> rsReList;
-    private List<TSchedule> scheduleList;
+    private List<Schedule> scheduleList;
     private List<TBus> busList;
     private int rsListSize;
     private int rsReListSize;

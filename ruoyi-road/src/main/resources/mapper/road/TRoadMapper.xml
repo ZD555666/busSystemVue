@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 <!--    查询发车时刻表-->
-    <select id="selectScheduleByRoad" parameterType="com.ruoyi.road.domain.TSchedule" resultType="com.ruoyi.road.domain.TSchedule">
+    <select id="selectScheduleByRoad" parameterType="com.ruoyi.road.domain.Schedule" resultType="com.ruoyi.road.domain.Schedule">
         SELECT busNo,timeInterval,starTime,endTime
         FROM t_schedule
         <where>
