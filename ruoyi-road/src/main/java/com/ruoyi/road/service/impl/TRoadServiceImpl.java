@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.ruoyi.road.domain.TBus;
 import com.ruoyi.road.domain.TRoad;
-import com.ruoyi.road.domain.TSchedule;
+import com.ruoyi.road.domain.Schedule;
 import com.ruoyi.road.domain.domains.RoadInfo;
 import com.ruoyi.road.domain.domains.RoadStationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +40,11 @@ public class TRoadServiceImpl implements ITRoadService
                 r.setBusList(busList);
             }
             //查询时刻表
-            TSchedule schedule=TSchedule.builder().busNo(r.getBusNo()).build();
-            List<TSchedule> scheduleList=selectScheduleByRoad(schedule);
+            Schedule schedule= Schedule.builder().busNo(r.getBusNo()).build();
+            List<Schedule> scheduleList=selectScheduleByRoad(schedule);
             if (scheduleList.size() != 0) {
                 int scTimes=0;
-                for (TSchedule s:scheduleList) {
+                for (Schedule s:scheduleList) {
                     int startTime = s.getStarTime();
                     int endTime = s.getEndTime();
                     int timeInterval = s.getTimeInterval();
@@ -89,8 +89,8 @@ public class TRoadServiceImpl implements ITRoadService
      * 查询x线路发车时刻表
      */
     @Override
-    public List<TSchedule> selectScheduleByRoad(TSchedule schedule) {
-        List<TSchedule> scheduleList= tRoadMapper.selectScheduleByRoad(schedule);
+    public List<Schedule> selectScheduleByRoad(Schedule schedule) {
+        List<Schedule> scheduleList= tRoadMapper.selectScheduleByRoad(schedule);
         return scheduleList;
     }
 

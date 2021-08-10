@@ -58,6 +58,12 @@ VueBMap.initBMapApiLoader({
 
 // import Moment from 'moment'
 // Vue.prototype.$moment = moment;
+// import ECharts from 'vue-echarts'
+// import {use} from "echarts/core";
+//
+// app.component('v-chart', ECharts)
+
+
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey

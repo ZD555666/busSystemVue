@@ -1,10 +1,37 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="城市名称" prop="cityname">
+      <el-form-item label="公交线路：" prop="busNo" label-width="90px">
         <el-input
-          v-model="queryParams.cityname"
-          placeholder="请输入城市名称"
+          v-model="queryParams.busNo"
+          placeholder="请输入公交线路"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="发车时间段(前)" prop="starTime" label-width="150px">
+        <el-input
+          v-model="queryParams.starTime"
+          placeholder="请输入发车时间段(前)"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="发车时间段(后)" prop="endTime" label-width="150px">
+        <el-input
+          v-model="queryParams.endTime"
+          placeholder="请输入发车时间段(后)"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="各个时间段发车间隔时间：" prop="timeInterval" label-width="200px">
+        <el-input
+          v-model="queryParams.timeInterval"
+          placeholder="请输入各个时间段发车间隔时间"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -24,8 +51,17 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['road:city:add']"
+          v-hasPermi="['road:schedule:add']"
         >新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+        >新增多时段
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -35,7 +71,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['road:city:edit']"
+          v-hasPermi="['road:schedule:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -46,7 +82,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['road:city:remove']"
+          v-hasPermi="['road:schedule:remove']"
         >删除</el-button>
       </el-col>
 <!--      <el-col :span="1.5">-->
@@ -57,16 +93,19 @@
 <!--          size="mini"-->
 <!--		  :loading="exportLoading"-->
 <!--          @click="handleExport"-->
-<!--          v-hasPermi="['road:city:export']"-->
+<!--          v-hasPermi="['road:schedule:export']"-->
 <!--        >导出</el-button>-->
 <!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="cityList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="scheduleList" @selection-change="handleSelectionChange">
+      <el-table-column type="index" label="序号" align="center"/>
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="cityid" />
-      <el-table-column label="城市名称" align="center" prop="cityname" />
+      <el-table-column label="公交线路" align="center" prop="busNo" />
+      <el-table-column label="发车时间段(前)" align="center" prop="starTime" />
+      <el-table-column label="发车时间段(后)" align="center" prop="endTime" />
+      <el-table-column label="各个时间段发车间隔时间" align="center" prop="timeInterval"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -74,14 +113,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['road:city:edit']"
+            v-hasPermi="['road:schedule:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['road:city:remove']"
+            v-hasPermi="['road:schedule:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -95,11 +134,20 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改城市配置对话框 -->
+    <!-- 添加或修改线路发车时刻配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="城市名称" prop="cityname">
-          <el-input v-model="form.cityname" placeholder="请输入城市名称" />
+        <el-form-item label="公交线路：" prop="busNo" label-width="100px">
+          <el-input v-model="form.busNo" placeholder="请输入公交线路" />
+        </el-form-item>
+        <el-form-item label="时间间隔：" prop="timeInterval" label-width="100px">
+          <el-input v-model="form.timeInterval" placeholder="请输入各个时间段发车时间" />
+        </el-form-item>
+        <el-form-item label="发车时间段：(前)" prop="starTime" label-width="100px">
+          <el-input v-model="form.starTime" placeholder="请输入发车时间段(前)" />
+        </el-form-item>
+        <el-form-item label="发车时间段：(后)" prop="endTime" label-width="100px">
+          <el-input v-model="form.endTime" placeholder="请输入发车时间段(后)" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -111,10 +159,10 @@
 </template>
 
 <script>
-import { listCity, getCity, delCity, addCity, updateCity, exportCity } from "@/api/road/city";
+import { listSchedule, getSchedule, delSchedule, addSchedule, updateSchedule, exportSchedule } from "@/api/road/schedule";
 
 export default {
-  name: "City",
+  name: "Schedule",
   data() {
     return {
       // 遮罩层
@@ -131,8 +179,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 城市配置表格数据
-      cityList: [],
+      // 线路发车时刻配置表格数据
+      scheduleList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -141,12 +189,18 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        cityname: null
+        busNo: null,
+        timeInterval: null,
+        starTime: null,
+        endTime: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        busNo: [
+          { required: true, message: "公交线路不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -154,11 +208,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询城市配置列表 */
+    /** 查询线路发车时刻配置列表 */
     getList() {
       this.loading = true;
-      listCity(this.queryParams).then(response => {
-        this.cityList = response.rows;
+      listSchedule(this.queryParams).then(response => {
+        this.scheduleList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -171,8 +225,12 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        cityid: null,
-        cityname: null
+        scheduleId: null,
+        busNo: null,
+        timeInterval: null,
+        starTime: null,
+        endTime: null,
+        busState: null
       };
       this.resetForm("form");
     },
@@ -188,7 +246,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.cityid)
+      this.ids = selection.map(item => item.scheduleId)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -196,30 +254,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加城市配置";
+      this.title = "添加线路发车时刻配置";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const cityid = row.cityid || this.ids
-      getCity(cityid).then(response => {
+      const scheduleId = row.scheduleId || this.ids
+      getSchedule(scheduleId).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改城市配置";
+        this.title = "修改线路发车时刻配置";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.cityid != null) {
-            updateCity(this.form).then(response => {
+          if (this.form.scheduleId != null) {
+            updateSchedule(this.form).then(response => {
               this.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addCity(this.form).then(response => {
+            addSchedule(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -230,13 +288,13 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const cityids = row.cityid || this.ids;
-      this.$confirm('是否确认删除城市配置编号为"' + cityids + '"的数据项?', "警告", {
+      const scheduleIds = row.scheduleId || this.ids;
+      this.$confirm('是否确认删除线路发车时刻配置编号为"' + scheduleIds + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delCity(cityids);
+          return delSchedule(scheduleIds);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -245,13 +303,13 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有城市配置数据项?', "警告", {
+      this.$confirm('是否确认导出所有线路发车时刻配置数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
           this.exportLoading = true;
-          return exportCity(queryParams);
+          return exportSchedule(queryParams);
         }).then(response => {
           this.download(response.msg);
           this.exportLoading = false;

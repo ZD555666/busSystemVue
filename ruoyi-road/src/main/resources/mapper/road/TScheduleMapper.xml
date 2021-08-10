@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.road.mapper.TScheduleMapper">
+    
+    <resultMap type="TSchedule" id="TScheduleResult">
+        <result property="scheduleId"    column="scheduleId"    />
+        <result property="busNo"    column="busNo"    />
+        <result property="timeInterval"    column="timeInterval"    />
+        <result property="starTime"    column="starTime"    />
+        <result property="endTime"    column="endTime"    />
+        <result property="busState"    column="busState"    />
+    </resultMap>
+
+    <sql id="selectTScheduleVo">
+        select scheduleId, busNo, timeInterval, starTime, endTime, busState from t_schedule
+    </sql>
+
+    <select id="selectTScheduleList" parameterType="TSchedule" resultMap="TScheduleResult">
+        <include refid="selectTScheduleVo"/>
+        <where>  
+            <if test="busNo != null  and busNo != ''"> and busNo like concat('%', #{busNo}, '%')</if>
+            <if test="timeInterval != null "> and timeInterval = #{timeInterval}</if>
+            <if test="starTime != null "> and starTime = #{starTime}</if>
+            <if test="endTime != null "> and endTime = #{endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectTScheduleById" parameterType="Integer" resultMap="TScheduleResult">
+        <include refid="selectTScheduleVo"/>
+        where scheduleId = #{scheduleId}
+    </select>
+        
+    <insert id="insertTSchedule" parameterType="TSchedule" useGeneratedKeys="true" keyProperty="scheduleId">
+        insert into t_schedule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="busNo != null and busNo != ''">busNo,</if>
+            <if test="timeInterval != null">timeInterval,</if>
+            <if test="starTime != null">starTime,</if>
+            <if test="endTime != null">endTime,</if>
+            <if test="busState != null">busState,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="busNo != null and busNo != ''">#{busNo},</if>
+            <if test="timeInterval != null">#{timeInterval},</if>
+            <if test="starTime != null">#{starTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="busState != null">#{busState},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTSchedule" parameterType="TSchedule">
+        update t_schedule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="busNo != null and busNo != ''">busNo = #{busNo},</if>
+            <if test="timeInterval != null">timeInterval = #{timeInterval},</if>
+            <if test="starTime != null">starTime = #{starTime},</if>
+            <if test="endTime != null">endTime = #{endTime},</if>
+            <if test="busState != null">busState = #{busState},</if>
+        </trim>
+        where scheduleId = #{scheduleId}
+    </update>
+
+    <delete id="deleteTScheduleById" parameterType="Integer">
+        delete from t_schedule where scheduleId = #{scheduleId}
+    </delete>
+
+    <delete id="deleteTScheduleByIds" parameterType="String">
+        delete from t_schedule where scheduleId in 
+        <foreach item="scheduleId" collection="array" open="(" separator="," close=")">
+            #{scheduleId}
+        </foreach>
+    </delete>
+</mapper>
