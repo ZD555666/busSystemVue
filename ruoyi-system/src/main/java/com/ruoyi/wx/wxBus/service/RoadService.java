@@ -21,4 +21,7 @@ public interface RoadService {
 
     //查询站点对应的线路信息
     List<Road> queryPassRoad(int stationId);
+
+    //查询站点对应的线路信息
+    List<Road> queryPassRoads(int stationId,String busNo);
 }

@@ -34,6 +34,10 @@ public class RoadPlan {
     private String middleWalk;
     private String startTurn;
     private String endTurn;
+    private String check;
+    private String lessTiem;
+    private String lessWalk;
+    private String lessTurn;
 
 
 }

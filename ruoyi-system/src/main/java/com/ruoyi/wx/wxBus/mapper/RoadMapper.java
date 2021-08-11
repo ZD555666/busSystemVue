@@ -3,6 +3,7 @@ package com.ruoyi.wx.wxBus.mapper;
 import com.ruoyi.wx.wxBus.domain.Road;
 import com.ruoyi.wx.wxBus.domain.Station;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,6 +23,11 @@ public interface RoadMapper {
 
     //查询站点对应的线路信息
     List<Road> selectPassRoad(int stationId);
+
+    //查询站点对应的线路信息
+    List<Road> selectPassRoads(@Param("stationId")int stationId,
+                               @Param("busNo") String busNo);
+
 
 
 

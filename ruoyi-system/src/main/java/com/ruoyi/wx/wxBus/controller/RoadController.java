@@ -12,6 +12,7 @@ import org.gavaghan.geodesy.GlobalCoordinates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.*;
 
 /**
@@ -29,6 +30,7 @@ public class RoadController {
     private RoadServiceImpl roadService;
     @Autowired
     private StationServiceImpl stationService;
+
 
     //查询站点和线路
     @RequestMapping(value = "/searchRoad")
@@ -69,6 +71,7 @@ public class RoadController {
         Station station = stationService.queryStationName(stationName);
         return station;
     }
+
 
     //获取线路对应的站点
     @RequestMapping(value = "/getStation")
@@ -246,11 +249,11 @@ public class RoadController {
                 }
                 //获取公交车运行的方向
                 List<Road> roads1 = roadService.queryRoads(road);
-                List<Road> roads2 = roadService.queryPassRoad(near.getStationId());
-                List<Road> roads3 = roadService.queryPassRoad(near1.getStationId());
+                List<Road> roads2 = roadService.queryPassRoads(near.getStationId(),road);
+                List<Road> roads3 = roadService.queryPassRoads(near1.getStationId(),road);
                 if(roads2.get(0).getTravelSort() > roads3.get(0).getTravelSort()){
                     roadPlan.setDirection(roads1.get(0).getStation().getStationName());
-                    roadPlan.setMomeyStation(roads2.get(0).getTravelSort() - roads3.get(0).getTravelSort());
+                    roadPlan.setMomeyStation(roads2.get(0).getTravelSort() - roads3.get(0).getTravelSort()-1);
                 }else{
                     roadPlan.setDirection(roads1.get(roads1.size()-1).getStation().getStationName());
                     roadPlan.setMomeyStation(roads3.get(0).getTravelSort() - roads2.get(0).getTravelSort());
@@ -261,6 +264,7 @@ public class RoadController {
                 roadPlan.setEndWalk(String.valueOf(mix1).substring(0,String.valueOf(mix1).lastIndexOf(".")));
                 roadPlan.setEndStation(near1.getStationName());
                 roadPlan.setBusNo(road);
+                roadPlan.setCheck("1");
                 roadPlans.add(roadPlan);
             }
 
@@ -300,11 +304,8 @@ public class RoadController {
             start:for(Road road1 : endPassRoad){
                 List<Road> roads2 = roadService.queryRoads(road1.getBusNo());
                for(Road road2 :roads1){
-//                   GlobalCoordinates source = new GlobalCoordinates(Double.parseDouble(road2.getStation().getYPoint()), Double.parseDouble(road2.getStation().getXPoint()));
                   end:for(Road road3 :roads2){
                       //算出两两站点之间的距离
-//                      GlobalCoordinates target =new GlobalCoordinates(Double.parseDouble(road3.getStation().getYPoint()),Double.parseDouble(road3.getStation().getXPoint()));
-//                      double meter = getDistanceMeter(source, target, Ellipsoid.WGS84);
                         if(road2.getStation().getStationName().equals(road3.getStation().getStationName())){
                             RoadPlan roadPlan = new RoadPlan();
                             Double mix = 0.0;
@@ -365,8 +366,8 @@ public class RoadController {
                             }
                             List<Road> rad  = roadService.queryRoads(road.getBusNo());
                             List<Road> rad1 = roadService.queryRoads(road1.getBusNo());
-                            List<Road> rd1 = roadService.queryPassRoad(near.getStationId());
-                            List<Road> rd2 = roadService.queryPassRoad(near1.getStationId());
+                            List<Road> rd1 = roadService.queryPassRoads(near.getStationId(),road.getBusNo());
+                            List<Road> rd2 = roadService.queryPassRoads(near1.getStationId(),road1.getBusNo());
                             List<Road> rd3 = roadService.queryPassRoad(road2.getStation().getStationId());
                             List<Road> rd4 = roadService.queryPassRoad(road3.getStation().getStationId());
                             if(rd1.get(0).getTravelSort() > rd3.get(0).getTravelSort()){
@@ -383,7 +384,7 @@ public class RoadController {
                             //总的站点数量
                             int startMeter = rd1.get(0).getTravelSort() - rd3.get(0).getTravelSort();
                             int endMeter = rd2.get(0).getTravelSort() - rd4.get(0).getTravelSort();
-                            int resultMeter = Math.abs(startMeter)+Math.abs(endMeter);
+                            int resultMeter = Math.abs(startMeter)+Math.abs(endMeter)-1;
                             roadPlan.setMomeyStation(resultMeter);
                             roadPlan.setAllWalk(String.valueOf(mix+mix1).substring(0,String.valueOf(mix+mix1).lastIndexOf(".")));
                             roadPlan.setStartWalk(String.valueOf(mix).substring(0,String.valueOf(mix).lastIndexOf(".")));
@@ -393,6 +394,7 @@ public class RoadController {
                             roadPlan.setStartBus(road.getBusNo());
                             roadPlan.setEndBus(road1.getBusNo());
                             roadPlan.setBusNo(road.getBusNo());
+                            roadPlan.setCheck("2");
                             roadPlan.setSameStation(road2.getStation().getStationName());
                             roadPlans.add(roadPlan);
                             break b;
@@ -420,6 +422,7 @@ public class RoadController {
                         //算出两两站点之间的距离
                         GlobalCoordinates target = new GlobalCoordinates(Double.parseDouble(road3.getStation().getYPoint()), Double.parseDouble(road3.getStation().getXPoint()));
                         double meter = getDistanceMeter(source, target, Ellipsoid.WGS84);
+
                         if(road2.getStation().getStationName().equals(road3.getStation().getStationName())){
                             check++;
                             continue start;
@@ -493,8 +496,8 @@ public class RoadController {
                     }
                     List<Road> rad  = roadService.queryRoads(road.getBusNo());
                     List<Road> rad1 = roadService.queryRoads(road1.getBusNo());
-                    List<Road> rd1 = roadService.queryPassRoad(near.getStationId());
-                    List<Road> rd2 = roadService.queryPassRoad(near1.getStationId());
+                    List<Road> rd1 = roadService.queryPassRoads(near.getStationId(),road.getBusNo());
+                    List<Road> rd2 = roadService.queryPassRoads(near1.getStationId(),road1.getBusNo());
                     List<Road> rd3 = roadService.queryPassRoad(ro2.getStation().getStationId());
                     List<Road> rd4 = roadService.queryPassRoad(ro3.getStation().getStationId());
                     if(rd1.get(0).getTravelSort() > rd3.get(0).getTravelSort()){
@@ -509,10 +512,14 @@ public class RoadController {
 
                     }
                     //总的站点数量
+                    System.out.println(rd1.get(0).getTravelSort() +"123" );
+                    System.out.println(rd2.get(0).getTravelSort() +"123");
+                    System.out.println(rd3.get(0).getTravelSort() +"123");
+                    System.out.println(rd4.get(0).getTravelSort() +"123");
                     int startMeter = rd1.get(0).getTravelSort() - rd3.get(0).getTravelSort();
                     int endMeter = rd2.get(0).getTravelSort() - rd4.get(0).getTravelSort();
                     int resultMeter = Math.abs(startMeter)+Math.abs(endMeter);
-                    roadPlan.setMomeyStation(resultMeter);
+                    roadPlan.setMomeyStation(resultMeter-1);
                     roadPlan.setAllWalk(String.valueOf(mix+mix1+mi).substring(0,String.valueOf(mix+mix1+mi).lastIndexOf(".")));
                     roadPlan.setStartWalk(String.valueOf(mix).substring(0,String.valueOf(mix).lastIndexOf(".")));
                     roadPlan.setStartStation(near.getStationName());
@@ -520,6 +527,7 @@ public class RoadController {
                     roadPlan.setEndStation(near1.getStationName());
                     roadPlan.setStartBus(road.getBusNo());
                     roadPlan.setSameStation("1");
+                    roadPlan.setCheck("2");
                     roadPlan.setEndBus(road1.getBusNo());
                     roadPlan.setBusNo(road.getBusNo());
                     roadPlan.setStartTurn(startTurn);
@@ -539,8 +547,27 @@ public class RoadController {
         System.out.println(roads);
         System.out.println(roadPlans);
 
-        return roadPlans;
+        int meter = 3000;
+        int check = 0;
+        for(RoadPlan roadPlan :roadPlans){
+            if(Integer.parseInt(roadPlan.getAllWalk()) < meter){
+                meter = Integer.parseInt(roadPlan.getAllWalk());
+            }
+            if(roadPlan.getCheck().equals("1")){
+                check++;
+                roadPlan.setLessTurn("lessTurn");
+            }
+        }
 
+        for(RoadPlan roadPlan :roadPlans){
+            if(Integer.parseInt(roadPlan.getAllWalk()) == meter){
+                roadPlan.setLessWalk("lessWalk");
+            }
+            if(check == 0 ){
+                roadPlan.setLessTurn("lessTurn");
+            }
+        }
+        return roadPlans;
     }
 
 
