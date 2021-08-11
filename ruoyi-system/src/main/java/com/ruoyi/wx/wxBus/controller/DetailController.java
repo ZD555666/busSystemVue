@@ -1,6 +1,6 @@
 package com.ruoyi.wx.wxBus.controller;
 
-import com.ruoyi.wx.wxBus.domain.Schedule;
+import com.ruoyi.wx.wxBus.domain.MySchedule;
 import com.ruoyi.wx.wxBus.service.impl.ScheduleServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,22 +51,22 @@ public class DetailController {
     @RequestMapping(value = "/getTimeTable")
     public List<String> getTimeTable(String busNo){
         List<String> times = new ArrayList<>();
-        List<Schedule> schedules = scheduleService.querySchedule(busNo);
-        for(int i = 0;i<schedules.size();i++){
+        List<MySchedule> mySchedules = scheduleService.querySchedule(busNo);
+        for(int i = 0; i< mySchedules.size(); i++){
             if(i == 0){
-                String timeQuantum = schedules.get(i).getStarTime()+":00-"+schedules.get(i).getEndTime()+":00 (早高峰)";
+                String timeQuantum = mySchedules.get(i).getStarTime()+":00-"+ mySchedules.get(i).getEndTime()+":00 (早高峰)";
                 times.add(timeQuantum);
             }
             if(i == 1){
-                String timeQuantum = schedules.get(i).getStarTime()+":00-"+schedules.get(i).getEndTime()+":00";
+                String timeQuantum = mySchedules.get(i).getStarTime()+":00-"+ mySchedules.get(i).getEndTime()+":00";
                 times.add(timeQuantum);
             }
             if(i == 2){
-                String timeQuantum = schedules.get(i).getStarTime()+":00-"+schedules.get(i).getEndTime()+":00 (晚高峰)";
+                String timeQuantum = mySchedules.get(i).getStarTime()+":00-"+ mySchedules.get(i).getEndTime()+":00 (晚高峰)";
                 times.add(timeQuantum);
             }
             if(i > 2){
-                String timeQuantum = schedules.get(i).getStarTime()+":00-"+schedules.get(i).getEndTime()+":00";
+                String timeQuantum = mySchedules.get(i).getStarTime()+":00-"+ mySchedules.get(i).getEndTime()+":00";
                 times.add(timeQuantum);
             }
 
@@ -82,15 +82,15 @@ public class DetailController {
     @RequestMapping(value = "/getTimes")
     public List<List<String>> getTimes(String busNo){
         List<List<String>> times = new ArrayList<>();
-        List<Schedule> schedules = scheduleService.querySchedule(busNo);
-        for(Schedule schedule : schedules){
+        List<MySchedule> mySchedules = scheduleService.querySchedule(busNo);
+        for(MySchedule mySchedule : mySchedules){
             List<String> time = new ArrayList<>();
-            String startTime = schedule.getStarTime()+":00";
-            int number = (schedule.getEndTime()-schedule.getStarTime())*60/schedule.getTimeInterval();
+            String startTime = mySchedule.getStarTime()+":00";
+            int number = (mySchedule.getEndTime()- mySchedule.getStarTime())*60/ mySchedule.getTimeInterval();
             String timeAdd = startTime;
             for(int i = 0;i<number-1;i++){
                 try {
-                    timeAdd = TimeAdd(timeAdd, String.valueOf(schedule.getTimeInterval()));
+                    timeAdd = TimeAdd(timeAdd, String.valueOf(mySchedule.getTimeInterval()));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

@@ -1,6 +1,6 @@
 package com.ruoyi.wx.wxBus.service;
 
-import com.ruoyi.wx.wxBus.domain.Schedule;
+import com.ruoyi.wx.wxBus.domain.MySchedule;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ import java.util.List;
 public interface ScheduleService {
 
     //查询某个线路的发车时刻表
-    List<Schedule> querySchedule(String busNo);
+    List<MySchedule> querySchedule(String busNo);
 }

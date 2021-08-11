@@ -15,7 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Schedule {
+public class MySchedule {
     private int scheduleId;
     private String busNo;
     private int timeInterval;
