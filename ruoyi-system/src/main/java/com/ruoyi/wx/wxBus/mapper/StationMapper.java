@@ -1,7 +1,6 @@
 package com.ruoyi.wx.wxBus.mapper;
 
-import com.ruoyi.wx.wxBus.domain.Road;
-import com.ruoyi.wx.wxBus.domain.Station;
+import com.ruoyi.wx.wxBus.domain.MyStation;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,14 +15,14 @@ import java.util.List;
 public interface StationMapper {
 
     //查询站点
-    List<Station> selectStation(String value);
+    List<MyStation> selectStation(String value);
 
     //查询站点信息
-    Station selectStationName(String value);
+    MyStation selectStationName(String value);
 
     //查询站点及对应的线路车辆
-    List<Station> selectStations(String value);
+    List<MyStation> selectStations(String value);
 
     //查询所有站点
-    List<Station> selectAllStation();
+    List<MyStation> selectAllStation();
 }
