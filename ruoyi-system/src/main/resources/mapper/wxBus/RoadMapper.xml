@@ -12,6 +12,10 @@
         select busNo,travelSort from t_road where stationId = #{stationId};
     </select>
 
+    <select id="selectPassRoads" resultType="com.ruoyi.wx.wxBus.domain.Road">
+        select busNo,travelSort from t_road where stationId = #{stationId} and busNo = #{busNo};
+    </select>
+
     <select id="selectRoads" resultMap="roadList">
         select t1.busNo,t1.travelSort,t2.stationName,t2.stationId,t2.yPoint,t2.xPoint
         from t_road t1
