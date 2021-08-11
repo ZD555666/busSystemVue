@@ -1,6 +1,6 @@
 package com.ruoyi.wx.wxBus.mapper;
 
-import com.ruoyi.wx.wxBus.domain.Schedule;
+import com.ruoyi.wx.wxBus.domain.MySchedule;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,5 +14,5 @@ import java.util.List;
 @Mapper
 public interface ScheduleMapper {
     //查询某个线路的发车时刻表
-    List<Schedule> selectSchedule(String busNo);
+    List<MySchedule> selectSchedule(String busNo);
 }

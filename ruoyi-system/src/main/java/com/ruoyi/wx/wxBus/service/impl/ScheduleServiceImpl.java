@@ -1,6 +1,6 @@
 package com.ruoyi.wx.wxBus.service.impl;
 
-import com.ruoyi.wx.wxBus.domain.Schedule;
+import com.ruoyi.wx.wxBus.domain.MySchedule;
 import com.ruoyi.wx.wxBus.mapper.ScheduleMapper;
 import com.ruoyi.wx.wxBus.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private ScheduleMapper scheduleMapper;
 
     @Override
-    public List<Schedule> querySchedule(String busNo) {
+    public List<MySchedule> querySchedule(String busNo) {
         return scheduleMapper.selectSchedule(busNo);
     }
 }
