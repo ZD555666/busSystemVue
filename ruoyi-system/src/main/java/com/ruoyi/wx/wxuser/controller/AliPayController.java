@@ -27,8 +27,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author gjw
@@ -92,38 +94,14 @@ public class AliPayController {
     }
 
     @RequestMapping("/queryPay")
-    public AjaxResult queryPay(@RequestBody HashMap<String, Object> map) throws AlipayApiException {
+    public AjaxResult queryPay(@RequestBody HashMap<String, Object> map) {
         String opId = (String) map.get("opId");
         String orderNo = (String) map.get("orderNo");
         int amount = (int) map.get("amount");
-        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY,
-                AlipayConfig.format, AlipayConfig.charset, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.sign_type);
-        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
-        request.setBizContent("{" +
-                "\"out_trade_no\":\"" + orderNo + "\"," +
-                "      \"query_options\":[" +
-                "        \"trade_settle_info\"" +
-                "      ]" +
-                "  }");
-        AlipayTradeQueryResponse response = alipayClient.execute(request);
-        System.err.println(response.getBody());
-        if (response.isSuccess() && response.getTradeStatus().equals(PayResponse.TRADE_SUCCESS)) {
-            System.err.println("调用成功");
-            int money = moneyService.queryMoneyByOpId(opId);
-            int i = moneyService.updMoneyByOpId(opId, money + (amount * 100));
-            if (i > 0 && money != money + (amount * 100)) {
-                String payState = aliPayService.queryPayState(orderNo, opId, amount*100);
-                if (!PayResponse.TRADE_SUCCESS.equals(payState))
-                    recordService.insertRecord(new WxRecord().setOpenId(opId).setIsAdd(0).setRecord(amount * 100).setRecordTime(new Date()));
-            }
-        } else {
-            System.err.println("调用失败");
-        }
-        aliPayService.updPayStateByOpId(opId, orderNo, response.getTradeStatus());
-        return AjaxResult.success(response.getTradeStatus());
+        return AjaxResult.success(aliPayService.queryPayState(orderNo, opId, amount * 100));
     }
 
-    @RequestMapping("delPay")
+    @RequestMapping("/delPay")
     public AjaxResult delPay(@RequestBody HashMap<String, Object> map) throws AlipayApiException {
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY,
                 AlipayConfig.format, AlipayConfig.charset, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.sign_type);
@@ -134,6 +112,34 @@ public class AliPayController {
         AlipayTradeCloseResponse response = alipayClient.execute(request);
         System.out.println(response.getSubMsg());
         return AjaxResult.success(response.getMsg());
+    }
+
+    @RequestMapping("/notify_url")
+    public void notify_url(HttpServletResponse response, HttpServletRequest req) throws AlipayApiException {
+        System.out.println("!!!!!!!!!!!!!!!");
+        String orderNo = req.getParameter("out_trade_no");
+        int amount = Double.valueOf(req.getParameter("total_amount")).intValue();
+        String status = req.getParameter("trade_status");
+        String openId = aliPayService.queryOpenIdByOrderNo(orderNo);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("opId", openId);
+        map.put("orderNo", orderNo);
+        map.put("amount", Double.valueOf(amount).intValue());
+
+        if (status.equals(PayResponse.TRADE_SUCCESS)) {
+            int money = moneyService.queryMoneyByOpId(openId);
+            int i = moneyService.updMoneyByOpId(openId, money + (amount * 100));
+            if (i > 0 && money != money + (amount * 100)) {
+                String payState = aliPayService.queryPayState(orderNo, openId, amount * 100);
+                if (!PayResponse.TRADE_SUCCESS.equals(payState))
+                    recordService.insertRecord(new WxRecord().setOpenId(openId).setIsAdd(0).setRecord(amount * 100).setRecordTime(new Date()));
+            }
+        } else {
+            System.err.println("调用失败");
+        }
+        aliPayService.updPayStateByOpId(openId, orderNo, status);
+
+
     }
 
 

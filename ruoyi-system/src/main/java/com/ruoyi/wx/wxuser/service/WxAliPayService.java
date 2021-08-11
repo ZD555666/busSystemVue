@@ -16,4 +16,7 @@ public interface WxAliPayService {
 
     String queryPayState(String out_trade_no,String openId,int total_amount);
 
+    String queryOpenIdByOrderNo(String orderNo);
+
+
 }

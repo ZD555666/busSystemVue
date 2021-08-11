@@ -23,7 +23,7 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
-    @PostMapping("queryNearStation")
+    @PostMapping("/queryNearStation")
     public AjaxResult queryNearStation(@RequestBody HashMap<String, Object> map) {
         double area = Double.valueOf(map.get("distance").toString()) / 100.00;
         System.err.println(area);
@@ -43,7 +43,7 @@ public class AddressController {
         return AjaxResult.success(list);
     }
 
-    @PostMapping("queryDetail")
+    @PostMapping("/queryDetail")
     public AjaxResult queryDetail(@RequestBody HashMap<String, Object> map) {
         int stationId = (int) map.get("stationId");
         List<WxBusRealRun> busNos = addressService.queryBusNoById(stationId, (String) map.get("cityName"), 0);
@@ -64,7 +64,7 @@ public class AddressController {
         return AjaxResult.success(list);
     }
 
-    @PostMapping("queryBusDetailInfo")
+    @PostMapping("/queryBusDetailInfo")
     public AjaxResult queryBusDetailInfo(@RequestBody HashMap<String, Object> map) {
         String busString = JSONObject.toJSONString(map.get("busDetailInfo"));
         String clickStation = (String) map.get("clickStation");
@@ -86,7 +86,7 @@ public class AddressController {
         return AjaxResult.success(list);
     }
 
-    @PostMapping("doCollect")
+    @PostMapping("/doCollect")
     public AjaxResult doCollect(@RequestBody HashMap<String, Object> map) {
         List<WxCollect> wxCollects = addressService.queryCollectByOpId((int) map.get("stationId"), (String) map.get("stationName"), (String) map.get("cityName"), (String) map.get("opId"));
         return wxCollects.size() == 0 ?
@@ -96,7 +96,7 @@ public class AddressController {
                 AjaxResult.success("exist");
     }
 
-    @PostMapping("queryMyCollect")
+    @PostMapping("/queryMyCollect")
     public AjaxResult queryMyCollect(@RequestBody HashMap<String, Object> map) {
         List<String> cityNames = addressService.queryCollectCityName((String) map.get("opId"));
         List<CollectVo> list = new ArrayList<>();
@@ -116,7 +116,7 @@ public class AddressController {
         return AjaxResult.success(list);
     }
 
-    @PostMapping("queryHistory")
+    @PostMapping("/queryHistory")
     public AjaxResult queryHistory(@RequestBody HashMap<String, Object> map) {
         System.err.println(map.get("opId"));
         List<String> list = new ArrayList<>();
@@ -126,5 +126,9 @@ public class AddressController {
         return AjaxResult.success(list);
     }
 
+    @RequestMapping("/test")
+    public AjaxResult test(){
+        return AjaxResult.success("132a");
+    }
 
 }

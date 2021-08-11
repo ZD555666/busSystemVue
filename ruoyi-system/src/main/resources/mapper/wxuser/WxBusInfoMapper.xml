@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wx.wxuser.mapper.WxBusInfoMapper">
+
+    <select id="queryBus" resultType="WxBusInfo">
+        select *
+        from t_businfo
+        where busNo = #{busNo}
+          and (busParam = #{busParam1} or busParam = #{busParam2});
+    </select>
+
+    <insert id="insertRealRunBus" parameterType="WxBusInfo">
+        insert into t_bus_realrun (busNo, licensePlate)
+        values (#{busNo}, #{licensePlate});
+    </insert>
+
+    <update id="updBusState">
+        update t_businfo
+        set busParam = #{busParam}
+        where licensePlate = #{licensePlate} limit 1;
+    </update>
+
+
+</mapper>

@@ -143,7 +143,7 @@ public class UserInfoController extends BaseController {
         return AjaxResult.success("/wx/scanCode/" + opId + "/" + code);
     }
 
-    @GetMapping("scanCode/{opId}/{code}")
+    @GetMapping("/scanCode/{opId}/{code}")
     public AjaxResult scanCode(@PathVariable("opId") String opId, @PathVariable("code") String code) {
         String redisCode = redisTemplate.opsForValue().get(opId + "scan");
         String substring = redisCode.substring(redisCode.length() - 18, redisCode.length());
