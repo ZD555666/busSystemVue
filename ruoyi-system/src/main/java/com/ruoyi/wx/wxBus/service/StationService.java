@@ -1,6 +1,6 @@
 package com.ruoyi.wx.wxBus.service;
 
-import com.ruoyi.wx.wxBus.domain.Station;
+import com.ruoyi.wx.wxBus.domain.MyStation;
 
 import java.util.List;
 
@@ -12,14 +12,14 @@ import java.util.List;
  */
 public interface StationService {
     //查询站点
-    List<Station> queryStation(String value);
+    List<MyStation> queryStation(String value);
 
     //查询站点信息
-    Station queryStationName(String value);
+    MyStation queryStationName(String value);
 
     //查询站点及对应的线路车辆
-    List<Station> queryStations(String value);
+    List<MyStation> queryStations(String value);
 
     //查询所有站点
-    List<Station> queryAllStation();
+    List<MyStation> queryAllStation();
 }

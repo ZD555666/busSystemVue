@@ -1,7 +1,6 @@
 package com.ruoyi.wx.wxBus.mapper;
 
 import com.ruoyi.wx.wxBus.domain.Road;
-import com.ruoyi.wx.wxBus.domain.Station;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

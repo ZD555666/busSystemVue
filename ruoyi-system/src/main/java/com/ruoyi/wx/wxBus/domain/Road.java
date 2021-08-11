@@ -24,5 +24,5 @@ public class Road {
     private String travelTime;
     private int travelSort;
     private int cityId;
-    private Station station;
+    private MyStation station;
 }

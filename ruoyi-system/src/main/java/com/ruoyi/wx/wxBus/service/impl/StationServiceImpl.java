@@ -1,6 +1,6 @@
 package com.ruoyi.wx.wxBus.service.impl;
 
-import com.ruoyi.wx.wxBus.domain.Station;
+import com.ruoyi.wx.wxBus.domain.MyStation;
 import com.ruoyi.wx.wxBus.mapper.StationMapper;
 import com.ruoyi.wx.wxBus.service.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +21,24 @@ public class StationServiceImpl implements StationService {
     private StationMapper stationMapper;
 
     @Override
-    public List<Station> queryStation(String value) {
-        List<Station> stations = stationMapper.selectStation(value);
+    public List<MyStation> queryStation(String value) {
+        List<MyStation> stations = stationMapper.selectStation(value);
         return stations;
     }
 
     @Override
-    public Station queryStationName(String value) {
+    public MyStation queryStationName(String value) {
         return stationMapper.selectStationName(value);
     }
 
     @Override
-    public List<Station> queryStations(String value) {
-        List<Station> stations = stationMapper.selectStations(value);
+    public List<MyStation> queryStations(String value) {
+        List<MyStation> stations = stationMapper.selectStations(value);
         return stations;
     }
 
     @Override
-    public List<Station> queryAllStation() {
+    public List<MyStation> queryAllStation() {
         return stationMapper.selectAllStation();
     }
 }

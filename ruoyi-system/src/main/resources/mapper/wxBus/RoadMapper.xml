@@ -28,7 +28,7 @@
     <resultMap id="roadList" type="com.ruoyi.wx.wxBus.domain.Road">
         <result column="busNo" property="busNo"></result>
         <result column="travelSort" property="travelSort"></result>
-        <association property="station" javaType="com.ruoyi.wx.wxBus.domain.Station">
+        <association property="station" javaType="com.ruoyi.wx.wxBus.domain.MyStation">
             <result column="stationName" property="stationName"></result>
             <result column="stationId" property="stationId"></result>
             <result column="yPoint" property="yPoint"></result>

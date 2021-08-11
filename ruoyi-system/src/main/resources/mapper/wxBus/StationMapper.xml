@@ -4,19 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.wx.wxBus.mapper.StationMapper">
 
-    <select id="selectStation" resultType="com.ruoyi.wx.wxBus.domain.Station">
+    <select id="selectStation" resultType="com.ruoyi.wx.wxBus.domain.MyStation">
         select stationId,stationName,yPoint,xPoint
         from t_stationinfo
         where stationName like concat('%', #{value}, '%');
     </select>
 
-    <select id="selectStationName" resultType="com.ruoyi.wx.wxBus.domain.Station">
+    <select id="selectStationName" resultType="com.ruoyi.wx.wxBus.domain.MyStation">
         select stationId,stationName,yPoint,xPoint
         from t_stationinfo
         where stationName = #{value};
     </select>
 
-    <select id="selectAllStation" resultType="com.ruoyi.wx.wxBus.domain.Station">
+    <select id="selectAllStation" resultType="com.ruoyi.wx.wxBus.domain.MyStation">
         select stationId,stationName,yPoint,xPoint from t_stationinfo;
     </select>
 
@@ -27,7 +27,7 @@
 <!--        on t1.stationId = t2.stationId-->
 <!--        where t2.stationName like  concat('%', #{value}, '%');-->
 <!--    </select>-->
-<!--    <resultMap id="stationList" type="com.ruoyi.wx.wxBus.domain.Station">-->
+<!--    <resultMap id="stationList" type="com.ruoyi.wx.wxBus.domain.MyStation">-->
 <!--        <result column="busNo" property="busNo"></result>-->
 <!--        <result column="tarvelSort" property="tarvelSort"></result>-->
 <!--        <association property="road" javaType="com.ruoyi.wx.wxBus.domain.Road">-->

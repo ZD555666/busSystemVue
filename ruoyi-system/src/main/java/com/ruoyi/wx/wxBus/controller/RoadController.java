@@ -1,8 +1,8 @@
 package com.ruoyi.wx.wxBus.controller;
 
+import com.ruoyi.wx.wxBus.domain.MyStation;
 import com.ruoyi.wx.wxBus.domain.Road;
 import com.ruoyi.wx.wxBus.domain.RoadPlan;
-import com.ruoyi.wx.wxBus.domain.Station;
 import com.ruoyi.wx.wxBus.service.impl.RoadServiceImpl;
 import com.ruoyi.wx.wxBus.service.impl.StationServiceImpl;
 import org.gavaghan.geodesy.Ellipsoid;
@@ -39,7 +39,7 @@ public class RoadController {
             Map<String,String> result = new HashMap<>();
             List<Road> roads = roadService.queryRoad(value);
             if(roads.size() == 0){
-                List<Station> stations = stationService.queryStation(value);
+                List<MyStation> stations = stationService.queryStation(value);
                 if(stations.size() == 0){
                     return null;
                 }else{
@@ -67,8 +67,8 @@ public class RoadController {
 
     //获取对应站点的站点信息
     @RequestMapping(value = "/getStationData")
-    public Station getStationData(String stationName){
-        Station station = stationService.queryStationName(stationName);
+    public MyStation getStationData(String stationName){
+        MyStation station = stationService.queryStationName(stationName);
         return station;
     }
 
@@ -88,9 +88,9 @@ public class RoadController {
 
     //获取站点
     @RequestMapping(value = "searchStation")
-    public List<Station> getPlace(String value){
+    public List<MyStation> getPlace(String value){
         if(!value.equals("")){
-            List<Station> stations = stationService.queryStation(value);
+            List<MyStation> stations = stationService.queryStation(value);
             System.out.println(stations);
             return stations;
         }
@@ -113,14 +113,14 @@ public class RoadController {
         System.out.println(toWhereLongitude);
 
         //查询所有站点
-        List<Station> stations = stationService.queryAllStation();
-        List<Station> startNearStation = new ArrayList<>();
-        List<Station> endNearStation = new ArrayList<>();
+        List<MyStation> stations = stationService.queryAllStation();
+        List<MyStation> startNearStation = new ArrayList<>();
+        List<MyStation> endNearStation = new ArrayList<>();
         List<Double> meters = new ArrayList<>();
-        Map<Double,Station> metSta = new HashMap<>();
+        Map<Double, MyStation> metSta = new HashMap<>();
         List<Double> meters1 = new ArrayList<>();
-        Map<Double,Station> metSta1 = new HashMap<>();
-        for(Station station : stations){
+        Map<Double, MyStation> metSta1 = new HashMap<>();
+        for(MyStation station : stations){
             //拿到起点附近站点
             GlobalCoordinates target1 =new GlobalCoordinates(Double.parseDouble(locationLatitude), Double.parseDouble(locationLongitude));
             GlobalCoordinates source1 =new GlobalCoordinates(Double.parseDouble(station.getYPoint()), Double.parseDouble(station.getXPoint()));
@@ -167,11 +167,11 @@ public class RoadController {
         List<String> roads = new ArrayList<>();
         List<Road> startRoads = new ArrayList<>();
         List<Road> endRoads = new ArrayList<>();
-        for(Station startStation : startNearStation){
+        for(MyStation startStation : startNearStation){
             List<Road> startRoad = roadService.queryPassRoad(startStation.getStationId());
             startRoads.addAll(startRoad);
         }
-        for(Station endStation : endNearStation){
+        for(MyStation endStation : endNearStation){
             List<Road> endRoad = roadService.queryPassRoad(endStation.getStationId());
             endRoads.addAll(endRoad);
         }
@@ -206,13 +206,13 @@ public class RoadController {
                         break;
                     }
                 }
-                Station near = new Station();
-                Station near1 = new Station();
-                for(Station station :startNearStation){
+                MyStation near = new MyStation();
+                MyStation near1 = new MyStation();
+                for(MyStation station :startNearStation){
                     List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
                     for(Road road1 : roads2){
                         if(road1.getBusNo().equals(road)){
-                            for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                            for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
                                 if(entry.getValue() == station){
                                     if(mix > entry.getKey()){
                                         mix = entry.getKey();
@@ -222,11 +222,11 @@ public class RoadController {
                         }
                     }
                 }
-                for(Station station :endNearStation){
+                for(MyStation station :endNearStation){
                     List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
                     for(Road road1 : roads2){
                         if(road1.getBusNo().equals(road)){
-                            for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                            for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
                                 if(entry.getValue() == station){
                                     if(mix1 > entry.getKey()){
                                         mix1 = entry.getKey();
@@ -237,12 +237,12 @@ public class RoadController {
                     }
                 }
 
-                for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
                     if(entry.getKey().equals(mix)){
                        near = entry.getValue();
                     }
                 }
-                for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
                     if(entry.getKey().equals(mix1)){
                         near1 = entry.getValue();
                     }
@@ -270,11 +270,11 @@ public class RoadController {
 
         }
         //先移除直达的线路在进行同站换乘线路的查询
-        for(Station station :startNearStation) {
+        for(MyStation station :startNearStation) {
             List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
             startPassRoad.addAll(roads2);
         }
-        for(Station station :endNearStation) {
+        for(MyStation station :endNearStation) {
             List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
             endPassRoad.addAll(roads2);
         }
@@ -322,13 +322,13 @@ public class RoadController {
                                     break;
                                 }
                             }
-                            Station near = new Station();
-                            Station near1 = new Station();
-                            for(Station station :startNearStation) {
+                            MyStation near = new MyStation();
+                            MyStation near1 = new MyStation();
+                            for(MyStation station :startNearStation) {
                                 List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
                                 for(Road road4 : roads3){
                                     if(road4.getBusNo().equals(road.getBusNo())){
-                                        for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                                        for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
                                             if(entry.getValue() == station){
                                                 if(mix > entry.getKey()){
                                                     mix = entry.getKey();
@@ -339,11 +339,11 @@ public class RoadController {
                                 }
 
                             }
-                            for(Station station :endNearStation) {
+                            for(MyStation station :endNearStation) {
                                 List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
                                 for(Road road4 : roads3){
                                     if(road4.getBusNo().equals(road1.getBusNo())){
-                                        for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                                        for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
                                             if(entry.getValue() == station){
                                                 if(mix1 > entry.getKey()){
                                                     mix1 = entry.getKey();
@@ -354,12 +354,12 @@ public class RoadController {
                                 }
 
                             }
-                            for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                            for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
                                 if(entry.getKey().equals(mix)){
                                     near = entry.getValue();
                                 }
                             }
-                            for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                            for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
                                 if(entry.getKey().equals(mix1)){
                                     near1 = entry.getValue();
                                 }
@@ -452,13 +452,13 @@ public class RoadController {
                             break;
                         }
                     }
-                    Station near = new Station();
-                    Station near1 = new Station();
-                    for(Station station :startNearStation) {
+                    MyStation near = new MyStation();
+                    MyStation near1 = new MyStation();
+                    for(MyStation station :startNearStation) {
                         List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
                         for(Road road4 : roads3){
                             if(road4.getBusNo().equals(road.getBusNo())){
-                                for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                                for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
                                     if(entry.getValue() == station){
                                         if(mix > entry.getKey()){
                                             mix = entry.getKey();
@@ -469,11 +469,11 @@ public class RoadController {
                         }
 
                     }
-                    for(Station station :endNearStation) {
+                    for(MyStation station :endNearStation) {
                         List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
                         for(Road road4 : roads3){
                             if(road4.getBusNo().equals(road1.getBusNo())){
-                                for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                                for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
                                     if(entry.getValue() == station){
                                         if(mix1 > entry.getKey()){
                                             mix1 = entry.getKey();
@@ -484,12 +484,12 @@ public class RoadController {
                         }
 
                     }
-                    for (Map.Entry<Double,Station> entry : metSta.entrySet()) {
+                    for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
                         if(entry.getKey().equals(mix)){
                             near = entry.getValue();
                         }
                     }
-                    for (Map.Entry<Double,Station> entry : metSta1.entrySet()) {
+                    for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
                         if(entry.getKey().equals(mix1)){
                             near1 = entry.getValue();
                         }

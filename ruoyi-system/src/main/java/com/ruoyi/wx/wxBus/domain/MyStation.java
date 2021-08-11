@@ -15,7 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Station {
+public class MyStation {
     private int stationId;
     private int cityId;
     private String stationName;
