@@ -133,10 +133,20 @@
       <!--添加线路      -->
       <add-road></add-road>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="openAddRoad = false">取 消</el-button>
+        <el-button @click="cancelAdd">取 消</el-button>
       </div>
     </el-dialog>
-
+<!--确认删除弹窗-->
+<!--    <el-dialog-->
+<!--      title="提示"-->
+<!--      :visible.sync="openConfirmDelete"-->
+<!--      width="30%">-->
+<!--      <span>确定删除{{}}?</span>-->
+<!--      <span slot="footer" class="dialog-footer">-->
+<!--    <el-button @click="openConfirmDelete = false">取 消</el-button>-->
+<!--    <el-button type="primary" @click="openConfirmDelete = false">确 定</el-button>-->
+<!--    </span>-->
+<!--    </el-dialog>-->
   </div>
 </template>
 
@@ -151,6 +161,8 @@ export default {
   components:{viewSchedule, addRoad, getStation},
   data() {
     return {
+      //打开确认删除弹窗
+      openConfirmDelete:false,
       //打开新增弹窗
       openAddRoad: false,
       //一条线路的信息
@@ -188,11 +200,28 @@ export default {
     this.getList();
   },
   methods: {
-    /** 打开新增页面 */
+    /** 查看已配置的线路并可修改 */
+    viewUpdateRoad(roadList) {
+
+    },
+    /** 删除线路 */
+    deleteRoad(){
+
+    },
+
+    /** 取消新增 */
+    cancelAdd(){
+      //初始化启反程数据列表
+      this.$store.commit("roadInfo/clearRoadStation");
+      this.openAddRoad = false
+    },
+    /** 关闭新增页面 */
     closeAdd(done) {
       this.$confirm('确认关闭？')
         .then(_ => {
           done();
+          //初始化启反程数据列表
+          this.$store.commit("roadInfo/clearRoadStation");
         })
         .catch(_ => {
         });

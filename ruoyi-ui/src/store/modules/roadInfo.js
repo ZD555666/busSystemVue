@@ -1,4 +1,3 @@
-import {format} from "echarts/lib/export";
 
 const state={
   localSelect:{xPoint: '', yPoint: ''},
@@ -35,21 +34,6 @@ const state={
       }
     }
   ],
-  returnMapStation:[],
-  returnMapRoad:[
-    {
-      geometry: {
-        type: 'LineString',
-        coordinates: [
-          [118.20011400, 24.51462700],
-          [118.12075700, 24.47598800]
-        ],
-      },
-      properties: {
-        color: 'red'
-      }
-    }
-  ]
 }
 
 const mutations={
