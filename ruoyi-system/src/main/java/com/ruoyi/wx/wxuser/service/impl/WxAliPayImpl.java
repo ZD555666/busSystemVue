@@ -32,4 +32,9 @@ public class WxAliPayImpl implements WxAliPayService {
     public String queryPayState(String out_trade_no, String openId, int total_amount) {
         return aliPayMapper.queryPayState(out_trade_no, openId, total_amount);
     }
+
+    @Override
+    public String queryOpenIdByOrderNo(String orderNo) {
+        return aliPayMapper.queryOpenIdByOrderNo(orderNo);
+    }
 }

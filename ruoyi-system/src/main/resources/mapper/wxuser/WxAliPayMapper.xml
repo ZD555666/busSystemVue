@@ -23,4 +23,10 @@
           and total_amount = #{total_amount};
     </select>
 
+    <select id="queryOpenIdByOrderNo" parameterType="String" resultType="String">
+        select openId
+        from t_wx_alipay
+        where out_trade_no = #{orderNo};
+    </select>
+
 </mapper>
