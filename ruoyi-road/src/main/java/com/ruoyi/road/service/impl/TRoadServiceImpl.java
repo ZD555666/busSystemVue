@@ -111,4 +111,10 @@ public class TRoadServiceImpl implements ITRoadService
         int flag= tRoadMapper.insertRoad(roadList);
         return flag;
     }
+
+    @Override
+    public int deleteRoad(TRoad road) {
+        int flag=tRoadMapper.deleteRoad(road);
+        return 0;
+    }
 }

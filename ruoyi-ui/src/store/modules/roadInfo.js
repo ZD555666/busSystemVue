@@ -33,14 +33,48 @@ const state={
         color: 'red'
       }
     }
-  ],
+  ]
 }
 
 const mutations={
+  //查看某路线站点
+  viewRoadStation:(state, roadList)=>{
+    //界面显示启程
+    var stations = [];
+    for (let i = 0; i < roadList.rsList.length; i++) {
+      var station = {};
+      station =
+        {
+          xPoint: roadList.rsList[i].xpoint,
+          yPoint: roadList.rsList[i].ypoint,
+          stationName: roadList.rsList[i].stationName,
+          stationId: roadList.rsList[i].stationId
+        };
+      stations.push(station);
+    }
+    state.stationSort= stations;
+    //界面显示返程
+    var stations2 = [];
+    for (let i = 0; i < roadList.rsReList.length; i++) {
+      var station2 = {};
+      station2=
+        {
+          xPoint: roadList.rsReList[i].xpoint,
+          yPoint: roadList.rsReList[i].ypoint,
+          stationName: roadList.rsReList[i].stationName,
+          stationId: roadList.rsReList[i].stationId
+        }
+      stations2.push(station2);
+    }
+    state.returnSort = stations2;
+
+  },
   //初始化配置的路线
   clearRoadStation(state){
     state.stationSort= [{xPoint: '', yPoint: '', stationName: '', stationId: ''}];
     state.returnSort= [{xPoint: '', yPoint: '', stationName: '', stationId: ''}];
+    state.mapStationSort=[];
+    state.mapRoadSort=[];
   },
   //返程地图站点
   addReturnMapStation: (state) => {

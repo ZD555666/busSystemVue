@@ -69,4 +69,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{item.cityId},#{item.direction})
         </foreach>
     </insert>
+<!--    删除路线-->
+    <delete id="deleteRoad" parameterType="com.ruoyi.road.domain.TRoad">
+        DELETE
+        FROM t_road
+        WHERE busNo = #{busNo}
+          AND cityId = #{cityId}
+    </delete>
 </mapper>
