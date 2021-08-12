@@ -32,7 +32,7 @@
           plain
           icon="el-icon-plus"
           size="mini"
-          @click="openAddRoad = true"
+          @click="addRoad(0)"
         >新增</el-button>
       </el-col>
       <right-toolbar @queryTable="getList"></right-toolbar>
@@ -48,11 +48,12 @@
             size="mini"
             type="text"
             icon="el-icon-s-promotion"
+            @click="viewUpdateRoad(1,scope.row)"
           >{{ scope.row.rsListSize }} , {{ scope.row.rsReListSize }}
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="每日运行班次数" align="center">
+      <el-table-column label="每日运行班次数(次)" align="center">
       <template slot-scope="scope">
         <el-button
           size="mini"
@@ -63,7 +64,7 @@
         </el-button>
       </template>
       </el-table-column>
-      <el-table-column label="线路在用车辆数" align="center">
+      <el-table-column label="线路在用车辆数(辆)" align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -74,14 +75,15 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="花费" align="center" prop="cost"/>
-      <el-table-column label="单程时间" align="center" prop="travelTime" />
+      <el-table-column label="花费(元)" align="center" prop="cost"/>
+      <el-table-column label="单程时间(分钟)" align="center" prop="travelTime" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
+            @click="deleteRoad(scope.row)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -126,16 +128,12 @@
       <span slot="footer" class="dialog-footer">
     <el-button @click="scheduleVisible = false">取 消</el-button>
     <el-button type="primary" @click="scheduleVisible = false">确 定</el-button>
-  </span>
+    </span>
     </el-dialog>
 <!--    新增页面-->
-    <el-dialog title="新增线路" :visible.sync="openAddRoad" width="60%" :before-close="closeAdd">
-      <!--添加线路      -->
-      <add-road></add-road>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelAdd">取 消</el-button>
-      </div>
-    </el-dialog>
+
+<!--      添加线路-->
+    <add-road ref="child1" @fatherMethod="getList"></add-road>
 <!--确认删除弹窗-->
 <!--    <el-dialog-->
 <!--      title="提示"-->
@@ -151,7 +149,7 @@
 </template>
 
 <script>
-import { listRoads } from "@/api/road/roads";
+import {deleteRoad, delRoads, listRoads} from "@/api/road/roads";
 import viewSchedule from "@/views/road/roads/viewSchedule";
 import addRoad from '@/views/road/roads/addRoad';
 import getStation from '@/views/road/roads/getStation';
@@ -161,6 +159,10 @@ export default {
   components:{viewSchedule, addRoad, getStation},
   data() {
     return {
+      //判断弹窗里的内容是新增还是更新
+      dialogType:0,
+      //点击删除后保存的数据
+      deleteList:[],
       //打开确认删除弹窗
       openConfirmDelete:false,
       //打开新增弹窗
@@ -200,21 +202,30 @@ export default {
     this.getList();
   },
   methods: {
+    /** 新增线路 */
+    addRoad(type){
+      this.$refs.child1.parentClick(type);
+    },
     /** 查看已配置的线路并可修改 */
-    viewUpdateRoad(roadList) {
-
+    viewUpdateRoad(type,roadList) {
+      this.openAddRoad=true;
+      console.log("父页面", this.$refs.child1);
+      this.$refs.child1.parentClick(type, roadList);
     },
     /** 删除线路 */
-    deleteRoad(){
+    deleteRoad(roadList){
+      console.log("删除的集合", roadList);
+      let params={
+        cityId: roadList.cityId,
+        busNo:roadList.busNo
+      }
+      deleteRoad(params).then(response => {
+        this.getList();
+        alert(response);
+      });
 
     },
 
-    /** 取消新增 */
-    cancelAdd(){
-      //初始化启反程数据列表
-      this.$store.commit("roadInfo/clearRoadStation");
-      this.openAddRoad = false
-    },
     /** 关闭新增页面 */
     closeAdd(done) {
       this.$confirm('确认关闭？')

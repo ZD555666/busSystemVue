@@ -30,4 +30,7 @@ public interface ITRoadService
 
     //新增线路
     public int insertRoad(List<TRoad> roadList);
+
+    //删除路线
+    public int deleteRoad(TRoad road);
 }

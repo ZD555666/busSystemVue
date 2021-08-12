@@ -28,19 +28,21 @@ export function addRoads(data) {
 }
 
 // 修改线路配置
-export function updateRoads(data) {
+export function updateRoads(params) {
   return request({
-    url: '/road/roads',
-    method: 'put',
-    data: data
+    url: '/road/roads/updateRoad',
+    method: 'get',
+    params: params
+    // config: {headers: {'Content-Type': 'application/json;charset=UTF-8'}}
   })
 }
 
 // 删除线路配置
-export function delRoads(roadid) {
+export function deleteRoad(params) {
   return request({
-    url: '/road/roads/' + roadid,
-    method: 'delete'
+    url: '/road/roads/deleteRoad',
+    method: 'get',
+    params: params
   })
 }
 

@@ -52,29 +52,48 @@ public class TRoadController extends BaseController
     }
 //添加线路
     @GetMapping("/addRoads")
-    public String addRoads(AddRoadInfo addRoadInfo, @RequestParam("stationPositive") String stationPositive, @RequestParam("stationReverse") String stationReverse){
+    public String addRoads(AddRoadInfo addRoadInfo, @RequestParam("stationPositive") String stationPositive, @RequestParam("stationReverse") String stationReverse, @RequestParam("actionType") int actionType){
+        String msg="";
+        if (actionType == 0) {
+            //新增
+            msg="新增成功";
+        } else if (actionType == 1) {
+            //更新
+            TRoad road = TRoad.builder().busNo(addRoadInfo.getRoadNo()).cityId(Integer.parseInt(addRoadInfo.getCityId())).build();
+            int flag = tRoadService.deleteRoad(road);
+            msg = "修改成功";
+        }
         Gson gson=new Gson();
-        System.out.println(addRoadInfo);
+//        System.out.println(addRoadInfo);
         List<Station> positiveList= gson.fromJson(stationPositive, new TypeToken<List<Station>>() {}.getType());
-        System.out.println(positiveList);
+//        System.out.println(positiveList);
         List<Station> reverseList= gson.fromJson(stationReverse, new TypeToken<List<Station>>() {}.getType());
-        System.out.println(reverseList);
+//        System.out.println(reverseList);
         List<TRoad> roadList=new ArrayList<TRoad>();
         for (Station s : positiveList) {
             TRoad road=TRoad.builder().stationId(Integer.parseInt(s.getStationId())).busNo(addRoadInfo.getRoadNo()).cost(Integer.parseInt(addRoadInfo.getCost())).
                     travelTime(addRoadInfo.getTime()).cityId(Integer.parseInt(addRoadInfo.getCityId())).direction(0).travelSort(positiveList.indexOf(s)+1).build();
             roadList.add(road);
         }
-        System.out.println("11111111111111111111111111111111111111");
-        System.out.println(roadList);
+//        System.out.println(roadList);
         for (Station s : reverseList) {
             TRoad road = TRoad.builder().stationId(Integer.parseInt(s.getStationId())).busNo(addRoadInfo.getRoadNo()).cost(Integer.parseInt(addRoadInfo.getCost())).
-                    travelTime(addRoadInfo.getTime()).cityId(Integer.parseInt(addRoadInfo.getCityId())).direction(1).travelSort(positiveList.indexOf(s) + 1).build();
+                    travelTime(addRoadInfo.getTime()).cityId(Integer.parseInt(addRoadInfo.getCityId())).direction(1).travelSort(reverseList.indexOf(s) + 1).build();
             roadList.add(road);
         }
-        System.out.println(roadList);
+//        System.out.println(roadList);
         int flag=tRoadService.insertRoad(roadList);
-        return "新增成功";
+        return msg;
     }
-
+    //删除线路
+    @GetMapping("/deleteRoad")
+    public String deleteRoads(TRoad road){
+        int flag=tRoadService.deleteRoad(road);
+        return "删除成功";
+    }
+//    //更新路线
+//    @GetMapping("/updateRoad")
+//    public String updateRoad(){
+//
+//    }
 }

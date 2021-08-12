@@ -1,29 +1,30 @@
 <template>
   <div id="addRoad">
+    <el-dialog :title="dialogTitle" :visible.sync="openAddRoad" width="60%" :before-close="closeAdd">
     <el-form ref="form" :model="form" label-width="80px">
       <el-row>
         <el-col :span="10">
           <el-form-item label="城市：">
-            <el-select v-model="form.cityId" placeholder="请选择城市" >
+            <el-select v-model="form.cityId" placeholder="请选择城市" id="city" :disabled="inputAble.cityAble">
               <el-option v-for="city in cityList" :label="city.cityname" :value="city.cityid" :key="city.cityid" ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="10">
           <el-form-item label="线路名：">
-            <el-input v-model="form.roadNo"></el-input>
+            <el-input v-model="form.roadNo" id="roadNo" :disabled="inputAble.roadNoAble"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="10">
-          <el-form-item label="花费：">
-            <el-input v-model="form.cost"></el-input>
+          <el-form-item label="花费(元)：" id="cost" >
+            <el-input v-model="form.cost" :disabled="inputAble.costAble"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="10">
-          <el-form-item label="时长：">
-            <el-input v-model="form.time"></el-input>
+          <el-form-item label="时长(分钟)：" id="time"  label-width="120px">
+            <el-input v-model="form.time" :disabled="inputAble.timeAble"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -110,10 +111,8 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-form-item>
-          <el-button type="primary" @click="confirmSubmit">立即创建</el-button>
-<!--          <el-button>取消</el-button>-->
-        </el-form-item>
+          <el-button type="primary" v-if="newVisible" @click="confirmSubmit(0)">立即创建</el-button>
+          <el-button type="primary" v-if="updateVisible" @click="confirmSubmit(1)">确认修改</el-button>
       </el-row>
     </el-form>
 <!--    地图站点选择弹窗-->
@@ -148,12 +147,16 @@
       width="50%">
     <showRoad></showRoad>
     </el-dialog>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelAdd">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import getStation from '@/views/road/roads/getStation';
-import {addRoads, cityOption, listRoads} from "@/api/road/roads";
+import {addRoads, cityOption, listRoads, updateRoads} from "@/api/road/roads";
 import {createNamespacedHelpers} from 'vuex'
 const {mapState, mapActions} = createNamespacedHelpers('roadInfo')
 import showRoad from '@/views/road/roads/showRoad'
@@ -163,6 +166,21 @@ export default {
   components:{getStation, showRoad},
   data() {
     return {
+      //表单文字是否可编辑
+      inputAble:{
+        cityAble:false,
+        roadNoAble:false,
+        costAble:false,
+        timeAble:false
+      },
+      //新建线路的按钮显隐
+      newVisible:false,
+      //更新线路的按钮显隐
+      updateVisible:false,
+      //弹窗的标题
+      dialogTitle:'',
+      //打开新增弹窗
+      openAddRoad: false,
       //预览线路弹窗
       previewRoad: false,
       //站点顺序
@@ -194,8 +212,53 @@ export default {
     })
   },
   methods: {
+    /** 取消新增 */
+    cancelAdd() {
+      //初始化启反程数据列表
+      this.openAddRoad = false;
+      this.initFrom();
+    },
+    /** 关闭新增页面 */
+    closeAdd(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done();
+          //初始化启反程数据列表
+          this.initFrom();
+        })
+        .catch(_ => {
+        });
+    },
+    /** 查看已配置的线路并可修改 */
+    parentClick(type, roadList) {
+      this.openAddRoad = true;
+      if (type==0){
+        this.dialogTitle = '新增线路';
+        this.newVisible=true;
+        this.updateVisible=false;
+        this.inputAble.cityAble = false;
+        this.inputAble.roadNoAble = false;
+        // this.inputAble.costAble = false;
+        this.inputAble.timeAble = false;
+      } else if (type==1){
+        this.dialogTitle='查看和修改线路';
+        this.newVisible = false;
+        this.updateVisible = true;
+        this.inputAble.cityAble = true;
+        this.inputAble.roadNoAble = true;
+        // this.inputAble.costAble=true;
+        this.inputAble.timeAble = true;
+        this.form.cityId= roadList.cityId;
+        this.form.roadNo= roadList.busNo;
+        this.form.cost= roadList.cost;
+        this.form.time= roadList.travelTime;
+        this.$store.commit("roadInfo/viewRoadStation", roadList);
+      }
+      console.log("子页面", type);
+      console.log("子页面", roadList);
+    },
     /** 提交表单 */
-    confirmSubmit(){
+    confirmSubmit(type){
       this.form.stationPositive= JSON.stringify(this.$store.state.roadInfo.stationSort);
       this.form.stationReverse = JSON.stringify(this.$store.state.roadInfo.returnSort);
       let map={
@@ -204,19 +267,47 @@ export default {
         cost: this.form.cost,
         time: this.form.time,
         stationPositive: this.form.stationPositive,
-        stationReverse: this.form.stationReverse
+        stationReverse: this.form.stationReverse,
+        actionType: 0
       }
-      addRoads(map).then(response => {
-        alert(response);
-      });
-      //初始化启反程数据列表
+      let map2 = {
+        cityId: this.form.cityId,
+        roadNo: this.form.roadNo,
+        cost: this.form.cost,
+        time: this.form.time,
+        stationPositive: this.form.stationPositive,
+        stationReverse: this.form.stationReverse,
+        actionType: 1
+      }
+      if (type==0){
+        addRoads(map).then(response => {
+          this.$emit('fatherMethod');
+          this.openAddRoad=false;
+          alert(response);
+        });
+      }else if (type == 1){
+        addRoads(map2).then(response => {
+          this.$emit('fatherMethod');
+          this.openAddRoad = false;
+          alert(response);
+        });
+      }
+     this.initFrom();
+    },
+    /** 初始化启反程数据列表和数据表单 */
+    initFrom(){
       this.$store.commit("roadInfo/clearRoadStation");
+      this.form.roadNo = '';
+      this.form.cost = '';
+      this.form.time = '';
+      this.form.cityId = '';
     },
     /** 打开预览线路 */
     openPreviewRoad(roadType) {
       if(roadType==0){
         this.$store.commit("roadInfo/addMapRoadSort");
         this.$store.commit("roadInfo/addMapStationSort");
+
       }else if (roadType==1){
         this.$store.commit("roadInfo/addReturnMapRoad");
         this.$store.commit("roadInfo/addReturnMapStation");

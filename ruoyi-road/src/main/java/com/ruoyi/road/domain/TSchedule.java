@@ -23,7 +23,7 @@ public class TSchedule extends BaseEntity
     private String busNo;
 
     /** 各个时间段发车时间 */
-    @Excel(name = "各个时间段发车时间")
+    @Excel(name = "各个时间段发车间隔时间")
     private Integer timeInterval;
 
     /** 发车时间段(前) */

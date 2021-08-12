@@ -60,6 +60,7 @@
           plain
           icon="el-icon-plus"
           size="mini"
+          @click="openAddMany"
         >新增多时段
         </el-button>
       </el-col>
@@ -85,17 +86,17 @@
           v-hasPermi="['road:schedule:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--		  :loading="exportLoading"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['road:schedule:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+		  :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['road:schedule:export']"
+        >导出</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -103,9 +104,9 @@
       <el-table-column type="index" label="序号" align="center"/>
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="公交线路" align="center" prop="busNo" />
-      <el-table-column label="发车时间段(前)" align="center" prop="starTime" />
-      <el-table-column label="发车时间段(后)" align="center" prop="endTime" />
-      <el-table-column label="各个时间段发车间隔时间" align="center" prop="timeInterval"/>
+      <el-table-column label="发车时间段(前)/(点钟)" align="center" prop="starTime" />
+      <el-table-column label="发车时间段(后)/(点钟)" align="center" prop="endTime" />
+      <el-table-column label="各个时间段发车间隔时间/(分钟)" align="center" prop="timeInterval"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -137,17 +138,17 @@
     <!-- 添加或修改线路发车时刻配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="公交线路：" prop="busNo" label-width="100px">
+        <el-form-item label="公交线路：" prop="busNo" label-width="180px">
           <el-input v-model="form.busNo" placeholder="请输入公交线路" />
         </el-form-item>
-        <el-form-item label="时间间隔：" prop="timeInterval" label-width="100px">
-          <el-input v-model="form.timeInterval" placeholder="请输入各个时间段发车时间" />
-        </el-form-item>
-        <el-form-item label="发车时间段：(前)" prop="starTime" label-width="100px">
+        <el-form-item label="发车时间段：(前)/(点钟)" prop="starTime" label-width="180px">
           <el-input v-model="form.starTime" placeholder="请输入发车时间段(前)" />
         </el-form-item>
-        <el-form-item label="发车时间段：(后)" prop="endTime" label-width="100px">
+        <el-form-item label="发车时间段：(后)/(点钟)" prop="endTime" label-width="180px">
           <el-input v-model="form.endTime" placeholder="请输入发车时间段(后)" />
+        </el-form-item>
+        <el-form-item label="发车间隔/(分钟)：" prop="timeInterval" label-width="180px">
+          <el-input v-model="form.timeInterval" placeholder="请输入各个时间段发车时间"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -155,14 +156,17 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <add-many-times ref="child1"></add-many-times>
   </div>
 </template>
 
 <script>
 import { listSchedule, getSchedule, delSchedule, addSchedule, updateSchedule, exportSchedule } from "@/api/road/schedule";
+import addManyTimes from "@/views/road/schedule/addManyTimes";
 
 export default {
   name: "Schedule",
+  components:{addManyTimes},
   data() {
     return {
       // 遮罩层
@@ -208,6 +212,10 @@ export default {
     this.getList();
   },
   methods: {
+    /** 调用子页面方法 */
+    openAddMany(){
+      this.$refs.child1.parentClick();
+    },
     /** 查询线路发车时刻配置列表 */
     getList() {
       this.loading = true;
