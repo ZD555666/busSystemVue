@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.publicBusManage.driverSalary.mapper.TBusdriversalaryMapper">
+
+    <resultMap type="TBusdriversalary" id="TBusdriversalaryResult">
+        <result property="salaryid"    column="salaryId"    />
+        <result property="busdriverid"    column="busDriverId"    />
+        <result property="driversalary"    column="driverSalary"    />
+        <result property="attr1"    column="attr1"    />
+        <result property="attr2"    column="attr2"    />
+    </resultMap>
+
+    <sql id="selectTBusdriversalaryVo">
+        select salaryId, busDriverId, driverSalary, attr1, attr2 from t_busdriversalary
+    </sql>
+
+    <select id="selectTBusdriversalaryList" parameterType="TBusdriversalary" resultMap="TBusdriversalaryResult">
+        <include refid="selectTBusdriversalaryVo"/>
+        <where>
+            <if test="busdriverid != null "> and busDriverId = #{busdriverid}</if>
+            <if test="driversalary != null "> and driverSalary = #{driversalary}</if>
+            <if test="attr1 != null  and attr1 != ''"> and attr1 = #{attr1}</if>
+            <if test="attr2 != null  and attr2 != ''"> and attr2 = #{attr2}</if>
+        </where>
+    </select>
+
+    <select id="selectTBusdriversalaryById" parameterType="Long" resultMap="TBusdriversalaryResult">
+        <include refid="selectTBusdriversalaryVo"/>
+        where salaryId = #{salaryid}
+    </select>
+
+    <insert id="insertTBusdriversalary" parameterType="TBusdriversalary" useGeneratedKeys="true" keyProperty="salaryid">
+        insert into t_busdriversalary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="busdriverid != null">busDriverId,</if>
+            <if test="driversalary != null">driverSalary,</if>
+            <if test="attr1 != null">attr1,</if>
+            <if test="attr2 != null">attr2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="busdriverid != null">#{busdriverid},</if>
+            <if test="driversalary != null">#{driversalary},</if>
+            <if test="attr1 != null">#{attr1},</if>
+            <if test="attr2 != null">#{attr2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTBusdriversalary" parameterType="TBusdriversalary">
+        update t_busdriversalary
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="busdriverid != null">busDriverId = #{busdriverid},</if>
+            <if test="driversalary != null">driverSalary = #{driversalary},</if>
+            <if test="attr1 != null">attr1 = #{attr1},</if>
+            <if test="attr2 != null">attr2 = #{attr2},</if>
+        </trim>
+        where salaryId = #{salaryid}
+    </update>
+
+    <delete id="deleteTBusdriversalaryById" parameterType="Long">
+        delete from t_busdriversalary where salaryId = #{salaryid}
+    </delete>
+
+    <delete id="deleteTBusdriversalaryByIds" parameterType="String">
+        delete from t_busdriversalary where salaryId in
+        <foreach item="salaryid" collection="array" open="(" separator="," close=")">
+            #{salaryid}
+        </foreach>
+    </delete>
+</mapper>

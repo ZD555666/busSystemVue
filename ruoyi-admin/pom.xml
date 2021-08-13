@@ -68,6 +68,12 @@
             <artifactId>ruoyi-road</artifactId>
         </dependency>
 
+        <!-- 新增模块，司机管理-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-drivermanage</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -32,6 +32,11 @@ import ImageUpload from "@/components/ImageUpload"
 import DictTag from '@/components/DictTag'
 
 import VueMeta from 'vue-meta'
+//引入日历FullCalendar
+import FullCalendar from 'vue-full-calendar' //全局
+import 'fullcalendar/dist/fullcalendar.css'
+//引入moment
+import moment from "moment"
 
 // 百度地图api
 import BaiduMap from 'vue-baidu-map'
@@ -91,7 +96,8 @@ Vue.component('ImageUpload', ImageUpload)
 
 Vue.use(directive)
 Vue.use(VueMeta)
-
+Vue.use(FullCalendar)
+Vue.use(moment)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

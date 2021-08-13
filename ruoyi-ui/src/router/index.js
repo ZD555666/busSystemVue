@@ -174,6 +174,36 @@ export const constantRoutes = [
         meta: { title: '修改生成配置' }
       }
     ]
+  },
+  {
+    path: '/yquantifies',
+    component: Layout,
+    children: [
+      {
+        path: '/ymDriverSalary',
+        component: (resolve) => require(['@/views/publicBusManage/quantifies/ymDriverSalary/index'], resolve),
+      }
+    ]
+  },
+  {
+    path: '/yquantifies',
+    component: Layout,
+    children: [
+      {
+        path: '/workPunchIn',
+        component: (resolve) => require(['@/views/publicBusManage/quantifies/punchIn/workPunchIn'], resolve),
+      }
+    ]
+  },
+  {
+    path: '/yquantifies',
+    component: Layout,
+    children: [
+      {
+        path: '/ymDepartureConfirm',
+        component: (resolve) => require(['@/views/publicBusManage/quantifies/ymDepartureConfirm/index'], resolve),
+      }
+    ]
   }
 ]
 

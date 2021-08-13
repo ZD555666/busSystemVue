@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.publicBusManage.quantifies.mapper.TDriverWorktimeMapper">
+
+    <resultMap type="TDriverWorktime" id="TDriverWorktimeResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="busdriverid"    column="busDriverId"    />
+        <result property="driverworktime"    column="driverWorkTime"    />
+        <result property="atworkpunch"    column="atWorkPunch"    />
+        <result property="offdutypunch"    column="offDutyPunch"    />
+        <result property="gobuspunch"    column="goBusPunch"    />
+        <result property="sysUserId"    column="sysUserId"    />
+        <result property="tDriverId"    column="tDriverId"    />
+    </resultMap>
+
+    <resultMap type="SysUserY" id="SysUserYResult">
+        <result property="userId"    column="user_id"    />
+        <result property="driverId"    column="driverWorkId"    />
+        <result property="userName"    column="user_name"    />
+        <result property="password"    column="password"    />
+    </resultMap>
+
+    <resultMap type="TDriverYy" id="TDriverYyResult">
+        <result property="driverWorkId"    column="driverWorkId"    />
+        <result property="userid"    column="user_id"    />
+        <result property="driverName"    column="driverName"    />
+        <result property="busNo"    column="busNo"    />
+    </resultMap>
+
+    <resultMap type="TDriverTime" id="TDriverTimeResult">
+        <result property="driverWorkTime"    column="driverWorkTime"    />
+        <result property="atWorkPunch"    column="atWorkPunch"    />
+        <result property="offDutyPunch"    column="offDutyPunch"    />
+        <result property="goBusPunch"    column="goBusPunch"    />
+    </resultMap>
+
+    <sql id="selectTDriverWorktimeVo">
+        select id, user_id, busDriverId, driverWorkTime, atWorkPunch, offDutyPunch, goBusPunch, sysUserId, tDriverId from t_driver_worktime
+    </sql>
+
+    <select id="selectTDriverWorktimeList" parameterType="TDriverWorktime" resultMap="TDriverWorktimeResult">
+        <include refid="selectTDriverWorktimeVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="busdriverid != null "> and busDriverId = #{busdriverid}</if>
+            <if test="driverworktime != null  and driverworktime != ''"> and driverWorkTime = #{driverworktime}</if>
+            <if test="atworkpunch != null "> and atWorkPunch = #{atworkpunch}</if>
+            <if test="offdutypunch != null "> and offDutyPunch = #{offdutypunch}</if>
+            <if test="gobuspunch != null  and gobuspunch != ''"> and goBusPunch = #{gobuspunch}</if>
+            <if test="sysUserId != null  and sysUserId != ''"> and sysUserId = #{sysUserId}</if>
+            <if test="tDriverId != null  and tDriverId != ''"> and tDriverId = #{tDriverId}</if>
+        </where>
+    </select>
+
+    <select id="selectTDriverWorktimeById" parameterType="Long" resultMap="TDriverWorktimeResult">
+        <include refid="selectTDriverWorktimeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTDriverWorktime" parameterType="TDriverWorktime" useGeneratedKeys="true" keyProperty="id">
+        insert into t_driver_worktime
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="busdriverid != null">busDriverId,</if>
+            <if test="driverworktime != null">driverWorkTime,</if>
+            <if test="atworkpunch != null">atWorkPunch,</if>
+            <if test="offdutypunch != null">offDutyPunch,</if>
+            <if test="gobuspunch != null">goBusPunch,</if>
+            <if test="sysUserId != null">sysUserId,</if>
+            <if test="tDriverId != null">tDriverId,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="busdriverid != null">#{busdriverid},</if>
+            <if test="driverworktime != null">#{driverworktime},</if>
+            <if test="atworkpunch != null">#{atworkpunch},</if>
+            <if test="offdutypunch != null">#{offdutypunch},</if>
+            <if test="gobuspunch != null">#{gobuspunch},</if>
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="tDriverId != null">#{tDriverId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTDriverWorktime" parameterType="TDriverWorktime">
+        update t_driver_worktime
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="busdriverid != null">busDriverId = #{busdriverid},</if>
+            <if test="driverworktime != null">driverWorkTime = #{driverworktime},</if>
+            <if test="atworkpunch != null">atWorkPunch = #{atworkpunch},</if>
+            <if test="offdutypunch != null">offDutyPunch = #{offdutypunch},</if>
+            <if test="gobuspunch != null">goBusPunch = #{gobuspunch},</if>
+            <if test="sysUserId != null">sysUserId = #{sysUserId},</if>
+            <if test="tDriverId != null">tDriverId = #{tDriverId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTDriverWorktimeById" parameterType="Long">
+        delete from t_driver_worktime where id = #{id}
+    </delete>
+
+    <delete id="deleteTDriverWorktimeByIds" parameterType="String">
+        delete from t_driver_worktime where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+<!--    打卡插入数据-->
+<!--  查询用户id  -->
+<!--    <select id="selectTDriverWorktimeList" parameterType="SysUserY" resultMap="SysUserYResult">-->
+<!--        select sys_user from  where user_name=#{userName} and password=#{password}-->
+<!--    </select>-->
+
+<!--    查询司机id-->
+    <select id="selectDriverId" parameterType="TDriverYy" resultMap="TDriverYyResult">
+        select driverWorkId from t_driver where driverName=#{driverName}
+    </select>
+
+<!--    插入打卡信息到数据库-->
+    <insert id="insertPunchInRecord" parameterType="TDriverWorktime" useGeneratedKeys="true" keyProperty="id">
+        insert into t_driver_worktime
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="busdriverid != null">busDriverId,</if>
+            <if test="driverworktime != null">driverWorkTime,</if>
+            <if test="atworkpunch != null">atWorkPunch,</if>
+            <if test="offdutypunch != null">offDutyPunch,</if>
+            <if test="gobuspunch != null">goBusPunch,</if>
+            <if test="sysUserId != null">sysUserId,</if>
+            <if test="tDriverId != null">tDriverId,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="busdriverid != null">#{busdriverid},</if>
+            <if test="driverworktime != null">#{driverworktime},</if>
+            <if test="atworkpunch != null">#{atworkpunch},</if>
+            <if test="offdutypunch != null">#{offdutypunch},</if>
+            <if test="gobuspunch != null">#{gobuspunch},</if>
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="tDriverId != null">#{tDriverId},</if>
+        </trim>
+    </insert>
+
+<!--    插入下班打卡数据-->
+    <insert id="insertOffDutyRecord" parameterType="TDriverWorktime" useGeneratedKeys="true" keyProperty="id">
+        insert into t_driver_worktime
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="busdriverid != null">busDriverId,</if>
+            <if test="driverworktime != null">driverWorkTime,</if>
+            <if test="atworkpunch != null">atWorkPunch,</if>
+            <if test="offdutypunch != null">offDutyPunch,</if>
+            <if test="gobuspunch != null">goBusPunch,</if>
+            <if test="sysUserId != null">sysUserId,</if>
+            <if test="tDriverId != null">tDriverId,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="busdriverid != null">#{busdriverid},</if>
+            <if test="driverworktime != null">#{driverworktime},</if>
+            <if test="atworkpunch != null">#{atworkpunch},</if>
+            <if test="offdutypunch != null">#{offdutypunch},</if>
+            <if test="gobuspunch != null">#{gobuspunch},</if>
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="tDriverId != null">#{tDriverId},</if>
+        </trim>
+    </insert>
+
+<!--    查询数据库上班打卡的时间-->
+    <select id="selectDriverOnTime" parameterType="TDriverYy" resultMap="TDriverTimeResult">
+        select atWorkPunch from t_driver_worktime where atWorkPunch=#{atWorkPunch}
+    </select>
+
+</mapper>
