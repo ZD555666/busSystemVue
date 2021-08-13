@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.publicBusManage.departureConfirm.mapper.TDepartureConfirmMapper">
+
+    <resultMap type="TDepartureConfirm" id="TDepartureConfirmResult">
+        <result property="busid"    column="busId"    />
+        <result property="busno"    column="busNo"    />
+        <result property="licenseplate"    column="licensePlate"    />
+        <result property="busparam"    column="busParam"    />
+        <result property="roadid"    column="roadId"    />
+        <result property="attr2"    column="attr2"    />
+        <result property="driverName"    column="driverName"    />
+        <result property="goBusTime"    column="starTime"    />
+    </resultMap>
+
+    <resultMap type="TScheduleym" id="TScheduleymResult">
+        <result property="busNo"    column="busNo"    />
+        <result property="startTime"    column="starTime"    />
+        <result property="busState"    column="busState"    />
+    </resultMap>
+
+    <resultMap type="TDriverym" id="TDriverymResult">
+        <result property="driverName"    column="driverName"    />
+        <result property="busNo"    column="busNo"    />
+    </resultMap>
+
+    <sql id="selectTDepartureConfirmVo">
+        select busId, busNo, licensePlate, busParam, roadId, attr2 from t_businfo
+    </sql>
+
+<!--    <sql id="selectTDriverInfoVo">-->
+<!--        select * from t_driver-->
+<!--    </sql>-->
+
+    <select id="selectTDepartureConfirmList" parameterType="TDepartureConfirm" resultMap="TDepartureConfirmResult">
+        <include refid="selectTDepartureConfirmVo"/>
+        <where>
+            <if test="busno != null  and busno != ''"> and busNo = #{busno}</if>
+            <if test="licenseplate != null  and licenseplate != ''"> and licensePlate = #{licenseplate}</if>
+            <if test="busparam != null "> and busParam = #{busparam}</if>
+            <if test="roadid != null "> and roadId = #{roadid}</if>
+            <if test="attr2 != null  and attr2 != ''"> and attr2 = #{attr2}</if>
+        </where>
+    </select>
+
+    <select id="selectTDepartureConfirmById" parameterType="Long" resultMap="TDepartureConfirmResult">
+        <include refid="selectTDepartureConfirmVo"/>
+        where busId = #{busid}
+    </select>
+
+    <insert id="insertTDepartureConfirm" parameterType="TDepartureConfirm" useGeneratedKeys="true" keyProperty="busid">
+        insert into t_businfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="busno != null">busNo,</if>
+            <if test="licenseplate != null">licensePlate,</if>
+            <if test="busparam != null">busParam,</if>
+            <if test="roadid != null">roadId,</if>
+            <if test="attr2 != null">attr2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="busno != null">#{busno},</if>
+            <if test="licenseplate != null">#{licenseplate},</if>
+            <if test="busparam != null">#{busparam},</if>
+            <if test="roadid != null">#{roadid},</if>
+            <if test="attr2 != null">#{attr2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTDepartureConfirm" parameterType="TDepartureConfirm">
+        update t_businfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="busno != null">busNo = #{busno},</if>
+            <if test="licenseplate != null">licensePlate = #{licenseplate},</if>
+            <if test="busparam != null">busParam = #{busparam},</if>
+            <if test="roadid != null">roadId = #{roadid},</if>
+            <if test="attr2 != null">attr2 = #{attr2},</if>
+        </trim>
+        where busId = #{busid}
+    </update>
+
+    <delete id="deleteTDepartureConfirmById" parameterType="Long">
+        delete from t_businfo where busId = #{busid}
+    </delete>
+
+    <delete id="deleteTDepartureConfirmByIds" parameterType="String">
+        delete from t_businfo where busId in
+        <foreach item="busid" collection="array" open="(" separator="," close=")">
+            #{busid}
+        </foreach>
+    </delete>
+
+<!--   更改车辆状态， 新增的方法-->
+    <update id="addGoBusConfirm" parameterType="TDepartureConfirm">
+        update t_businfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="busparam != null">busParam = #{busparam},</if>
+        </trim>
+        where licensePlate = #{licenseplate} and busNo=#{busno}
+    </update>
+
+<!--    改变时刻表里面车辆的状态-->
+    <update id="updateBusScheduleState" parameterType="TScheduleym">
+        update t_schedule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="busState != null">busState = #{busState},</if>
+        </trim>
+        where busNo = #{busNo} and starTime=#{startTime}
+    </update>
+
+<!--    查询司机是否存在-->
+    <select id="selectDriverInfoList" parameterType="TDriverym" resultMap="TDriverymResult">
+        select * from t_driver where driverName = #{driverName}
+    </select>
+</mapper>

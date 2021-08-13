@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.publicBusManage.driverSchedule.mapper.TDriverMapper">
+
+    <resultMap type="TDriver" id="TDriverResult">
+        <result property="driverworkid" column="driverWorkId"/>
+        <result property="workshift" column="workShift"/>
+        <result property="workstation" column="workStation"/>
+        <result property="busno" column="busNo"/>
+        <result property="userId" column="user_id"/>
+        <result property="busSchedudleId" column="busSchedudleId"/>
+        <result property="driverName" column="driverName"/>
+        <result property="stationInfoId" column="stationInfoId"/>
+        <result property="departureTime" column="starTime"/>
+        <result property="licensePlate" column="licensePlate"/>
+        <result property="stationName" column="stationName"/>
+    </resultMap>
+
+    <!--发车时刻信息-->
+    <resultMap type="TschedudleInfo" id="TschedudleInfoRe">
+        <result property="scheduleId" column="scheduleId"/>
+        <result property="busNo" column="busNo"/>
+        <result property="timeInterval" column="timeInterval"/>
+        <result property="startTime" column="starTime"/>
+        <result property="endTime" column="endTime"/>
+        <result property="busState" column="busState"/>
+    </resultMap>
+
+    <!--站点信息-->
+    <resultMap type="busStopInfor" id="busStopInforRe">
+        <result property="stationId" column="stationId"/>
+        <result property="cityId" column="cityId"/>
+        <result property="stationName" column="stationName"/>
+    </resultMap>
+
+<!--    公交信息-->
+    <resultMap type="BusInformation" id="BusInformationResult">
+        <result property="busId" column="busId"/>
+        <result property="busNo" column="busNo"/>
+        <result property="licensePlate" column="licensePlate"/>
+        <result property="busParam" column="busParam"/>
+        <result property="roadId" column="roadId"/>
+    </resultMap>
+
+    <!--司机信息-->
+    <resultMap type="sysUserInfor" id="sysUserInforResult">
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+    </resultMap>
+
+    <sql id="selectTDriverVo">
+        select driverWorkId,
+               workShift,
+               workStation,
+               busNo,
+               user_id,
+               busSchedudleId,
+               driverName,
+               stationInfoId,
+               licensePlate
+        from t_driver
+    </sql>
+
+    <select id="selectTDriverList" parameterType="TDriver" resultMap="TDriverResult">
+        <include refid="selectTDriverVo"/>
+        <where>
+            <if test="workshift != null  and workshift != ''">and workShift = #{workshift}</if>
+            <if test="workstation != null  and workstation != ''">and workStation = #{workstation}</if>
+            <if test="busno != null  and busno != ''">and busNo = #{busno}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="busSchedudleId != null  and busSchedudleId != ''">and busSchedudleId = #{busSchedudleId}</if>
+            <if test="driverName != null  and driverName != ''">and driverName = #{driverName}</if>
+            <if test="stationInfoId != null  and stationInfoId != ''">and stationInfoId = #{stationInfoId}</if>
+            <if test="licensePlate != null  and licensePlate != ''">and licensePlate = #{licensePlate}</if>
+        </where>
+    </select>
+
+    <select id="selectTDriverById" parameterType="Long" resultMap="TDriverResult">
+        <include refid="selectTDriverVo"/>
+        where driverWorkId = #{driverworkid}
+    </select>
+
+    <insert id="insertTDriver" parameterType="TDriver" useGeneratedKeys="true" keyProperty="driverworkid">
+        insert into t_driver
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workshift != null">workShift,</if>
+            <if test="workstation != null">workStation,</if>
+            <if test="busno != null">busNo,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="busSchedudleId != null">busSchedudleId,</if>
+            <if test="driverName != null">driverName,</if>
+            <if test="stationInfoId != null">stationInfoId,</if>
+            <if test="licensePlate != null">licensePlate,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workshift != null">#{workshift},</if>
+            <if test="workstation != null">#{workstation},</if>
+            <if test="busno != null">#{busno},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="busSchedudleId != null">#{busSchedudleId},</if>
+            <if test="driverName != null">#{driverName},</if>
+            <if test="stationInfoId != null">#{stationInfoId},</if>
+            <if test="licensePlate != null">#{licensePlate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTDriver" parameterType="TDriver">
+        update t_driver
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workshift != null">workShift = #{workshift},</if>
+            <if test="workstation != null">workStation = #{workstation},</if>
+            <if test="busno != null">busNo = #{busno},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="busSchedudleId != null">busSchedudleId = #{busSchedudleId},</if>
+            <if test="driverName != null">driverName = #{driverName},</if>
+            <if test="stationInfoId != null">stationInfoId = #{stationInfoId},</if>
+            <if test="licensePlate != null">licensePlate = #{licensePlate},</if>
+        </trim>
+        where driverWorkId = #{driverworkid}
+    </update>
+
+    <delete id="deleteTDriverById" parameterType="Long">
+        delete
+        from t_driver
+        where driverWorkId = #{driverworkid}
+    </delete>
+
+    <delete id="deleteTDriverByIds" parameterType="String">
+        delete from t_driver where driverWorkId in
+        <foreach item="driverworkid" collection="array" open="(" separator="," close=")">
+            #{driverworkid}
+        </foreach>
+    </delete>
+
+    <!--新增的方法  查询发车时刻表的信息-->
+    <select id="busScheduleInfoList" parameterType="TschedudleInfo" resultMap="TschedudleInfoRe">
+        select * from t_schedule
+    </select>
+
+<!--    新增方法，查询站点信息-->
+    <select id="selectStationInfolist"  resultMap="TDriverResult">
+        select stationName from t_stationinfo
+    </select>
+
+<!--    查询公交车牌-->
+    <select id="selectBusInformationList"  resultMap="BusInformationResult">
+        select busNo , licensePlate from t_businfo
+    </select>
+
+    <!--    查询司机信息-->
+    <select id="selectBusDriverInformationList"  resultMap="sysUserInforResult">
+        select user_name , password from sys_user
+    </select>
+
+</mapper>
