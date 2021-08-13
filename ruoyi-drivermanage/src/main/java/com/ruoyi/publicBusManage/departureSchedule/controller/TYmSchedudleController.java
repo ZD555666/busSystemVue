@@ -28,7 +28,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/drivermanager/departureSchedule")
-public class TSchedudleController extends BaseController
+public class TYmSchedudleController extends BaseController
 {
     @Autowired
     private ITSchedudleService tSchedudleService;
