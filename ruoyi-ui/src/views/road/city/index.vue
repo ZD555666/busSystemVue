@@ -64,9 +64,10 @@
     </el-row>
 
     <el-table v-loading="loading" :data="cityList" @selection-change="handleSelectionChange">
+      <el-table-column type="index" label="序号" align="center"/>
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="cityid" />
-      <el-table-column label="城市名称" align="center" prop="cityname" />
+      <el-table-column label="城市名称" align="center" prop="cityname"/>
+      <el-table-column label="城市id" align="center" prop="cityid" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -147,6 +148,9 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        cityname: [
+          {required: true, message: "城市名称不能为空", trigger: "blur"}
+        ]
       }
     };
   },

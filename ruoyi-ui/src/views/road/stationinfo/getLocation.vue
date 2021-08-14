@@ -74,9 +74,10 @@ export default {
       this.zoom = this.zoom
       this.map2 = map
       const viewthis = this
-      map.addEventListener('click', function (e) {
+      map.addEventListener('click', (e) =>{
         viewthis.model.lng = e.point.lng
         viewthis.model.lat = e.point.lat
+        // console.log("子页面",this.$refs.child1)
       })
 
       // 区域图

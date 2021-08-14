@@ -10,8 +10,12 @@
           <el-col :span="6">
             <div>
               <el-form-item label="公交线路" label-width="100px">
-                <el-input v-model="busNo" placeholder="请输入线路">
-                </el-input>
+                <el-autocomplete
+                  v-model="busNo"
+                  :fetch-suggestions="querySearchAsync"
+                  placeholder="请输入线路"
+                  @select="handleSelect"
+                ></el-autocomplete>
               </el-form-item>
             </div>
           </el-col>
@@ -131,7 +135,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
       <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      <el-button type="primary" @click="confirm">确 定</el-button>
       </span>
 
     </el-dialog>
@@ -139,9 +143,13 @@
 </template>
 
 <script>
+import {addManyTimes, getAllBusNo} from "@/api/road/schedule";
+
 export default {
   data() {
     return {
+      busNoList: [],
+      timeout: null,
       busNo:'',
       formMsg:[
         {
@@ -173,6 +181,56 @@ export default {
     };
   },
   methods: {
+    /**
+     * 动态查询线路开始
+     * */
+    loadAllBusNo() {
+      let roadList=[];
+      getAllBusNo().then(res => {
+        for (let i = 0; i < res.length; i++) {
+          let road={
+            "value": res[i].busNo, "key": res[i].busNo
+          }
+          roadList.push(road);
+        }
+        this.busNoList= roadList;
+      });
+    },
+    querySearchAsync(queryString, cb) {
+      var busNoList = this.busNoList;
+      var results = queryString ? busNoList.filter(this.createStateFilter(queryString)) : busNoList;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 900 * Math.random());
+    },
+    createStateFilter(queryString) {
+      return (busNo) => {
+        return (busNo.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    handleSelect(item) {
+      console.log("选择线路", item);
+    },
+    /**
+     * 动态查询线路结束
+     * */
+    confirm(){
+      if (this.busNo!=''){
+        let param = {
+          busNo: this.busNo,
+          roadSchedule: JSON.stringify(this.formMsg)
+        };
+        addManyTimes(param).then(res => {
+          this.$emit('fatherMethod');
+          alert(res);
+        })
+        this.dialogVisible = false
+      }else{
+        alert("请输入您要配置的线路");
+      }
+    },
     parentClick(){
       this.dialogVisible=true;
     },
@@ -184,6 +242,9 @@ export default {
         .catch(_ => {
         });
     }
+  },
+  mounted() {
+    this.loadAllBusNo();
   }
 };
 </script>

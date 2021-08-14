@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TScheduleMapper 
 {
+
     /**
      * 查询线路发车时刻配置
      * 

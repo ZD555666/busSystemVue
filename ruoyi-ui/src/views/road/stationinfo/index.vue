@@ -121,6 +121,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="stationinfoList" @selection-change="handleSelectionChange">
+      <el-table-column type="index" label="序号" align="center"/>
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="城市名称" align="center" prop="city.cityname"/>
       <el-table-column label="城市id" align="center" prop="cityid" />
@@ -172,7 +173,7 @@
         top="0px">
         <div style="width: 100%;height: 550px">
           <!--            查询坐标容器 -->
-          <getLocation></getLocation>
+          <getLocation ref="child1"></getLocation>
           <!--            查询坐标容器 -->
         </div>
 <!--        <span slot="footer" class="dialog-footer">-->
@@ -182,7 +183,7 @@
       </el-dialog>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="城市id" prop="cityid">
-          <el-input v-model="form.cityid" placeholder="请输入城市id" />
+          <el-input v-model="form.cityid" placeholder="请输入城市id" :disabled="cityIdDisable"/>
         </el-form-item>
         <el-form-item label="站点名称" prop="stationname">
           <el-input v-model="form.stationname" placeholder="请输入站点名称" />
@@ -211,6 +212,7 @@ export default {
   components: {getLocation, showStation},
   data() {
     return {
+      cityIdDisable:false,
       //地图站点显示弹出层
       showStation:false,
       // 地图选点弹出层
@@ -250,6 +252,18 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        cityid: [
+          {required: true, message: "城市id不能为空", trigger: "blur"}
+        ],
+        stationname: [
+          {required: true, message: "站点名称不能为空", trigger: "blur"}
+        ],
+        xpoint: [
+          {required: true, message: "经度位置不能为空", trigger: "blur"}
+        ],
+        ypoint: [
+          {required: true, message: "纬度位置不能为空", trigger: "blur"}
+        ],
       }
     };
   },
@@ -320,12 +334,14 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.cityIdDisable = false;
       this.reset();
       this.open = true;
       this.title = "添加站点信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.cityIdDisable = true;
       this.reset();
       const stationid = row.stationid || this.ids
       getStationinfo(stationid).then(response => {

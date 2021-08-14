@@ -1,16 +1,17 @@
 <template>
   <div>
-      <div id="dayCashier" :style="{width: '1100px', height: '550px'}"> </div>
+<!--    <el-dialog-->
+<!--      title="提示"-->
+<!--      :visible.sync="openRoadSum"-->
+<!--      width="70%">-->
+    <div id="dayCashier" :style="{width: '1100px', height: '550px'}"> </div>
+<!--    </el-dialog>-->
     <el-dialog
       title="提示"
       :visible.sync="openTimeCashier"
       width="70%">
-      <el-row>
-        <span style="font-size: 20px;font-weight: 500;">日期：{{ colName }}</span>
-      </el-row>
-      <el-row>
-        <time-cashier></time-cashier>
-      </el-row>
+      <span style="font-weight: 500;font-size: 20px">日期：{{ colName }}</span>
+      <time-cashier></time-cashier>
     </el-dialog>
   </div>
 </template>
@@ -22,7 +23,8 @@ export default {
   components:{timeCashier},
   data(){
     return{
-      openTimeCashier:false,
+      openTimeCashier: false,
+      openRoadSum: false,
       dayCashierData:
         {
           title: {text: '线路收银/天'},
@@ -44,14 +46,18 @@ export default {
     this.showDay();
   },
   methods:{
+    parentClick(){
+      this.openRoadSum = true;
+    },
     showDay() {
     // 基于准备好的dom，初始化echarts实例
-      let dayCashier = this.$echarts.init(document.getElementById('dayCashier'), 'dark')
+      let dayCashier = this.$echarts.init(document.getElementById('dayCashier'), 'white')
       // 绘制图表
       dayCashier.setOption(this.dayCashierData);
       dayCashier.on('click', (params) => {
         this.colName = params.name;
-        this.openTimeCashier = true;
+        // this.$refs.child1.parentClick();
+        this.openTimeCashier=true;
       });
     }
   }

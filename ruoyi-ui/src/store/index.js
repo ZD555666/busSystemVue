@@ -8,6 +8,8 @@ import settings from './modules/settings'
 import baiduUser from './modules/baiduUser'
 import getters from './getters'
 import roadInfo from './modules/roadInfo'
+import cashier from "./modules/cashier"
+import ridership from "./modules/ridership";
 
 Vue.use(Vuex)
 
@@ -19,7 +21,9 @@ const store = new Vuex.Store({
     permission,
     settings,
     baiduUser,
-    roadInfo
+    roadInfo,
+    cashier,
+    ridership
   },
   getters
 })

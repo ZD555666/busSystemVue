@@ -16,6 +16,9 @@ import com.ruoyi.road.domain.domains.RoadStationInfo;
  */
 public interface ITRoadService
 {
+    //公交线路信息列表
+    public List<RoadInfo> selectAllBusNo(RoadInfo roadInfo);
+
     //查询公交线路信息列表
     public List<RoadInfo> selectAllRoad(RoadInfo roadInfo);
 
