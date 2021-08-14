@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version 1.0
@@ -67,13 +68,33 @@ public class AddressMapperImpl implements AddressService {
     }
 
     @Override
-    public List<WxHistory> queryHistoryByOpId(String openId) {
-        return addressMapper.queryHistoryByOpId(openId);
+    public List<WxHistory> queryHistoryByOpId(String openId, String cityName) {
+        return addressMapper.queryHistoryByOpId(openId, cityName);
     }
 
     @Override
     public int insertHistory(WxHistory history) {
         return addressMapper.insertHistory(history);
+    }
+
+    @Override
+    public int insertHistory1(WxHistory history) {
+        return addressMapper.insertHistory1(history);
+    }
+
+    @Override
+    public int delAllHistory(String openId, String cityName) {
+        return addressMapper.delAllHistory(openId, cityName);
+    }
+
+    @Override
+    public List<StationRoadVo> TaskQueryBusTo(String busNo, int direction) {
+        return addressMapper.TaskQueryBusTo(busNo, direction);
+    }
+
+    @Override
+    public Map<String, Double> queryClickStationXy(String stationName, String cityName) {
+        return addressMapper.queryClickStationXy(stationName, cityName);
     }
 }
 

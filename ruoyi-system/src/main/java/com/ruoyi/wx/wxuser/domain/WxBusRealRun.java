@@ -23,10 +23,15 @@ public class WxBusRealRun {
     private String nowStation;
     private String nextStation;
     private String roadState;
-    private String speed;
+    private double speed;
     private String personNum;
     private int cityId;
     private double distance;
+    private String expression;
+    private double xPoint;
+    private double yPoint;
+    private int direction;
+    private String stationName;
 
 
 }

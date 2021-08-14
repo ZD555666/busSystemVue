@@ -29,5 +29,6 @@ public class WxBusInfo implements Serializable {
     private String nextStation;
     private double speed;
     private int cityId;
+    private int direction;
 
 }

@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version 1.0
@@ -34,8 +35,17 @@ public interface AddressMapper {
 
     List<WxCollect> queryCollectByOpIdAndCity(@Param("openId") String opId, @Param("cityName") String cityName);
 
-    List<WxHistory> queryHistoryByOpId(String openId);
+    List<WxHistory> queryHistoryByOpId(@Param("openId") String openId, @Param("cityName") String cityName);
 
     int insertHistory(WxHistory history);
+
+    int insertHistory1(WxHistory history);
+
+    int delAllHistory(@Param("openId") String openId, @Param("cityName") String cityName);
+
+    List<StationRoadVo> TaskQueryBusTo(@Param("busNo") String busNo, @Param("direction") int direction);
+
+    Map<String, Double> queryClickStationXy(@Param("stationName") String stationName, @Param("cityName") String cityName);
+
 
 }

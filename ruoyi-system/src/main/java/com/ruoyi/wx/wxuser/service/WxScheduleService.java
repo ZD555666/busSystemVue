@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface WxScheduleService {
 
-    List<WxSchedule> queryScheduled(int busState1, int busState2);
+    List<WxSchedule> queryScheduled();
 
 
 }

@@ -19,6 +19,7 @@ import java.io.Serializable;
 public class StationRoadVo implements Serializable {
 
     private int travelSort;
+    private int cityId;
     private String stationName;
     private String busNo;
     private String startStation;
