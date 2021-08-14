@@ -1,16 +1,16 @@
 package com.ruoyi.road.controller;
 
 import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.ruoyi.road.domain.TCity;
+import com.ruoyi.road.domain.domains.RoadInfo;
+import com.ruoyi.road.domain.domains.Station;
+import com.ruoyi.road.service.ITRoadService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -32,7 +32,33 @@ public class TScheduleController extends BaseController
 {
     @Autowired
     private ITScheduleService tScheduleService;
+    @Autowired
+    private ITRoadService RoadService;
 
+    //  获取所有的线路
+    @GetMapping("getAllBusNo")
+    public List<RoadInfo> getAllBusNo() {
+        RoadInfo roadInfo2 = new RoadInfo();
+        List<RoadInfo> roadInfoList=RoadService.selectAllBusNo(roadInfo2);
+//        List<RoadInfo> roadInfoList=null;
+        System.out.println("132131211312313232132132Ni");
+        return roadInfoList;
+    }
+    //一条路线新增多个时刻
+    @GetMapping("addManyTimes")
+    public String addManyTimes(@RequestParam("busNo") String busNo, @RequestParam("roadSchedule") String roadSchedule){
+        Gson gson=new Gson();
+        List<TSchedule> roadSchedules = gson.fromJson(roadSchedule, new TypeToken<List<TSchedule>>() {
+        }.getType());
+        for (int i = 0; i < roadSchedules.size(); i++) {
+            roadSchedules.get(i).setBusNo(busNo);
+        }
+        System.out.println(roadSchedules);
+        for (TSchedule s: roadSchedules) {
+            tScheduleService.insertTSchedule(s);
+        }
+        return "新增成功";
+    };
     /**
      * 查询线路发车时刻配置列表
      */

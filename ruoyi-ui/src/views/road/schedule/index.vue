@@ -139,7 +139,14 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="公交线路：" prop="busNo" label-width="180px">
-          <el-input v-model="form.busNo" placeholder="请输入公交线路" />
+<!--          <el-input v-model="form.busNo" placeholder="请输入公交线路" />-->
+          <el-autocomplete
+            v-model="form.busNo"
+            :fetch-suggestions="querySearchAsync"
+            placeholder="请输入线路"
+            @select="handleSelect"
+            :disabled="busNoDisable"
+          ></el-autocomplete>
         </el-form-item>
         <el-form-item label="发车时间段：(前)/(点钟)" prop="starTime" label-width="180px">
           <el-input v-model="form.starTime" placeholder="请输入发车时间段(前)" />
@@ -156,12 +163,20 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <add-many-times ref="child1"></add-many-times>
+    <add-many-times ref="child1" @fatherMethod="getList"></add-many-times>
   </div>
 </template>
 
 <script>
-import { listSchedule, getSchedule, delSchedule, addSchedule, updateSchedule, exportSchedule } from "@/api/road/schedule";
+import {
+  listSchedule,
+  getSchedule,
+  delSchedule,
+  addSchedule,
+  updateSchedule,
+  exportSchedule,
+  getAllBusNo
+} from "@/api/road/schedule";
 import addManyTimes from "@/views/road/schedule/addManyTimes";
 
 export default {
@@ -169,6 +184,7 @@ export default {
   components:{addManyTimes},
   data() {
     return {
+      busNoDisable:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -205,13 +221,60 @@ export default {
         busNo: [
           { required: true, message: "公交线路不能为空", trigger: "blur" }
         ],
+        starTime: [
+          {required: true, message: "开始时间不能为空", trigger: "blur"}
+        ],
+        endTime: [
+          {required: true, message: "结束时间不能为空", trigger: "blur"}
+        ],
+        timeInterval: [
+          {required: true, message: "发车间隔不能为空", trigger: "blur"}
+        ],
       }
     };
   },
   created() {
     this.getList();
+    this.loadAllBusNo();
   },
   methods: {
+
+    /**
+     * 动态查询线路开始
+     * */
+    loadAllBusNo() {
+      let roadList = [];
+      getAllBusNo().then(res => {
+        for (let i = 0; i < res.length; i++) {
+          let road = {
+            "value": res[i].busNo, "key": res[i].busNo
+          }
+          roadList.push(road);
+        }
+        this.busNoList = roadList;
+      });
+    },
+    querySearchAsync(queryString, cb) {
+      var busNoList = this.busNoList;
+      var results = queryString ? busNoList.filter(this.createStateFilter(queryString)) : busNoList;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 900 * Math.random());
+    },
+    createStateFilter(queryString) {
+      return (busNo) => {
+        return (busNo.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    handleSelect(item) {
+      console.log("选择线路",item);
+    },
+    /**
+     * 动态查询线路结束
+     * */
+
     /** 调用子页面方法 */
     openAddMany(){
       this.$refs.child1.parentClick();
@@ -263,6 +326,7 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加线路发车时刻配置";
+      this.busNoDisable=false;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -273,6 +337,7 @@ export default {
         this.open = true;
         this.title = "修改线路发车时刻配置";
       });
+      this.busNoDisable=true;
     },
     /** 提交按钮 */
     submitForm() {

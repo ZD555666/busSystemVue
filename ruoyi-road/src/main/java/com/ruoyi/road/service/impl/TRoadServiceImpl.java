@@ -26,6 +26,17 @@ public class TRoadServiceImpl implements ITRoadService
     private TRoadMapper tRoadMapper;
 
     /**
+     * 查询公交线名字列表
+     */
+
+    @Override
+    public List<RoadInfo> selectAllBusNo(RoadInfo roadInfo) {
+        RoadInfo roadInfo2 = new RoadInfo();
+        List<RoadInfo> roadInfoList = tRoadMapper.selectAllRoad(roadInfo2);
+        return roadInfoList;
+    }
+
+    /**
      * 查询公交线路信息列表
      */
     @Override

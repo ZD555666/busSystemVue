@@ -25,7 +25,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="4" label-width="100px" style="margin: 20px" :push="1">
-          <el-form-item label="总金额合计：" label-width="100px">
+          <el-form-item label="总金额合计(元)：" label-width="120px">
             <el-input value="13548￥" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
@@ -41,12 +41,13 @@
       :visible.sync="openRoadSum"
       width="70%">
       <el-row>
-        <span style="font-size: 20px;font-weight: 500;">线路名：{{ colName }}</span>
+        <span style="font-weight: 500;font-size: 20px">线路：{{ colName }}</span>
       </el-row>
       <el-row>
-        <day-cashier></day-cashier>
+        <day-cashier ref="child1"></day-cashier>
       </el-row>
     </el-dialog>
+
   </div>
 </template>
 
@@ -57,8 +58,7 @@ export default {
   components:{dayCashier},
   data() {
     return {
-      openRoadSum:false,
-      msg: 'Welcome to Your Vue.js App',
+      openRoadSum: false,
       option:
         {
         title: {text: '线路收银/月'},
@@ -111,13 +111,14 @@ export default {
   methods: {
     drawLine() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById('myChart'),'dark')
+      let myChart = this.$echarts.init(document.getElementById('myChart'),'white');
       // 绘制图表
       myChart.setOption(this.option);
       myChart.on('click', (params)=>{
         this.colName= params.name;
         console.log("params", this.colName);
-        this.openRoadSum=true;
+        // this.$refs.child1.parentClick();
+        this.openRoadSum= true;
       });
     }
   }

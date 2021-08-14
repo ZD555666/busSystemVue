@@ -2,6 +2,7 @@
   <div id="addRoad">
     <el-dialog :title="dialogTitle" :visible.sync="openAddRoad" width="60%" :before-close="closeAdd">
     <el-form ref="form" :model="form" label-width="80px">
+<!--      :rules="rules"-->
       <el-row>
         <el-col :span="10">
           <el-form-item label="城市：">
@@ -198,6 +199,14 @@ export default {
         time: '',
         stationPositive: '',
         stationReverse: ''
+      },
+      rules:{
+        cityId:[
+          {required: true, message: "城市不能为空", trigger: "blur"}
+        ],
+        roadNo: [
+          {required: true, message: "城市不能为空", trigger: "blur"}
+        ],
       }
     }
   },
@@ -259,40 +268,51 @@ export default {
     },
     /** 提交表单 */
     confirmSubmit(type){
-      this.form.stationPositive= JSON.stringify(this.$store.state.roadInfo.stationSort);
-      this.form.stationReverse = JSON.stringify(this.$store.state.roadInfo.returnSort);
-      let map={
-        cityId: this.form.cityId,
-        roadNo: this.form.roadNo,
-        cost: this.form.cost,
-        time: this.form.time,
-        stationPositive: this.form.stationPositive,
-        stationReverse: this.form.stationReverse,
-        actionType: 0
+      // this.$refs["form"].validate(valid => {
+      //   if (valid) {
+
+      //   }
+      //
+      // });
+      if (this.form.cityId!=''&& this.form.roadNo != '' && this.form.time != '' && this.form.cost != ''){
+        this.form.stationPositive = JSON.stringify(this.$store.state.roadInfo.stationSort);
+        this.form.stationReverse = JSON.stringify(this.$store.state.roadInfo.returnSort);
+        let map = {
+          cityId: this.form.cityId,
+          roadNo: this.form.roadNo,
+          cost: this.form.cost,
+          time: this.form.time,
+          stationPositive: this.form.stationPositive,
+          stationReverse: this.form.stationReverse,
+          actionType: 0
+        }
+        let map2 = {
+          cityId: this.form.cityId,
+          roadNo: this.form.roadNo,
+          cost: this.form.cost,
+          time: this.form.time,
+          stationPositive: this.form.stationPositive,
+          stationReverse: this.form.stationReverse,
+          actionType: 1
+        }
+        if (type == 0) {
+          addRoads(map).then(response => {
+            this.$emit('fatherMethod');
+            this.openAddRoad = false;
+            alert(response);
+          });
+        } else if (type == 1) {
+          addRoads(map2).then(response => {
+            this.$emit('fatherMethod');
+            this.openAddRoad = false;
+            alert(response);
+          });
+        }
+        this.initFrom();
+      }else{
+        alert("请完善线路信息");
       }
-      let map2 = {
-        cityId: this.form.cityId,
-        roadNo: this.form.roadNo,
-        cost: this.form.cost,
-        time: this.form.time,
-        stationPositive: this.form.stationPositive,
-        stationReverse: this.form.stationReverse,
-        actionType: 1
-      }
-      if (type==0){
-        addRoads(map).then(response => {
-          this.$emit('fatherMethod');
-          this.openAddRoad=false;
-          alert(response);
-        });
-      }else if (type == 1){
-        addRoads(map2).then(response => {
-          this.$emit('fatherMethod');
-          this.openAddRoad = false;
-          alert(response);
-        });
-      }
-     this.initFrom();
+
     },
     /** 初始化启反程数据列表和数据表单 */
     initFrom(){

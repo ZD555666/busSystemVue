@@ -31,7 +31,7 @@ export default {
   methods: {
     ridership() {
 // 基于准备好的dom，初始化echarts实例
-      let ridership = this.$echarts.init(document.getElementById('ridership'), 'dark')
+      let ridership = this.$echarts.init(document.getElementById('ridership'), 'white')
       // 绘制图表
       ridership.setOption(this.ridershipData);
     }
