@@ -1,6 +1,7 @@
 package com.ruoyi.wx.wxBus.service;
 
 import com.ruoyi.wx.wxBus.domain.Road;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -24,4 +25,10 @@ public interface RoadService {
 
     //查询站点对应的线路信息
     List<Road> queryPassRoads(int stationId,String busNo);
+
+    //查询线路方向
+    Integer queryDirection(int stationId, String busNo);
+
+    //查询站点对应的线路信息
+    Road selectTravelSort(int stationId, String busNo,int dir);
 }

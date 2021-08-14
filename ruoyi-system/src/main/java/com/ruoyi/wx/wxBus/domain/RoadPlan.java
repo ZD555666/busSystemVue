@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
  * @version 1.0
  * @author: ZD
@@ -15,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RoadPlan {
+public class RoadPlan implements Serializable {
 
     private String startWalk;
     private String endWalk;
@@ -35,9 +37,11 @@ public class RoadPlan {
     private String startTurn;
     private String endTurn;
     private String check;
-    private String lessTiem;
+    private String lessTime;
     private String lessWalk;
     private String lessTurn;
-
+    private String allDate;
+    private int planStations;
+    private String planDate;
 
 }

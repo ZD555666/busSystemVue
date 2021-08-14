@@ -9,11 +9,23 @@
     </select>
 
     <select id="selectPassRoad" resultType="com.ruoyi.wx.wxBus.domain.Road">
-        select busNo,travelSort from t_road where stationId = #{stationId};
+        select busNo,travelSort from t_road where stationId = #{stationId} and direction = 0;
     </select>
 
     <select id="selectPassRoads" resultType="com.ruoyi.wx.wxBus.domain.Road">
-        select busNo,travelSort from t_road where stationId = #{stationId} and busNo = #{busNo};
+        select busNo,travelSort from t_road where stationId = #{stationId} and busNo = #{busNo} and direction = 0;
+    </select>
+
+    <select id="selectTravelSort" resultType="com.ruoyi.wx.wxBus.domain.Road">
+        select busNo,travelSort from t_road where stationId = #{stationId} and busNo = #{busNo} and direction = #{direction};
+    </select>
+
+    <select id="selectDirection" resultType="java.lang.Integer">
+        select t1.direction
+        from t_road t1
+        join t_stationinfo t2
+        on t1.stationId = t2.stationId
+        where t1.busNo = #{busNo} and t2.stationId = #{stationId} and t1.travelSort > 1;
     </select>
 
     <select id="selectRoads" resultMap="roadList">
@@ -21,7 +33,7 @@
         from t_road t1
         join t_stationinfo t2
         on t1.stationId = t2.stationId
-        where busNo = #{busNo}
+        where busNo = #{busNo} and direction = 0
         order by travelSort;
     </select>
 

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
  * @version 1.0
  * @author: ZD
@@ -15,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class MyStation {
+public class MyStation implements Serializable {
     private int stationId;
     private int cityId;
     private String stationName;

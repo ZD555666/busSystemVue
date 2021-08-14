@@ -27,6 +27,14 @@ public interface RoadMapper {
     List<Road> selectPassRoads(@Param("stationId")int stationId,
                                @Param("busNo") String busNo);
 
+    //查询站点对应的线路信息
+    Road selectTravelSort(@Param("stationId")int stationId,
+                          @Param("busNo") String busNo,
+                          @Param("direction") int dir);
+
+    //查询线路方向
+    Integer selectDirection(@Param("stationId")int stationId,
+                            @Param("busNo") String busNo);
 
 
 
