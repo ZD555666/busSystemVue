@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
  * @version 1.0
  * @author: ZD
@@ -15,11 +17,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class MySchedule {
+public class MySchedule implements Serializable{
     private int scheduleId;
     private String busNo;
     private int timeInterval;
     private int starTime;
     private int endTime;
     private String busState;
+
 }

@@ -1,8 +1,7 @@
 package com.ruoyi.wx.wxBus.controller;
 
-import com.ruoyi.wx.wxBus.domain.MyStation;
-import com.ruoyi.wx.wxBus.domain.Road;
-import com.ruoyi.wx.wxBus.domain.RoadPlan;
+import com.ruoyi.wx.wxBus.domain.*;
+import com.ruoyi.wx.wxBus.service.impl.RealRunServiceImpl;
 import com.ruoyi.wx.wxBus.service.impl.RoadServiceImpl;
 import com.ruoyi.wx.wxBus.service.impl.StationServiceImpl;
 import org.gavaghan.geodesy.Ellipsoid;
@@ -10,9 +9,11 @@ import org.gavaghan.geodesy.GeodeticCalculator;
 import org.gavaghan.geodesy.GeodeticCurve;
 import org.gavaghan.geodesy.GlobalCoordinates;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.lang.model.element.NestingKind;
 import java.util.*;
 
 /**
@@ -30,6 +31,10 @@ public class RoadController {
     private RoadServiceImpl roadService;
     @Autowired
     private StationServiceImpl stationService;
+    @Autowired
+    private RedisTemplate<Object,Object> redisTemplate;
+    @Autowired
+    private RealRunServiceImpl realRunService;
 
 
     //查询站点和线路
@@ -37,9 +42,30 @@ public class RoadController {
     public Map<String,String> searchRoad(String value){
         if(!value.equals("")){
             Map<String,String> result = new HashMap<>();
-            List<Road> roads = roadService.queryRoad(value);
+            //使用redis缓存
+            String redisRoad = "Road"+value;
+            List<Road> roads = (List<Road>)redisTemplate.opsForValue().get(redisRoad);
+            if(roads == null){
+                synchronized (this){
+                    if(roads == null){
+                        //从数据库查询
+                        roads = roadService.queryRoad(value);
+                        redisTemplate.opsForValue().set(redisRoad,roads);
+                    }
+                }
+            }
             if(roads.size() == 0){
-                List<MyStation> stations = stationService.queryStation(value);
+                String redisStation = "Station"+value;
+                List<MyStation> stations = (List<MyStation>)redisTemplate.opsForValue().get(redisStation);
+                if(stations == null){
+                    synchronized (this){
+                        if(stations == null){
+                            //从数据库查询
+                            stations = stationService.queryStation(value);
+                            redisTemplate.opsForValue().set(redisStation,stations);
+                        }
+                    }
+                }
                 if(stations.size() == 0){
                     return null;
                 }else{
@@ -51,7 +77,18 @@ public class RoadController {
             }else{
                 for(int i = 0;i<roads.size();i++){
                     String busNo = roads.get(i).getBusNo();
-                    List<Road> roads1 = roadService.queryRoads(busNo);
+                    //使用redis缓存
+                    String redisRoads = "Roads"+busNo;
+                    List<Road> roads1 = (List<Road>)redisTemplate.opsForValue().get(redisRoads);
+                    if(roads1 == null){
+                        synchronized (this){
+                            if(roads1 == null){
+                                //从数据库查询
+                                roads1 = roadService.queryRoads(busNo);
+                                redisTemplate.opsForValue().set(redisRoads,roads1);
+                            }
+                        }
+                    }
                     String startStationName = roads1.get(0).getStation().getStationName();
                     String endStationName = roads1.get(roads1.size()-1).getStation().getStationName();
                     result.put(startStationName,roads1.get(0).getBusNo());
@@ -68,7 +105,18 @@ public class RoadController {
     //获取对应站点的站点信息
     @RequestMapping(value = "/getStationData")
     public MyStation getStationData(String stationName){
-        MyStation station = stationService.queryStationName(stationName);
+        //使用redis缓存
+        String redisStationName = "StationName"+stationName;
+        MyStation station = (MyStation)redisTemplate.opsForValue().get(redisStationName);
+        if(station == null){
+            synchronized (this){
+                if(station == null){
+                    //从数据库查询
+                    station = stationService.queryStationName(stationName);
+                    redisTemplate.opsForValue().set(redisStationName,station);
+                }
+            }
+        }
         return station;
     }
 
@@ -76,12 +124,20 @@ public class RoadController {
     //获取线路对应的站点
     @RequestMapping(value = "/getStation")
     public List getStation(String road,String station){
-        List<Road> roads = roadService.queryRoads(road);
+        //使用redis缓存
+        String redisRoads = "Roads"+road;
+        List<Road> roads = (List<Road>)redisTemplate.opsForValue().get(redisRoads);
+        if(roads == null){
+            synchronized (this){
+                if(roads == null){
+                    //从数据库查询
+                    roads = roadService.queryRoads(road);
+                    redisTemplate.opsForValue().set(redisRoads,roads);
+                }
+            }
+        }
         if(roads.get(0).getStation().getStationName().equals(station)){
             Collections.reverse(roads);
-            for(Road road1 : roads){
-                System.out.println(road1.getStation().getStationName());
-            }
         }
         return roads;
     }
@@ -90,8 +146,17 @@ public class RoadController {
     @RequestMapping(value = "searchStation")
     public List<MyStation> getPlace(String value){
         if(!value.equals("")){
-            List<MyStation> stations = stationService.queryStation(value);
-            System.out.println(stations);
+            String redisStation = "Station"+value;
+            List<MyStation> stations = (List<MyStation>)redisTemplate.opsForValue().get(redisStation);
+            if(stations == null){
+                synchronized (this){
+                    if(stations == null){
+                        //从数据库查询
+                        stations = stationService.queryStation(value);
+                        redisTemplate.opsForValue().set(redisStation,stations);
+                    }
+                }
+            }
             return stations;
         }
         return null;
@@ -113,7 +178,17 @@ public class RoadController {
         System.out.println(toWhereLongitude);
 
         //查询所有站点
-        List<MyStation> stations = stationService.queryAllStation();
+        String redisAllStation = "AllStation";
+        List<MyStation> stations = (List<MyStation>)redisTemplate.opsForValue().get(redisAllStation);
+        if(stations == null){
+            synchronized (this){
+                if(stations == null){
+                    //从数据库查询
+                    stations = stationService.queryAllStation();;
+                    redisTemplate.opsForValue().set(redisAllStation,stations);
+                }
+            }
+        }
         List<MyStation> startNearStation = new ArrayList<>();
         List<MyStation> endNearStation = new ArrayList<>();
         List<Double> meters = new ArrayList<>();
@@ -168,11 +243,33 @@ public class RoadController {
         List<Road> startRoads = new ArrayList<>();
         List<Road> endRoads = new ArrayList<>();
         for(MyStation startStation : startNearStation){
-            List<Road> startRoad = roadService.queryPassRoad(startStation.getStationId());
+            //存入redis
+            String redisPassRoad = "PassRoad"+startStation.getStationId();
+            List<Road> startRoad = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+            if(startRoad == null){
+                synchronized (this){
+                    if(startRoad == null){
+                        //从数据库查询
+                        startRoad = roadService.queryPassRoad(startStation.getStationId());
+                        redisTemplate.opsForValue().set(redisPassRoad,startRoad);
+                    }
+                }
+            }
             startRoads.addAll(startRoad);
         }
         for(MyStation endStation : endNearStation){
-            List<Road> endRoad = roadService.queryPassRoad(endStation.getStationId());
+            //存入redis
+            String redisPassRoad = "PassRoad"+endStation.getStationId();
+            List<Road> endRoad = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+            if(endRoad == null){
+                synchronized (this){
+                    if(endRoad == null){
+                        //从数据库查询
+                        endRoad = roadService.queryPassRoad(endStation.getStationId());
+                        redisTemplate.opsForValue().set(redisPassRoad,endRoad);
+                    }
+                }
+            }
             endRoads.addAll(endRoad);
         }
         for(Road road0 : startRoads){
@@ -209,7 +306,18 @@ public class RoadController {
                 MyStation near = new MyStation();
                 MyStation near1 = new MyStation();
                 for(MyStation station :startNearStation){
-                    List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
+                    //存入redis
+                    String redisPassRoad = "PassRoad"+station.getStationId();
+                    List<Road> roads2 = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+                    if(roads2 == null){
+                        synchronized (this){
+                            if(roads2 == null){
+                                //从数据库查询
+                                roads2 = roadService.queryPassRoad(station.getStationId());
+                                redisTemplate.opsForValue().set(redisPassRoad,roads2);
+                            }
+                        }
+                    }
                     for(Road road1 : roads2){
                         if(road1.getBusNo().equals(road)){
                             for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
@@ -223,7 +331,18 @@ public class RoadController {
                     }
                 }
                 for(MyStation station :endNearStation){
-                    List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
+                    //存入redis
+                    String redisPassRoad = "PassRoad"+station.getStationId();
+                    List<Road> roads2 = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+                    if(roads2 == null){
+                        synchronized (this){
+                            if(roads2 == null){
+                                //从数据库查询
+                                roads2 = roadService.queryPassRoad(station.getStationId());
+                                redisTemplate.opsForValue().set(redisPassRoad,roads2);
+                            }
+                        }
+                    }
                     for(Road road1 : roads2){
                         if(road1.getBusNo().equals(road)){
                             for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
@@ -251,11 +370,14 @@ public class RoadController {
                 List<Road> roads1 = roadService.queryRoads(road);
                 List<Road> roads2 = roadService.queryPassRoads(near.getStationId(),road);
                 List<Road> roads3 = roadService.queryPassRoads(near1.getStationId(),road);
+                String dir = "";
                 if(roads2.get(0).getTravelSort() > roads3.get(0).getTravelSort()){
                     roadPlan.setDirection(roads1.get(0).getStation().getStationName());
+                    dir = roads1.get(0).getStation().getStationName();
                     roadPlan.setMomeyStation(roads2.get(0).getTravelSort() - roads3.get(0).getTravelSort()-1);
                 }else{
                     roadPlan.setDirection(roads1.get(roads1.size()-1).getStation().getStationName());
+                    dir = roads1.get(roads1.size()-1).getStation().getStationName();
                     roadPlan.setMomeyStation(roads3.get(0).getTravelSort() - roads2.get(0).getTravelSort());
                 }
                 roadPlan.setAllWalk(String.valueOf(mix+mix1).substring(0,String.valueOf(mix+mix1).lastIndexOf(".")));
@@ -265,17 +387,52 @@ public class RoadController {
                 roadPlan.setEndStation(near1.getStationName());
                 roadPlan.setBusNo(road);
                 roadPlan.setCheck("1");
+
+                //总时间获取
+                GlobalCoordinates target =new GlobalCoordinates(Double.parseDouble(near.getYPoint()), Double.parseDouble(near.getXPoint()));
+                GlobalCoordinates source =new GlobalCoordinates(Double.parseDouble(near1.getYPoint()), Double.parseDouble(near1.getXPoint()));
+                double meter = getDistanceMeter(source,target, Ellipsoid.WGS84);
+                double time = ((meter)/(11/3.6))/60 + (mix+mix1)/1.1/60;
+                roadPlan.setAllDate(String.valueOf(time).substring(0,String.valueOf(time).lastIndexOf(".")));
+                //实时数据获取
+                RealData realData = getRealData(road, dir, near.getStationName());
+                if(realData != null){
+                    roadPlan.setPlanDate(realData.getTime());
+                    roadPlan.setPlanStations(realData.getMoneyStation());
+                }
                 roadPlans.add(roadPlan);
             }
 
         }
         //先移除直达的线路在进行同站换乘线路的查询
         for(MyStation station :startNearStation) {
-            List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
+            //存入redis
+            String redisPassRoad = "PassRoad"+station.getStationId();
+            List<Road> roads2 = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+            if(roads2 == null){
+                synchronized (this){
+                    if(roads2 == null){
+                        //从数据库查询
+                        roads2 = roadService.queryPassRoad(station.getStationId());
+                        redisTemplate.opsForValue().set(redisPassRoad,roads2);
+                    }
+                }
+            }
             startPassRoad.addAll(roads2);
         }
         for(MyStation station :endNearStation) {
-            List<Road> roads2 = roadService.queryPassRoad(station.getStationId());
+            //存入redis
+            String redisPassRoad = "PassRoad"+station.getStationId();
+            List<Road> roads2 = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+            if(roads2 == null){
+                synchronized (this){
+                    if(roads2 == null){
+                        //从数据库查询
+                        roads2 = roadService.queryPassRoad(station.getStationId());
+                        redisTemplate.opsForValue().set(redisPassRoad,roads2);
+                    }
+                }
+            }
             endPassRoad.addAll(roads2);
         }
         if(roads != null){
@@ -300,9 +457,31 @@ public class RoadController {
         }
         //同站换乘
         b:for(Road road : startPassRoad){
-            List<Road> roads1 = roadService.queryRoads(road.getBusNo());
+            //使用redis缓存
+            String redisRoads = "Roads"+road.getBusNo();
+            List<Road> roads1 = (List<Road>)redisTemplate.opsForValue().get(redisRoads);
+            if(roads1 == null){
+                synchronized (this){
+                    if(roads1 == null){
+                        //从数据库查询
+                        roads1 = roadService.queryRoads(road.getBusNo());
+                        redisTemplate.opsForValue().set(redisRoads,roads1);
+                    }
+                }
+            }
             start:for(Road road1 : endPassRoad){
-                List<Road> roads2 = roadService.queryRoads(road1.getBusNo());
+                //使用redis缓存
+                String redisRoads1 = "Roads"+road1.getBusNo();
+                List<Road> roads2 = (List<Road>)redisTemplate.opsForValue().get(redisRoads1);
+                if(roads2 == null){
+                    synchronized (this){
+                        if(roads2 == null){
+                            //从数据库查询
+                            roads2 = roadService.queryRoads(road1.getBusNo());
+                            redisTemplate.opsForValue().set(redisRoads1,roads2);
+                        }
+                    }
+                }
                for(Road road2 :roads1){
                   end:for(Road road3 :roads2){
                       //算出两两站点之间的距离
@@ -325,7 +504,18 @@ public class RoadController {
                             MyStation near = new MyStation();
                             MyStation near1 = new MyStation();
                             for(MyStation station :startNearStation) {
-                                List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
+                                //存入redis
+                                String redisPassRoad = "PassRoad"+station.getStationId();
+                                List<Road> roads3 = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+                                if(roads3 == null){
+                                    synchronized (this){
+                                        if(roads3 == null){
+                                            //从数据库查询
+                                            roads3 = roadService.queryPassRoad(station.getStationId());
+                                            redisTemplate.opsForValue().set(redisPassRoad,roads3);
+                                        }
+                                    }
+                                }
                                 for(Road road4 : roads3){
                                     if(road4.getBusNo().equals(road.getBusNo())){
                                         for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
@@ -340,7 +530,18 @@ public class RoadController {
 
                             }
                             for(MyStation station :endNearStation) {
-                                List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
+                                //存入redis
+                                String redisPassRoad = "PassRoad"+station.getStationId();
+                                List<Road> roads3 = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+                                if(roads3 == null){
+                                    synchronized (this){
+                                        if(roads3 == null){
+                                            //从数据库查询
+                                            roads3 = roadService.queryPassRoad(station.getStationId());
+                                            redisTemplate.opsForValue().set(redisPassRoad,roads3);
+                                        }
+                                    }
+                                }
                                 for(Road road4 : roads3){
                                     if(road4.getBusNo().equals(road1.getBusNo())){
                                         for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
@@ -368,12 +569,15 @@ public class RoadController {
                             List<Road> rad1 = roadService.queryRoads(road1.getBusNo());
                             List<Road> rd1 = roadService.queryPassRoads(near.getStationId(),road.getBusNo());
                             List<Road> rd2 = roadService.queryPassRoads(near1.getStationId(),road1.getBusNo());
-                            List<Road> rd3 = roadService.queryPassRoad(road2.getStation().getStationId());
-                            List<Road> rd4 = roadService.queryPassRoad(road3.getStation().getStationId());
+                            List<Road> rd3 = roadService.queryPassRoads(road2.getStation().getStationId(),road.getBusNo());
+                            List<Road> rd4 = roadService.queryPassRoads(road3.getStation().getStationId(),road1.getBusNo());
+                            String dir = "";
                             if(rd1.get(0).getTravelSort() > rd3.get(0).getTravelSort()){
                                 roadPlan.setStartDirection(rad.get(0).getStation().getStationName());
+                                dir = rad.get(0).getStation().getStationName();
                             }else{
                                 roadPlan.setStartDirection(rad.get(rad.size()-1).getStation().getStationName());
+                                dir = rad.get(rad.size()-1).getStation().getStationName();
                             }
                             if(rd2.get(0).getTravelSort() > rd4.get(0).getTravelSort()){
                                 roadPlan.setEndDirection(rad1.get(0).getStation().getStationName());
@@ -396,6 +600,20 @@ public class RoadController {
                             roadPlan.setBusNo(road.getBusNo());
                             roadPlan.setCheck("2");
                             roadPlan.setSameStation(road2.getStation().getStationName());
+
+                            //总时间获取
+                            GlobalCoordinates target =new GlobalCoordinates(Double.parseDouble(near.getYPoint()), Double.parseDouble(near.getXPoint()));
+                            GlobalCoordinates source =new GlobalCoordinates(Double.parseDouble(near1.getYPoint()), Double.parseDouble(near1.getXPoint()));
+                            double meter = getDistanceMeter(source,target, Ellipsoid.WGS84);
+                            double time = ((meter)/(11/3.6))/60 + (mix+mix1)/1.1/60;
+                            roadPlan.setAllDate(String.valueOf(time).substring(0,String.valueOf(time).lastIndexOf(".")));
+                            //实时数据获取
+                            RealData realData = getRealData(road.getBusNo(), dir, near.getStationName());
+                            if(realData != null){
+                                roadPlan.setPlanDate(realData.getTime());
+                                roadPlan.setPlanStations(realData.getMoneyStation());
+                            }
+
                             roadPlans.add(roadPlan);
                             break b;
                         }
@@ -405,7 +623,18 @@ public class RoadController {
         }
         //非同站换乘
         for(Road road : startPassRoad) {
-            List<Road> roads1 = roadService.queryRoads(road.getBusNo());
+            //使用redis缓存
+            String redisRoads = "Roads"+road.getBusNo();
+            List<Road> roads1 = (List<Road>)redisTemplate.opsForValue().get(redisRoads);
+            if(roads1 == null){
+                synchronized (this){
+                    if(roads1 == null){
+                        //从数据库查询
+                        roads1 = roadService.queryRoads(road.getBusNo());
+                        redisTemplate.opsForValue().set(redisRoads,roads1);
+                    }
+                }
+            }
             start:
             for (Road road1 : endPassRoad) {
                 int check = 0;
@@ -414,7 +643,18 @@ public class RoadController {
                 String endTurn = "";
                 Road ro2 = null;
                 Road ro3 = null;
-                List<Road> roads2 = roadService.queryRoads(road1.getBusNo());
+                //使用redis缓存
+                String redisRoads1 = "Roads"+road1.getBusNo();
+                List<Road> roads2 = (List<Road>)redisTemplate.opsForValue().get(redisRoads1);
+                if(roads2 == null){
+                    synchronized (this){
+                        if(roads2 == null){
+                            //从数据库查询
+                            roads2 = roadService.queryRoads(road1.getBusNo());
+                            redisTemplate.opsForValue().set(redisRoads1,roads2);
+                        }
+                    }
+                }
                 for (Road road2 : roads1) {
                     GlobalCoordinates source = new GlobalCoordinates(Double.parseDouble(road2.getStation().getYPoint()), Double.parseDouble(road2.getStation().getXPoint()));
                     end:
@@ -455,7 +695,18 @@ public class RoadController {
                     MyStation near = new MyStation();
                     MyStation near1 = new MyStation();
                     for(MyStation station :startNearStation) {
-                        List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
+                        //存入redis
+                        String redisPassRoad = "PassRoad"+station.getStationId();
+                        List<Road> roads3 = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+                        if(roads3 == null){
+                            synchronized (this){
+                                if(roads3 == null){
+                                    //从数据库查询
+                                    roads3 = roadService.queryPassRoad(station.getStationId());
+                                    redisTemplate.opsForValue().set(redisPassRoad,roads3);
+                                }
+                            }
+                        }
                         for(Road road4 : roads3){
                             if(road4.getBusNo().equals(road.getBusNo())){
                                 for (Map.Entry<Double, MyStation> entry : metSta.entrySet()) {
@@ -470,7 +721,18 @@ public class RoadController {
 
                     }
                     for(MyStation station :endNearStation) {
-                        List<Road> roads3 = roadService.queryPassRoad(station.getStationId());
+                        //存入redis
+                        String redisPassRoad = "PassRoad"+station.getStationId();
+                        List<Road> roads3 = (List<Road>)redisTemplate.opsForValue().get(redisPassRoad);
+                        if(roads3 == null){
+                            synchronized (this){
+                                if(roads3 == null){
+                                    //从数据库查询
+                                    roads3 = roadService.queryPassRoad(station.getStationId());
+                                    redisTemplate.opsForValue().set(redisPassRoad,roads3);
+                                }
+                            }
+                        }
                         for(Road road4 : roads3){
                             if(road4.getBusNo().equals(road1.getBusNo())){
                                 for (Map.Entry<Double, MyStation> entry : metSta1.entrySet()) {
@@ -498,12 +760,15 @@ public class RoadController {
                     List<Road> rad1 = roadService.queryRoads(road1.getBusNo());
                     List<Road> rd1 = roadService.queryPassRoads(near.getStationId(),road.getBusNo());
                     List<Road> rd2 = roadService.queryPassRoads(near1.getStationId(),road1.getBusNo());
-                    List<Road> rd3 = roadService.queryPassRoad(ro2.getStation().getStationId());
-                    List<Road> rd4 = roadService.queryPassRoad(ro3.getStation().getStationId());
+                    List<Road> rd3 = roadService.queryPassRoads(ro2.getStation().getStationId(),road.getBusNo());
+                    List<Road> rd4 = roadService.queryPassRoads(ro3.getStation().getStationId(),road1.getBusNo());
+                    String dir = "";
                     if(rd1.get(0).getTravelSort() > rd3.get(0).getTravelSort()){
                         roadPlan.setStartDirection(rad.get(0).getStation().getStationName());
+                        dir = rad.get(0).getStation().getStationName();
                     }else{
                         roadPlan.setStartDirection(rad.get(rad.size()-1).getStation().getStationName());
+                        dir = rad.get(rad.size()-1).getStation().getStationName();
                     }
                     if(rd2.get(0).getTravelSort() > rd4.get(0).getTravelSort()){
                         roadPlan.setEndDirection(rad1.get(0).getStation().getStationName());
@@ -512,10 +777,6 @@ public class RoadController {
 
                     }
                     //总的站点数量
-                    System.out.println(rd1.get(0).getTravelSort() +"123" );
-                    System.out.println(rd2.get(0).getTravelSort() +"123");
-                    System.out.println(rd3.get(0).getTravelSort() +"123");
-                    System.out.println(rd4.get(0).getTravelSort() +"123");
                     int startMeter = rd1.get(0).getTravelSort() - rd3.get(0).getTravelSort();
                     int endMeter = rd2.get(0).getTravelSort() - rd4.get(0).getTravelSort();
                     int resultMeter = Math.abs(startMeter)+Math.abs(endMeter);
@@ -533,6 +794,20 @@ public class RoadController {
                     roadPlan.setStartTurn(startTurn);
                     roadPlan.setEndTurn(endTurn);
                     roadPlan.setMiddleWalk(String.valueOf(mi).substring(0,String.valueOf(mi).lastIndexOf(".")));
+
+                    //总时间获取
+                    GlobalCoordinates target =new GlobalCoordinates(Double.parseDouble(near.getYPoint()), Double.parseDouble(near.getXPoint()));
+                    GlobalCoordinates source =new GlobalCoordinates(Double.parseDouble(near1.getYPoint()), Double.parseDouble(near1.getXPoint()));
+                    double meter = getDistanceMeter(source,target, Ellipsoid.WGS84);
+                    double time = ((meter)/(11/3.6))/60 + (mix+mix1)/1.1/60;
+                    roadPlan.setAllDate(String.valueOf(time).substring(0,String.valueOf(time).lastIndexOf(".")));
+                    //实时数据获取
+                    RealData realData = getRealData(road.getBusNo(), dir, near.getStationName());
+                    if(realData != null){
+                        roadPlan.setPlanDate(realData.getTime());
+                        roadPlan.setPlanStations(realData.getMoneyStation());
+                    }
+
                     roadPlans.add(roadPlan);
 
                     break start;
@@ -548,27 +823,41 @@ public class RoadController {
         System.out.println(roadPlans);
 
         int meter = 3000;
+        int allDate = 500;
         int check = 0;
-        for(RoadPlan roadPlan :roadPlans){
-            if(Integer.parseInt(roadPlan.getAllWalk()) < meter){
-                meter = Integer.parseInt(roadPlan.getAllWalk());
+        for(int i = 0;i<roadPlans.size();i++){
+            if(Integer.parseInt(roadPlans.get(i).getAllWalk()) < meter){
+                meter = Integer.parseInt(roadPlans.get(i).getAllWalk());
             }
-            if(roadPlan.getCheck().equals("1")){
+            if(roadPlans.get(i).getCheck().equals("1")){
                 check++;
-                roadPlan.setLessTurn("lessTurn");
+                roadPlans.get(i).setLessTurn("lessTurn");
+            }
+            if(Integer.parseInt(roadPlans.get(i).getAllDate()) < allDate){
+                System.out.println("11111");
+                allDate = Integer.parseInt(roadPlans.get(i).getAllDate());
             }
         }
 
-        for(RoadPlan roadPlan :roadPlans){
-            if(Integer.parseInt(roadPlan.getAllWalk()) == meter){
-                roadPlan.setLessWalk("lessWalk");
+        for(int i = 0;i<roadPlans.size();i++){
+            if(Integer.parseInt(roadPlans.get(i).getAllWalk()) == meter){
+                roadPlans.get(i).setLessWalk("lessWalk");
             }
             if(check == 0 ){
-                roadPlan.setLessTurn("lessTurn");
+                roadPlans.get(i).setLessTurn("lessTurn");
+            }
+            if(Integer.parseInt(roadPlans.get(i).getAllDate()) == allDate ){
+                System.out.println("11111");
+                roadPlans.get(i).setLessTime("lessTime");
             }
         }
         return roadPlans;
     }
+
+//    @RequestMapping(value = "/getRealRunData")
+//    public MyRealRun getRealRunData(String busNo, String direction, String stationName){
+//        getRealData(busNo, direction, stationName);
+//    }
 
 
     //经纬度计算距离
@@ -576,6 +865,48 @@ public class RoadController {
         //创建GeodeticCalculator，调用计算方法，传入坐标系、经纬度用于计算距离
         GeodeticCurve geoCurve =new GeodeticCalculator().calculateGeodeticCurve(ellipsoid, gpsFrom, gpsTo);
         return geoCurve.getEllipsoidalDistance();
+    }
+
+    public RealData getRealData(String busNo, String direction, String stationName){
+        RealData realData = new RealData();
+        Map<Double,RealData> meters1 = new HashMap<>();
+        List<Double> lists = new ArrayList<>();
+        MyStation myStation = stationService.queryStationName(direction);
+        Integer dir = roadService.queryDirection(myStation.getStationId(), busNo);
+        List<MyRealRun> myRealRuns = realRunService.queryRealRun(dir, busNo);
+        MyStation sta = stationService.queryStationName(stationName);
+
+        //拿到travelSort
+        Road road = roadService.selectTravelSort(sta.getStationId(), busNo,dir);
+        for(MyRealRun myRealRun : myRealRuns){
+            MyStation sta1 = stationService.queryStationName(myRealRun.getNowStation());
+            Road road1 = roadService.selectTravelSort(sta1.getStationId(), busNo,dir);
+            if(road.getTravelSort() > road1.getTravelSort()){
+                GlobalCoordinates target =new GlobalCoordinates(myRealRun.getRealYPoint(), myRealRun.getRealXPoint());
+                GlobalCoordinates source =new GlobalCoordinates(Double.parseDouble(sta.getYPoint()), Double.parseDouble(sta.getXPoint()));
+                double meter = getDistanceMeter(source,target, Ellipsoid.WGS84);
+                lists.add(meter);
+                RealData realData1 = new RealData();
+                realData1.setMoneyStation(road.getTravelSort() - road1.getTravelSort());
+                double time = ((meter)/(10/3.6))/60;
+                realData1.setTime(String.valueOf(time).substring(0,String.valueOf(time).lastIndexOf("."))+"分钟");
+                meters1.put(meter,realData1);
+            }
+        }
+        if(lists.size() != 0){
+            Double min1 = Collections.min(lists);
+            for(Map.Entry<Double, RealData> entry : meters1.entrySet()){
+                if(min1.equals(entry.getKey())){
+                    realData = entry.getValue();
+                }
+            }
+        }
+        System.out.println(myRealRuns);
+        System.out.println(stationName);
+        System.out.println(lists);
+        System.out.println(meters1);
+        System.out.println(realData);
+        return realData;
     }
 
 }

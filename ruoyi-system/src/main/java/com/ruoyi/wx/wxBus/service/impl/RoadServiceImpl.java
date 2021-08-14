@@ -41,4 +41,14 @@ public class RoadServiceImpl implements RoadService {
     public List<Road> queryPassRoads(int stationId, String busNo) {
         return roadMapper.selectPassRoads(stationId,busNo);
     }
+
+    @Override
+    public Integer queryDirection(int stationId, String busNo) {
+        return roadMapper.selectDirection(stationId,busNo);
+    }
+
+    @Override
+    public Road selectTravelSort(int stationId, String busNo,int dir) {
+        return roadMapper.selectTravelSort(stationId,busNo,dir);
+    }
 }

@@ -10,21 +10,19 @@ import java.io.Serializable;
 /**
  * @version 1.0
  * @author: ZD
- * @date: 2021/7/30 17:56
+ * @date: 2021/8/13 1:03
  * @desc:
  */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Road implements Serializable {
-    private int roadId;
-    private int stationId;
-    private String busNo;
-    private int cost;
-    private String travelTime;
-    private int travelSort;
-    private int cityId;
-    private MyStation station;
+public class RealData implements Serializable {
+    private int moneyStation;
+    private String time;
+    private String meter;
+    private String startTime;
+    private String allData;
+    private String nearStation;
+    private int nowStation;
 }

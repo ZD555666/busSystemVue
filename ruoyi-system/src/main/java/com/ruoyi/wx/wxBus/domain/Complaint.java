@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
  * @version 1.0
  * @author: ZD
@@ -15,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Complaint {
+public class Complaint implements Serializable {
     private String phoneNumber;
     private String problem;
     private String imagePath;
