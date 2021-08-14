@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wx.wxuser.mapper.WxBusRealRunMapper">
+
+    <select id="queryAllRunBus" resultType="WxBusRealRun">
+        select *
+        from t_bus_realrun;
+    </select>
+
+    <select id="queryNowStationXy" parameterType="String" resultType="WxBusRealRun">
+        SELECT t2.stationId, t2.xPoint, t2.yPoint
+        from t_bus_realrun t1,
+             t_stationinfo t2
+        WHERE t1.nowStation = #{nowStation}
+          and t1.nowStation = t2.stationName
+        limit 1
+    </select>
+
+    <select id="queryNextStationXy" parameterType="String" resultType="WxBusRealRun">
+        SELECT t2.stationId, t2.xPoint, t2.yPoint
+        from t_bus_realrun t1,
+             t_stationinfo t2
+        WHERE t1.nextStation = #{nowStation}
+          and t1.nextStation = t2.stationName
+        limit 1
+    </select>
+
+    <select id="queryTravelSort" resultType="Integer">
+        SELECT t2.travelSort
+        from t_bus_realrun t1,
+             t_road t2
+        WHERE t1.busNo = t2.busNo
+          and t2.stationId = (SELECT stationId FROM t_stationinfo WHERE stationName = #{stationName} limit 1)
+          and t1.direction = #{direction}
+          and t1.busNo = #{busNo}
+          and t1.cityId = t2.cityId
+          and t1.direction = t2.direction
+          and t1.licensePlate = #{licensePlate}
+    </select>
+    <!--    SELECT t2.travelSort-->
+    <!--    from t_bus_realrun t1,-->
+    <!--    t_road t2-->
+    <!--    WHERE t1.busNo = t2.busNo-->
+    <!--    and t2.stationId = (SELECT stationId FROM t_stationinfo WHERE stationName = #{stationName} limit 1)-->
+    <!--    and t1.direction = #{direction}-->
+    <!--    and t1.cityId = t2.cityId-->
+    <!--    limit 1-->
+
+    <select id="queryNextInfo" resultType="WxBusRealRun">
+        SELECT t1.busNo, t2.stationName, t2.xPoint, t2.yPoint, t1.cityId
+        from t_road t1,
+             t_stationinfo t2
+        WHERE t1.stationId = t2.stationId
+          and t1.direction = #{direction}
+          and t1.busNo = #{busNo}
+          and (t1.travelSort = #{travelSort1} or t1.travelSort = #{travelSort2})
+          and t1.cityId = t2.cityId
+        ORDER BY travelSort
+    </select>
+
+    <select id="queryHasNext" resultType="Integer">
+        SELECT count(*)
+        from t_road
+        WHERE busNo = #{busNo}
+          and direction = #{direction}
+          and cityId = #{cityId}
+          and travelSort = #{travelSort}
+        ORDER BY travelSort
+        limit 1
+    </select>
+
+    <update id="updateRealRun" parameterType="WxBusRealRun">
+        update t_bus_realrun
+        set nowStation=#{nowStation},
+            nextStation=#{nextStation},
+            realXPoint=#{xPoint},
+            realYPoint=#{yPoint},
+            speed=#{speed}
+        where licensePlate = #{licensePlate};
+    </update>
+
+    <delete id="delEndBus" parameterType="String">
+        delete
+        from t_bus_realrun
+        where licensePlate = #{licensePlate};
+    </delete>
+
+    <update id="updateBusInfoState">
+        update t_businfo
+        set busParam = #{busParam}
+        where licensePlate = #{licensePlate};
+    </update>
+
+    <select id="queryNewRunsByPlate" resultType="WxBusRealRun">
+        select *
+        from t_bus_realrun
+        where licensePlate = #{licensePlate};
+    </select>
+
+
+</mapper>

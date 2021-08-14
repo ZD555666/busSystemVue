@@ -7,8 +7,6 @@
     <select id="queryScheduled" resultType="WxSchedule">
         select *
         from t_schedule
-        where busState = #{busState1}
-           or busState = #{busState2}
         order By starTime;
     </select>
 </mapper>

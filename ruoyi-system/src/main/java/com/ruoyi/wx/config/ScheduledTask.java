@@ -1,8 +1,10 @@
 package com.ruoyi.wx.config;
 
+import com.ruoyi.wx.wxuser.domain.StationRoadVo;
 import com.ruoyi.wx.wxuser.domain.WxBusInfo;
 import com.ruoyi.wx.wxuser.domain.WxSchedule;
 import com.ruoyi.wx.wxuser.mapper.WxBusInfoMapper;
+import com.ruoyi.wx.wxuser.service.AddressService;
 import com.ruoyi.wx.wxuser.service.WxBusInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
@@ -28,6 +31,9 @@ public class ScheduledTask implements SchedulingConfigurer {
 
     @Autowired
     private WxBusInfoService busInfoService;
+
+    @Autowired
+    private AddressService addressService;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -104,8 +110,6 @@ public class ScheduledTask implements SchedulingConfigurer {
                 cronTasks.remove(String.valueOf(txTask.getScheduleId()));
             }
             log.info("redisCache {}", redisTemplate.opsForValue().get("num"));
-//            final Integer[] i = {0};
-
             CronTask task = new CronTask(new Runnable() {
                 @Override
                 public void run() {
@@ -114,28 +118,37 @@ public class ScheduledTask implements SchedulingConfigurer {
                         log.info("执行单个任务，任务ID【{}】执行规则【{}】", txTask.getScheduleId(), txTask.getExpression());
                         lock.lock();
                         List<WxBusInfo> wxBusInfos = busInfoService.queryBus(txTask.getBusNo(), 1, 2);
-                        System.err.println(wxBusInfos);
-                        int num = (int) redisTemplate.opsForValue().get("num");
-                        log.info("num==>{}", num);
-                        if (num < tasks.size()) {
-                            num = num + 1;
-                            redisTemplate.opsForValue().set("num", num);
-                            log.info("num======================================>{}", num);
-                            log.info("redisCache====>>>num{}",redisTemplate.opsForValue().get("num"));
-                            WxBusInfo wxBusInfo = wxBusInfos.get(0);
-
-                            int i = busInfoService.insertRealRunBus(wxBusInfo);
-                            if (i == 1) {
-                                busInfoService.updBusState(wxBusInfo.getLicensePlate(), 0);
-                                lock.unlock();
+                        log.info("所有的可以开的公交车：{}", wxBusInfos);
+//                        int num = (int) redisTemplate.opsForValue().get("num");
+//                        log.info("num==>{}", num);
+                        if (wxBusInfos.size() != 0) {
+//                            num <= tasks.size()&&
+//                            redisTemplate.opsForValue().set("num", num);
+//                            log.info("num======================================>{}", num);
+//                            log.info("redisCache====>>>num{}", redisTemplate.opsForValue().get("num"));
+                            int nextInt = new Random().nextInt(wxBusInfos.size());
+                            log.info("随机选择的车下标是：{}",nextInt);
+                            WxBusInfo wxBusInfo = wxBusInfos.get(nextInt);
+                            List<StationRoadVo> list = addressService.TaskQueryBusTo(wxBusInfo.getBusNo(), wxBusInfo.getBusParam() == 1 ? 0 : 1);
+                            if (list.size() != 0) {
+                                wxBusInfo.setRealXPoint(list.get(0).getXPoint()).setRealYPoint(list.get(0).getYPoint()).
+                                        setNowStation(list.get(0).getStationName()).setCityId(list.get(0).getCityId()).setSpeed(1.00).setDirection(wxBusInfo.getBusParam() == 1 ? 0 : 1);
+                                if (list.size() == 1) {
+                                    wxBusInfo.setNextStation(list.get(0).getStationName());
+                                } else {
+                                    wxBusInfo.setNextStation(list.get(1).getStationName());
+                                }
+                                log.info("插入前的wxBusInfo{}", wxBusInfo);
+                                int i = busInfoService.insertRealRunBus(wxBusInfo);
+                                if (i == 1) {
+                                    busInfoService.updBusState(wxBusInfo.getLicensePlate(), 0);
+                                }
                             }
-                        }else {
-                            return;
                         }
-
-
+                        lock.unlock();
                         System.out.println("==========================执行任务=============================");
                     } catch (Exception e) {
+                        lock.unlock();
                         log.error("执行发送消息任务异常，异常信息：{}", e);
                     }
                 }

@@ -12,14 +12,17 @@
     </select>
 
     <insert id="insertRealRunBus" parameterType="WxBusInfo">
-        insert into t_bus_realrun (busNo, licensePlate)
-        values (#{busNo}, #{licensePlate});
+        insert into t_bus_realrun ( busNo, licensePlate, realXPoint, realYPoint, nowStation, nextStation
+                                  , speed, cityId, direction)
+        values (#{busNo}, #{licensePlate}, #{realXPoint}, #{realYPoint}, #{nowStation}, #{nextStation}, #{speed},
+                #{cityId}, #{direction});
     </insert>
 
     <update id="updBusState">
         update t_businfo
         set busParam = #{busParam}
-        where licensePlate = #{licensePlate} limit 1;
+        where licensePlate = #{licensePlate}
+        limit 1;
     </update>
 
 

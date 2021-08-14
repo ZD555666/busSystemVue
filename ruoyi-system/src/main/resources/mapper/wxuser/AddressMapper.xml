@@ -38,7 +38,8 @@
         WHERE t1.stationId = #{stationId}
           AND t1.busNo = t2.busNo
           AND t1.cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
-          AND t1.direction = #{direction};
+          AND t1.direction = #{direction}
+          AND t1.direction = t2.direction;
     </select>
 
     <select id="queryBusTo" resultType="StationRoadVo">
@@ -50,6 +51,7 @@
           and t1.cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
           and t1.direction = #{direction}
         ORDER BY t1.travelSort
+
     </select>
 
     <select id="queryDistanceAndSpeed" resultType="StationRoadVo">
@@ -71,6 +73,8 @@
           and t2.stationId = t3.stationId
           and t3.busNo = t1.busNo
           and t1.cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName})
+          and t1.direction = t3.direction
+        limit 1;
     </select>
 
     <select id="querySurplusStation" resultType="Integer">
@@ -114,12 +118,42 @@
     <select id="queryHistoryByOpId" parameterType="String" resultType="WxHistory">
         select *
         from t_wx_history
-        where openId = #{openId};
+        where openId = #{openId}
+          and cityName = #{cityName};
     </select>
 
     <insert id="insertHistory" parameterType="WxHistory">
-#         insert into t_wx_history (stationId, stationName, endStation, xPoint, yPoint, busNo, cityName, openId)
-#         values (#{stationId});
+        insert into t_wx_history (endStation, busNo, openId, cityName)
+        values (#{endStation}, #{busNo}, #{openId}, #{cityName});
     </insert>
+    <insert id="insertHistory1" parameterType="WxHistory">
+        insert into t_wx_history (stationId, stationName, xPoint, yPoint, cityName, openId)
+        values (#{stationId}, #{stationName}, #{xPoint}, #{yPoint}, #{cityName}, #{openId});
+    </insert>
+
+    <delete id="delAllHistory">
+        delete
+        from t_wx_history
+        where openId = #{openId}
+          and cityName = #{cityName};
+    </delete>
+
+    <select id="TaskQueryBusTo" resultType="StationRoadVo">
+        SELECT t1.travelSort, t2.stationName, t2.xPoint, t2.yPoint, t1.cityId
+        FROM t_road t1,
+             t_stationinfo t2
+        WHERE t1.stationId = t2.stationId
+          and t1.busNo = #{busNo}
+          and t1.cityId = t2.cityId
+          and t1.direction = #{direction}
+        ORDER BY t1.travelSort
+    </select>
+
+    <select id="queryClickStationXy" resultType="Map">
+        select xPoint, yPoint
+        from t_stationinfo
+        where stationName = #{stationName}
+          and cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName});
+    </select>
 
 </mapper>

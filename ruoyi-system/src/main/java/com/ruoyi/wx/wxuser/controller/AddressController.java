@@ -46,18 +46,27 @@ public class AddressController {
     @PostMapping("/queryDetail")
     public AjaxResult queryDetail(@RequestBody HashMap<String, Object> map) {
         int stationId = (int) map.get("stationId");
-        List<WxBusRealRun> busNos = addressService.queryBusNoById(stationId, (String) map.get("cityName"), 0);
+        int direction = (int) map.get("direction");
+        List<WxBusRealRun> busNos = addressService.queryBusNoById(stationId, (String) map.get("cityName"), direction);
         List<StationRoadVo> list = new ArrayList<>();
         for (WxBusRealRun vo : busNos) {
-            List<StationRoadVo> listVo = addressService.queryBusTo(vo.getBusNo(), (String) map.get("cityName"), 0);
+            List<StationRoadVo> listVo = addressService.queryBusTo(vo.getBusNo(), (String) map.get("cityName"), direction);
             for (StationRoadVo stationRoadVo : listVo) {
                 StationRoadVo roadVo = new StationRoadVo();
-                if (stationRoadVo.getTravelSort() == listVo.size()) {
-                    list.add(roadVo.setTravelSort(stationRoadVo.getTravelSort())
-                            .setStationName(stationRoadVo.getStationName())
-                            .setBusNo(vo.getBusNo()).setEndStation(stationRoadVo
-                                    .getStationName()).setLicensePlate(vo.getLicensePlate()).setXPoint(stationRoadVo.getXPoint()).setYPoint(stationRoadVo.getYPoint()));
+                if (direction == 0) {
+                    if (stationRoadVo.getTravelSort() == listVo.size()) {
+                        list.add(roadVo.setTravelSort(stationRoadVo.getTravelSort())
+                                .setStationName(stationRoadVo.getStationName()).setEndStation(stationRoadVo.getStationName())
+                                .setBusNo(vo.getBusNo()).setLicensePlate(vo.getLicensePlate()).setXPoint(stationRoadVo.getXPoint()).setYPoint(stationRoadVo.getYPoint()));
+                    }
+                } else if (direction == 1) {
+                    if (stationRoadVo.getTravelSort() == listVo.size()) {
+                        list.add(roadVo.setTravelSort(stationRoadVo.getTravelSort())
+                                .setStationName(stationRoadVo.getStationName()).setEndStation(stationRoadVo.getStationName())
+                                .setBusNo(vo.getBusNo()).setLicensePlate(vo.getLicensePlate()).setXPoint(stationRoadVo.getXPoint()).setYPoint(stationRoadVo.getYPoint()));
+                    }
                 }
+
             }
         }
         System.err.println(list);
@@ -66,21 +75,24 @@ public class AddressController {
 
     @PostMapping("/queryBusDetailInfo")
     public AjaxResult queryBusDetailInfo(@RequestBody HashMap<String, Object> map) {
+        int direction = (int) map.get("direction");
         String busString = JSONObject.toJSONString(map.get("busDetailInfo"));
         String clickStation = (String) map.get("clickStation");
+        Map<String, Double> clickStationXy = addressService.queryClickStationXy(clickStation, (String) map.get("cityName"));
+        System.out.println(clickStationXy + "================>>>>>>>>>>>>>");
         List<StationRoadVo> busDetailInfo = JSONObject.parseArray(busString, StationRoadVo.class);
         List<StationRoadVo> list = new ArrayList<>();
         for (StationRoadVo stationRoadVo : busDetailInfo) {
-            StationRoadVo realRun = addressService.queryDistanceAndSpeed(stationRoadVo.getLicensePlate(), (String) map.get("cityName"), 0);
-            double distance = NearbyUtil.getDistance(realRun.getRealXPoint(), realRun.getRealYPoint(), realRun.getXPoint(), realRun.getYPoint());
+            StationRoadVo realRun = addressService.queryDistanceAndSpeed(stationRoadVo.getLicensePlate(), (String) map.get("cityName"), direction);
+            double distance = NearbyUtil.getDistance(realRun.getRealXPoint(), realRun.getRealYPoint(), clickStationXy.get("xPoint"), clickStationXy.get("yPoint"));
             realRun.setDistance(distance);
             realRun.setDistanceTime(((distance / 1000.00) / realRun.getSpeed() * 60));
             realRun.setStationName(stationRoadVo.getStationName()).setEndStation(stationRoadVo.getEndStation()).setBusNo(stationRoadVo.getBusNo());
-            int stationOne = addressService.querySurplusStation(clickStation, stationRoadVo.getBusNo(), (String) map.get("cityName"), 0);
-            int stationTwo = addressService.querySurplusStation(realRun.getNowStation(), stationRoadVo.getBusNo(), (String) map.get("cityName"), 0);
-            realRun.setSurplusStation(stationOne - stationTwo);
-
-            list.add(realRun);
+            int stationOne = addressService.querySurplusStation(clickStation, stationRoadVo.getBusNo(), (String) map.get("cityName"), direction);
+            int stationTwo = addressService.querySurplusStation(realRun.getNowStation(), stationRoadVo.getBusNo(), (String) map.get("cityName"), direction);
+            int i = stationOne - stationTwo;
+            realRun.setSurplusStation(i);
+            if (i >= 0) list.add(realRun);
         }
         System.err.println(list);
         return AjaxResult.success(list);
@@ -118,17 +130,31 @@ public class AddressController {
 
     @PostMapping("/queryHistory")
     public AjaxResult queryHistory(@RequestBody HashMap<String, Object> map) {
-        System.err.println(map.get("opId"));
-        List<String> list = new ArrayList<>();
-        list.add("aaa");
+        List<WxHistory> wxHistories = addressService.queryHistoryByOpId((String) map.get("opId"), (String) map.get("cityName"));
+        System.err.println(wxHistories);
 
-
-        return AjaxResult.success(list);
+        return AjaxResult.success(wxHistories);
     }
 
-    @RequestMapping("/test")
-    public AjaxResult test(){
-        return AjaxResult.success("132a");
+    @PostMapping("/putHistory")
+    public AjaxResult putHistory(@RequestBody HashMap<String, Object> map) {
+        int i = addressService.insertHistory(new WxHistory().setOpenId((String) map.get("opId")).setEndStation((String) map.get("endStation")).
+                setBusNo((String) map.get("busNo")).setCityName((String) map.get("cityName")));
+        return AjaxResult.success(i);
     }
+
+    @PostMapping("/putHistory1")
+    public AjaxResult putHistory1(@RequestBody HashMap<String, Object> map) {
+        int i = addressService.insertHistory1(new WxHistory().setOpenId((String) map.get("opId")).setStationId((int) map.get("stationId"))
+                .setStationName((String) map.get("stationName")).setXPoint(Double.valueOf((String) map.get("xPoint"))).setYPoint(Double.valueOf((String) map.get("yPoint")))
+                .setCityName((String) map.get("cityName")));
+        return AjaxResult.success(i);
+    }
+
+    @PostMapping("/delHistory")
+    public AjaxResult delHistory(@RequestBody HashMap<String, Object> map) {
+        return AjaxResult.success(addressService.delAllHistory((String) map.get("opId"), (String) map.get("cityName")));
+    }
+
 
 }

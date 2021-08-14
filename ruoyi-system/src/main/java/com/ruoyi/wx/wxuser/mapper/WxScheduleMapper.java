@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper
 public interface WxScheduleMapper {
 
-    List<WxSchedule> queryScheduled(@Param("busState1") int busState1, @Param("busState2") int busState2);
+    List<WxSchedule> queryScheduled();
 
 
 

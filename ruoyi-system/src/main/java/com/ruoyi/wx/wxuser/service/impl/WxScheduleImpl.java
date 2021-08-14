@@ -20,7 +20,7 @@ public class WxScheduleImpl implements WxScheduleService {
     private WxScheduleMapper scheduleMapper;
 
     @Override
-    public List<WxSchedule> queryScheduled(int busState1, int busState2) {
-        return scheduleMapper.queryScheduled(busState1, busState2);
+    public List<WxSchedule> queryScheduled() {
+        return scheduleMapper.queryScheduled();
     }
 }

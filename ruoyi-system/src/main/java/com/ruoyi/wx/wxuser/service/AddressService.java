@@ -4,6 +4,7 @@ import com.ruoyi.wx.wxuser.domain.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version 1.0
@@ -31,9 +32,17 @@ public interface AddressService {
 
     List<WxCollect> queryCollectByOpIdAndCity(String opId, String cityName);
 
-    List<WxHistory> queryHistoryByOpId(String openId);
+    List<WxHistory> queryHistoryByOpId(String openId, String cityName);
 
     int insertHistory(WxHistory history);
+
+    int insertHistory1(WxHistory history);
+
+    int delAllHistory(String openId, String cityName);
+
+    List<StationRoadVo> TaskQueryBusTo(String busNo, int direction);
+
+    Map<String, Double> queryClickStationXy(String stationName, String cityName);
 
 
 }
