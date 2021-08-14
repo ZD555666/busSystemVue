@@ -1,7 +1,7 @@
 package com.ruoyi.busTime.service;
 
 import java.util.List;
-import com.ruoyi.busTime.domain.TSchedudle;
+import com.ruoyi.busTime.domain.TSchedudled;
 
 /**
  * 公交车时刻Service接口
@@ -17,7 +17,7 @@ public interface ITSchedudleService
      * @param scheduleid 公交车时刻ID
      * @return 公交车时刻
      */
-    public TSchedudle selectTSchedudleById(Long scheduleid);
+    public TSchedudled selectTSchedudleById(Long scheduleid);
 
     /**
      * 查询公交车时刻列表
@@ -25,7 +25,7 @@ public interface ITSchedudleService
      * @param tSchedudle 公交车时刻
      * @return 公交车时刻集合
      */
-    public List<TSchedudle> selectTSchedudleList(TSchedudle tSchedudle);
+    public List<TSchedudled> selectTSchedudleList(TSchedudled tSchedudle);
 
     /**
      * 新增公交车时刻
@@ -33,7 +33,7 @@ public interface ITSchedudleService
      * @param tSchedudle 公交车时刻
      * @return 结果
      */
-    public int insertTSchedudle(TSchedudle tSchedudle);
+    public int insertTSchedudle(TSchedudled tSchedudle);
 
     /**
      * 修改公交车时刻
@@ -41,7 +41,7 @@ public interface ITSchedudleService
      * @param tSchedudle 公交车时刻
      * @return 结果
      */
-    public int updateTSchedudle(TSchedudle tSchedudle);
+    public int updateTSchedudle(TSchedudled tSchedudle);
 
     /**
      * 批量删除公交车时刻

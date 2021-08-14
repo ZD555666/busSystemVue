@@ -53,7 +53,7 @@ public class ScheduledConfig {
     @Autowired
     private WxBusRealRunService realRunService;
 
-    @Scheduled(cron = "30 55 23 ? * *")
+    @Scheduled(cron = "0 59 12 ? * *")
     public void querySchedule() {
 //        redisTemplate.opsForValue().set("num", 1);
         List<WxSchedule> wxSchedules = scheduleService.queryScheduled();

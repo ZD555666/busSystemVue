@@ -15,7 +15,7 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.busTime.domain.TSchedudle;
+import com.ruoyi.busTime.domain.TSchedudled;
 import com.ruoyi.busTime.service.ITSchedudleService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -38,10 +38,10 @@ public class TSchedudleController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('busTime:bustime:list')")
     @GetMapping("/list")
-    public TableDataInfo list(TSchedudle tSchedudle)
+    public TableDataInfo list(TSchedudled tSchedudle)
     {
         startPage();
-        List<TSchedudle> list = tSchedudleService.selectTSchedudleList(tSchedudle);
+        List<TSchedudled> list = tSchedudleService.selectTSchedudleList(tSchedudle);
         return getDataTable(list);
     }
 
@@ -51,10 +51,10 @@ public class TSchedudleController extends BaseController
     @PreAuthorize("@ss.hasPermi('busTime:bustime:export')")
     @Log(title = "公交车时刻", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(TSchedudle tSchedudle)
+    public AjaxResult export(TSchedudled tSchedudle)
     {
-        List<TSchedudle> list = tSchedudleService.selectTSchedudleList(tSchedudle);
-        ExcelUtil<TSchedudle> util = new ExcelUtil<TSchedudle>(TSchedudle.class);
+        List<TSchedudled> list = tSchedudleService.selectTSchedudleList(tSchedudle);
+        ExcelUtil<TSchedudled> util = new ExcelUtil<TSchedudled>(TSchedudled.class);
         return util.exportExcel(list, "公交车时刻数据");
     }
 
@@ -74,7 +74,7 @@ public class TSchedudleController extends BaseController
     @PreAuthorize("@ss.hasPermi('busTime:bustime:add')")
     @Log(title = "公交车时刻", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TSchedudle tSchedudle)
+    public AjaxResult add(@RequestBody TSchedudled tSchedudle)
     {
         return toAjax(tSchedudleService.insertTSchedudle(tSchedudle));
     }
@@ -85,7 +85,7 @@ public class TSchedudleController extends BaseController
     @PreAuthorize("@ss.hasPermi('busTime:bustime:edit')")
     @Log(title = "公交车时刻", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody TSchedudle tSchedudle)
+    public AjaxResult edit(@RequestBody TSchedudled tSchedudle)
     {
         return toAjax(tSchedudleService.updateTSchedudle(tSchedudle));
     }

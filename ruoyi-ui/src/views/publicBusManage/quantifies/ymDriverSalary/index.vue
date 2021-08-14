@@ -19,24 +19,24 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="备用字段" prop="attr1">
-        <el-input
-          v-model="queryParams.attr1"
-          placeholder="请输入备用字段"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="备用字段" prop="attr2">
-        <el-input
-          v-model="queryParams.attr2"
-          placeholder="请输入备用字段"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="备用字段" prop="attr1">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.attr1"-->
+<!--          placeholder="请输入备用字段"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="备用字段" prop="attr2">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.attr2"-->
+<!--          placeholder="请输入备用字段"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -128,18 +128,18 @@
     <!-- 添加或修改driverSalary对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="司机id" prop="busdriverid">
+        <el-form-item label="司机姓名" prop="busdriverid">
           <el-input v-model="form.busdriverid" placeholder="请输入司机id" />
         </el-form-item>
         <el-form-item label="司机工资" prop="driversalary">
           <el-input v-model="form.driversalary" placeholder="请输入司机工资" />
         </el-form-item>
-        <el-form-item label="备用字段" prop="attr1">
-          <el-input v-model="form.attr1" placeholder="请输入备用字段" />
-        </el-form-item>
-        <el-form-item label="备用字段" prop="attr2">
-          <el-input v-model="form.attr2" placeholder="请输入备用字段" />
-        </el-form-item>
+<!--        <el-form-item label="备用字段" prop="attr1">-->
+<!--          <el-input v-model="form.attr1" placeholder="请输入备用字段" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="备用字段" prop="attr2">-->
+<!--          <el-input v-model="form.attr2" placeholder="请输入备用字段" />-->
+<!--        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -241,7 +241,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加driverSalary";
+      this.title = "添加";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -250,7 +250,7 @@ export default {
       getDriverSalary(salaryid).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改driverSalary";
+        this.title = "修改";
       });
     },
     /** 提交按钮 */
