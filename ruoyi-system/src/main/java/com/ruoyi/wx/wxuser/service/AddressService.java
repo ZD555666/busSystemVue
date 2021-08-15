@@ -44,5 +44,8 @@ public interface AddressService {
 
     Map<String, Double> queryClickStationXy(String stationName, String cityName);
 
+    List<BaiDuMarkers> queryRoadMap(String busNo,int direction);
+
+
 
 }

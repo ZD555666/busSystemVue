@@ -18,6 +18,7 @@ public interface WxBusInfoService {
 
     int updBusState(String licensePlate, int busParam);
 
+    int updBusWhenOver(int busParam);
 
 
 }

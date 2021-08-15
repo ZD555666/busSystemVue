@@ -32,6 +32,7 @@ public interface WxBusRealRunService {
 
     WxBusRealRun queryNewRunsByPlate(String licensePlate);
 
+    int delAllRealRun();
 
 
 }

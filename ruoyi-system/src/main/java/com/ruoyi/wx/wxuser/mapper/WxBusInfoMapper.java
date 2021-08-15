@@ -20,5 +20,6 @@ public interface WxBusInfoMapper {
 
     int updBusState(@Param("licensePlate") String licensePlate, @Param("busParam") int busParam);
 
+    int updBusWhenOver(int busParam);
 
 }

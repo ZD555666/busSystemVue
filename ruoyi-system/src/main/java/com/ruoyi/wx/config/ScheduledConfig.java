@@ -8,19 +8,25 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.HttpClientUtil;
+import com.ruoyi.wx.wxBus.service.RealRunService;
 import com.ruoyi.wx.wxuser.domain.*;
 import com.ruoyi.wx.wxuser.service.AddressService;
 import com.ruoyi.wx.wxuser.service.WxBusInfoService;
 import com.ruoyi.wx.wxuser.service.WxBusRealRunService;
 import com.ruoyi.wx.wxuser.service.WxScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import javax.annotation.PostConstruct;
 import java.net.URL;
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,14 +54,13 @@ public class ScheduledConfig {
     private BusRealRunTask realRunTask;
 
     @Autowired
-    private AddressService addressService;
-
-    @Autowired
     private WxBusRealRunService realRunService;
 
-    @Scheduled(cron = "0 59 12 ? * *")
+    @Autowired
+    private WxBusInfoService busInfoService;
+
+    @Scheduled(cron = "00 57 11 ? * *")
     public void querySchedule() {
-//        redisTemplate.opsForValue().set("num", 1);
         List<WxSchedule> wxSchedules = scheduleService.queryScheduled();
         for (WxSchedule wxSchedule : wxSchedules) {
             wxSchedule.setExpression("0 */" + wxSchedule.getTimeInterval() + " " + wxSchedule.getStarTime() + "-" + wxSchedule.getEndTime() + " * * ?");
@@ -65,7 +70,7 @@ public class ScheduledConfig {
         scheduledTask.refreshTask(wxSchedules);
     }
 
-    @Scheduled(cron = "45 * * * * ?")
+    @Scheduled(cron = "45 * 6-23 * * ?")
     public void doBus() {
         String base_url = "https://api.map.baidu.com/routematrix/v2/driving?output=json&origins=";
         if ((Boolean) redisTemplate.opsForValue().get("isWait") == true) {
@@ -93,8 +98,12 @@ public class ScheduledConfig {
         } else {
             System.out.println("======>>>wait Update<<<=====");
         }
+    }
 
-
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void cleanBus() {
+        realRunService.delAllRealRun();
+        busInfoService.updBusWhenOver(1);
     }
 
 

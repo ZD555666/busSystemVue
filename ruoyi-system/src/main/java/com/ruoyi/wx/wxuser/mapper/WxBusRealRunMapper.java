@@ -34,4 +34,6 @@ public interface WxBusRealRunMapper {
 
     WxBusRealRun queryNewRunsByPlate(String licensePlate);
 
+    int delAllRealRun();
+
 }

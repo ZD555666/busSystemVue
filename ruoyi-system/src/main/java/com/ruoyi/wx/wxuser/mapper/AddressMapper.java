@@ -47,5 +47,7 @@ public interface AddressMapper {
 
     Map<String, Double> queryClickStationXy(@Param("stationName") String stationName, @Param("cityName") String cityName);
 
+    List<BaiDuMarkers> queryRoadMap(@Param("busNo") String busNo, @Param("direction") int direction);
+
 
 }

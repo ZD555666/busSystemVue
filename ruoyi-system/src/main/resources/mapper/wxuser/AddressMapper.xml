@@ -156,4 +156,17 @@
           and cityId = (SELECT cityId FROM t_city WHERE cityName = #{cityName});
     </select>
 
+    <select id="queryRoadMap" resultType="BaiDuMarkers">
+        SELECT stationId as id, stationName, xPoint as longitude, yPoint as latitude
+        from t_stationinfo
+        WHERE stationId in (SELECT t2.stationId
+                            from t_bus_realrun t1,
+                                 t_road t2
+                            WHERE t1.busNo = t2.busNo
+                              and t1.busNo = #{busNo}
+                              and t2.direction = t1.direction
+                              and t2.direction = #{direction}
+                            ORDER BY t2.travelSort)
+    </select>
+
 </mapper>

@@ -5,7 +5,7 @@ export function listUser(query) {
 
   console.log(process.env.VUE_APP_BASE_API)
   return request({
-    url: '/wxuser/user/list',
+    url: '/xcxuser/user/list',
     method: 'get',
     params: query
   })
@@ -14,7 +14,7 @@ export function listUser(query) {
 // 查询小程序用户详细
 export function getUser(id) {
   return request({
-    url: '/wxuser/user/' + id,
+    url: '/xcxuser/user/' + id,
     method: 'get'
   })
 }
@@ -22,7 +22,7 @@ export function getUser(id) {
 // 新增小程序用户
 export function addUser(data) {
   return request({
-    url: '/wxuser/user',
+    url: '/xcxuser/user',
     method: 'post',
     data: data
   })
@@ -31,7 +31,7 @@ export function addUser(data) {
 // 修改小程序用户
 export function updateUser(data) {
   return request({
-    url: '/wxuser/user',
+    url: '/xcxuser/user',
     method: 'put',
     data: data
   })
@@ -40,7 +40,7 @@ export function updateUser(data) {
 // 删除小程序用户
 export function delUser(id) {
   return request({
-    url: '/wxuser/user/' + id,
+    url: '/xcxuser/user/' + id,
     method: 'delete'
   })
 }
@@ -48,7 +48,7 @@ export function delUser(id) {
 // 导出小程序用户
 export function exportUser(query) {
   return request({
-    url: '/wxuser/user/export',
+    url: '/xcxuser/user/export',
     method: 'get',
     params: query
   })

@@ -25,5 +25,11 @@
         limit 1;
     </update>
 
+    <update id="updBusWhenOver">
+        update t_businfo
+        set busParam = #{busParam}
+        where busParam = 0;
+    </update>
+
 
 </mapper>

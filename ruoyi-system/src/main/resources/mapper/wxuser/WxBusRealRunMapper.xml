@@ -99,5 +99,10 @@
         where licensePlate = #{licensePlate};
     </select>
 
+    <delete id="delAllRealRun">
+        delete
+        from t_bus_realrun;
+    </delete>
+
 
 </mapper>

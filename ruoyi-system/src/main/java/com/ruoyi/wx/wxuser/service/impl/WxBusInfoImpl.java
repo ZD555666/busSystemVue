@@ -33,4 +33,9 @@ public class WxBusInfoImpl implements WxBusInfoService {
     public int updBusState(String licensePlate, int busParam) {
         return busInfoMapper.updBusState(licensePlate, busParam);
     }
+
+    @Override
+    public int updBusWhenOver(int busParam) {
+        return busInfoMapper.updBusWhenOver(busParam);
+    }
 }

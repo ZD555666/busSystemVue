@@ -96,5 +96,10 @@ public class AddressMapperImpl implements AddressService {
     public Map<String, Double> queryClickStationXy(String stationName, String cityName) {
         return addressMapper.queryClickStationXy(stationName, cityName);
     }
+
+    @Override
+    public List<BaiDuMarkers> queryRoadMap(String busNo, int direction) {
+        return addressMapper.queryRoadMap(busNo, direction);
+    }
 }
 

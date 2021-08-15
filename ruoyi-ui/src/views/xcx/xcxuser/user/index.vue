@@ -28,7 +28,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="性别，1男，0女" prop="gender">
+      <el-form-item label="性别" prop="gender">
         <el-input
           v-model="queryParams.gender"
           placeholder="请输入性别，0男，1女"
@@ -68,24 +68,6 @@
         <el-input
           v-model="queryParams.avatarurl"
           placeholder="请输入头像"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="开放平台标识符" prop="unionid">
-        <el-input
-          v-model="queryParams.unionid"
-          placeholder="请输入开放平台标识符"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="是否授权" prop="isauth">
-        <el-input
-          v-model="queryParams.isauth"
-          placeholder="请输入是否授权"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -158,13 +140,11 @@
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="标识" align="center" prop="openid" />
       <el-table-column label="昵称" align="center" prop="nickname" />
-      <el-table-column label="性别，1男，0女" align="center" prop="gender" />
+      <el-table-column label="性别" align="center" prop="gender" />
       <el-table-column label="城市" align="center" prop="city" />
       <el-table-column label="省份" align="center" prop="province" />
       <el-table-column label="国家" align="center" prop="country" />
-      <el-table-column label="头像" align="center" prop="avatarurl" />
-      <el-table-column label="开放平台标识符" align="center" prop="unionid" />
-      <el-table-column label="是否授权" align="center" prop="isauth" />
+      <el-table-column :show-overflow-tooltip="true" label="头像" align="center" prop="avatarurl" />
       <el-table-column label="手机号" align="center" prop="phone" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -206,7 +186,7 @@
         <el-form-item label="昵称" prop="nickname">
           <el-input v-model="form.nickname" placeholder="请输入昵称" />
         </el-form-item>
-        <el-form-item label="性别，1男，0女" prop="gender">
+        <el-form-item label="性别" prop="gender">
           <el-input v-model="form.gender" placeholder="请输入性别，0男，1女" />
         </el-form-item>
         <el-form-item label="城市" prop="city">
@@ -221,12 +201,6 @@
         <el-form-item label="头像" prop="avatarurl">
           <el-input v-model="form.avatarurl" placeholder="请输入头像" />
         </el-form-item>
-        <el-form-item label="开放平台标识符" prop="unionid">
-          <el-input v-model="form.unionid" placeholder="请输入开放平台标识符" />
-        </el-form-item>
-        <el-form-item label="是否授权" prop="isauth">
-          <el-input v-model="form.isauth" placeholder="请输入是否授权" />
-        </el-form-item>
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入手机号" />
         </el-form-item>
@@ -240,7 +214,7 @@
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser, exportUser } from "@/api/wx/wxuser/user";
+import { listUser, getUser, delUser, addUser, updateUser, exportUser } from "@/api/xcx/xcxuser/user";
 
 export default {
   name: "User",

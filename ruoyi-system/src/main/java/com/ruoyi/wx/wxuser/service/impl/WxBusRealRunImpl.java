@@ -69,4 +69,9 @@ public class WxBusRealRunImpl implements WxBusRealRunService {
     public WxBusRealRun queryNewRunsByPlate(String licensePlate) {
         return realRunMapper.queryNewRunsByPlate(licensePlate);
     }
+
+    @Override
+    public int delAllRealRun() {
+        return realRunMapper.delAllRealRun();
+    }
 }

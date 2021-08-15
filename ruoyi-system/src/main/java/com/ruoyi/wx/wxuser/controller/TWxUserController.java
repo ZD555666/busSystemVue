@@ -27,7 +27,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2021-07-24
  */
 @RestController
-@RequestMapping("/wxuser/user")
+@RequestMapping("/xcxuser/user")
 public class TWxUserController extends BaseController
 {
     @Autowired
