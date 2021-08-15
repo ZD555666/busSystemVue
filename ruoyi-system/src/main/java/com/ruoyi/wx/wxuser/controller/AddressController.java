@@ -86,7 +86,7 @@ public class AddressController {
             StationRoadVo realRun = addressService.queryDistanceAndSpeed(stationRoadVo.getLicensePlate(), (String) map.get("cityName"), direction);
             double distance = NearbyUtil.getDistance(realRun.getRealXPoint(), realRun.getRealYPoint(), clickStationXy.get("xPoint"), clickStationXy.get("yPoint"));
             realRun.setDistance(distance);
-            realRun.setDistanceTime(((distance / 1000.00) / realRun.getSpeed() > 35 ? 30 : realRun.getSpeed() * 60));
+            realRun.setDistanceTime(((distance / 1000.00) / (realRun.getSpeed() > 35 ? 30 : realRun.getSpeed()) * 60));
             realRun.setStationName(stationRoadVo.getStationName()).setEndStation(stationRoadVo.getEndStation()).setBusNo(stationRoadVo.getBusNo());
             int stationOne = addressService.querySurplusStation(clickStation, stationRoadVo.getBusNo(), (String) map.get("cityName"), direction);
             int stationTwo = addressService.querySurplusStation(realRun.getNowStation(), stationRoadVo.getBusNo(), (String) map.get("cityName"), direction);

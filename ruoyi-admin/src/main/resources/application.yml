@@ -29,10 +29,10 @@ server:
     max-threads: 800
     # Tomcat启动初始化的线程数，默认值25
     min-spare-threads: 30
-  ssl:
-    key-store: classpath:6087711_mystudy365.cn.pfx
-    key-store-type: PKCS12
-    key-store-password: lriB24V3
+#  ssl:
+#    key-store: classpath:6087711_mystudy365.cn.pfx
+#    key-store-type: PKCS12
+#    key-store-password: lriB24V3
 
 # 日志配置
 logging:

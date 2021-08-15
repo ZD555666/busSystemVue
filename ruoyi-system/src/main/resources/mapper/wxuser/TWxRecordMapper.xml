@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wx.wxuser.mapper.TWxRecordMapper">
+    
+    <resultMap type="TWxRecord" id="TWxRecordResult">
+        <result property="rid"    column="rId"    />
+        <result property="openid"    column="openId"    />
+        <result property="isadd"    column="isAdd"    />
+        <result property="record"    column="record"    />
+        <result property="recordtime"    column="recordTime"    />
+        <result property="restmoney"    column="restMoney"    />
+    </resultMap>
+
+    <sql id="selectTWxRecordVo">
+        select rId, openId, isAdd, record, recordTime, restMoney from t_wx_record
+    </sql>
+
+    <select id="selectTWxRecordList" parameterType="TWxRecord" resultMap="TWxRecordResult">
+        <include refid="selectTWxRecordVo"/>
+        <where>  
+            <if test="openid != null  and openid != ''"> and openId = #{openid}</if>
+            <if test="isadd != null "> and isAdd = #{isadd}</if>
+            <if test="record != null "> and record = #{record}</if>
+            <if test="recordtime != null "> and recordTime = #{recordtime}</if>
+            <if test="restmoney != null "> and restMoney = #{restmoney}</if>
+        </where>
+    </select>
+    
+    <select id="selectTWxRecordById" parameterType="Long" resultMap="TWxRecordResult">
+        <include refid="selectTWxRecordVo"/>
+        where rId = #{rid}
+    </select>
+        
+    <insert id="insertTWxRecord" parameterType="TWxRecord" useGeneratedKeys="true" keyProperty="rid">
+        insert into t_wx_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openid != null">openId,</if>
+            <if test="isadd != null">isAdd,</if>
+            <if test="record != null">record,</if>
+            <if test="recordtime != null">recordTime,</if>
+            <if test="restmoney != null">restMoney,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openid != null">#{openid},</if>
+            <if test="isadd != null">#{isadd},</if>
+            <if test="record != null">#{record},</if>
+            <if test="recordtime != null">#{recordtime},</if>
+            <if test="restmoney != null">#{restmoney},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTWxRecord" parameterType="TWxRecord">
+        update t_wx_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openid != null">openId = #{openid},</if>
+            <if test="isadd != null">isAdd = #{isadd},</if>
+            <if test="record != null">record = #{record},</if>
+            <if test="recordtime != null">recordTime = #{recordtime},</if>
+            <if test="restmoney != null">restMoney = #{restmoney},</if>
+        </trim>
+        where rId = #{rid}
+    </update>
+
+    <delete id="deleteTWxRecordById" parameterType="Long">
+        delete from t_wx_record where rId = #{rid}
+    </delete>
+
+    <delete id="deleteTWxRecordByIds" parameterType="String">
+        delete from t_wx_record where rId in 
+        <foreach item="rid" collection="array" open="(" separator="," close=")">
+            #{rid}
+        </foreach>
+    </delete>
+</mapper>

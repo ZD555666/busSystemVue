@@ -45,7 +45,7 @@
             <if test="avatarurl != null  and avatarurl != ''">and avatarUrl = #{avatarurl}</if>
             <if test="unionid != null  and unionid != ''">and unionId = #{unionid}</if>
             <if test="isauth != null ">and isAuth = #{isauth}</if>
-            <if test="phone != null ">and phone = like concat('%', #{phone}, '%')</if>
+            <if test="phone != null ">and phone = #{phone}</if>
         </where>
     </select>
 

@@ -25,7 +25,7 @@
         </el-col>
         <el-col :span="10">
           <el-form-item label="时长(分钟)：" id="time"  label-width="120px">
-            <el-input v-model="form.time" :disabled="inputAble.timeAble"></el-input>
+            <el-input v-model="form.time"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -251,7 +251,7 @@ export default {
         this.inputAble.cityAble = false;
         this.inputAble.roadNoAble = false;
         // this.inputAble.costAble = false;
-        this.inputAble.timeAble = false;
+        // this.inputAble.timeAble = false;
       } else if (type==1){
         this.dialogTitle='查看和修改线路';
         this.newVisible = false;
@@ -259,7 +259,7 @@ export default {
         this.inputAble.cityAble = true;
         this.inputAble.roadNoAble = true;
         // this.inputAble.costAble=true;
-        this.inputAble.timeAble = true;
+        // this.inputAble.timeAble = true;
         this.form.cityId= roadList.cityId;
         this.form.roadNo= roadList.busNo;
         this.form.cost= roadList.cost;
