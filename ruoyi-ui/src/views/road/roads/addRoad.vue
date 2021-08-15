@@ -60,15 +60,17 @@
                 <div style="height: 400px;border: black solid 1px;overflow-y:auto">
                   <!--启程      -->
                   <div v-for="(item, index) in stationSort" v-if="item.stationName!=''">
+                    <div v-if="index>0">
+                      <img src="../../../assets/images/arrow.png" alt="" class="arrowStyle"/>
+                      <span style="font-size: 18px;margin-right: 10px">{{ item.distance }}</span>
+                      <span style="font-size: 18px">预计时长：{{ item.time }}</span>
+                    </div>
                     <div>
                       <span class="fontStyle">{{index+1}}、</span>
-                      <span class="fontStyle" style="margin-right: 20px">{{ item.stationName }}</span>
+                      <span class="fontStyle" style="margin-right: 5px">{{ item.stationName }}</span>
                       <el-button type="primary" plain icon="el-icon-circle-plus-outline" @click="addStation(index)">添加
                       </el-button>
                       <el-button type="danger" plain icon="el-icon-circle-close" @click="deleteStation(index)">删除</el-button>
-                    </div>
-                    <div>
-                      <img src="../../../assets/images/arrow.png" alt="" class="arrowStyle"/>
                     </div>
                   </div>
                 </div>
@@ -219,7 +221,8 @@ export default {
       stationSort: state => state.stationSort,
       returnSort: state => state.returnSort
     })
-  },
+  }
+  ,
   methods: {
     /** 取消新增 */
     cancelAdd() {
@@ -374,10 +377,12 @@ export default {
     confirmChoice(){
       if (this.openMapType== 0){
         this.$store.commit('roadInfo/addLastStation');
+        // this.$store.commit('roadInfo/getResource',-1);
       }else if (this.openMapType == 1){
         this.$store.commit('roadInfo/addFirstStation');
       }else if (this.openMapType == 2){
         this.$store.commit('roadInfo/addStation',this.stationIndex);
+        this.$store.commit('roadInfo/getResource', this.stationIndex);
       }else if (this.openMapType==3){
         this.$store.commit('roadInfo/addReturn', this.stationIndex);
       }

@@ -63,6 +63,7 @@ VueBMap.initBMapApiLoader({
 import echarts from 'echarts'
 
 Vue.prototype.$echarts = echarts
+
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey

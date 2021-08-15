@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+//获取距离
+export function getResource(param) {
+  return request({
+    url: '/road/roads/getResource',
+    method: 'get',
+    params: param
+  })
+}
+
 // 查询线路配置列表
 export function listRoads(query) {
   return request({
