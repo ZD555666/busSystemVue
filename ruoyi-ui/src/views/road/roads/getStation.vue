@@ -24,7 +24,7 @@
 <script>
 import {listStationinfo, stationList} from "@/api/road/stationinfo";
 
-module.exports = {
+export default {
   name: 'getStation',
   data() {
     return {

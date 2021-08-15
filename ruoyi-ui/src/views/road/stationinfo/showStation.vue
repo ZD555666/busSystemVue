@@ -23,7 +23,7 @@
 <script>
 import {listStationinfo, stationList} from "@/api/road/stationinfo";
 
-module.exports = {
+export default{
   name: 'showStation',
   data() {
     return {
