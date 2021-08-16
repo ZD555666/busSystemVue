@@ -1,6 +1,7 @@
 package com.ruoyi.wx.wxBus.controller;
 
 import com.ruoyi.wx.wxBus.domain.News;
+import com.ruoyi.wx.wxBus.service.impl.IsShowServiceImpl;
 import com.ruoyi.wx.wxBus.utils.CrawlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,16 +21,24 @@ public class NewsController {
 
     @Autowired
     private CrawlerUtil crawlerUtil;
+    @Autowired
+    private IsShowServiceImpl isShowService;
 
     @RequestMapping(value = "/getNews")
     public List<News> getNews(int param){
-        List<News> newsData = null;
-        try {
-            newsData = crawlerUtil.getNewsData(param);
-        } catch (Exception e) {
-            e.printStackTrace();
+        Integer check = isShowService.selectNew();
+        if(check == 0){
+           return null;
+        }else{
+            List<News> newsData = null;
+            try {
+                newsData = crawlerUtil.getNewsData(param);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return newsData;
         }
-        return newsData;
+
     }
 
 }
