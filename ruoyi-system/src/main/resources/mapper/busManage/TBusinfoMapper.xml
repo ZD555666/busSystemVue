@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.busInfo.mapper.TBusinfoMapper">
-    
+
     <resultMap type="TBusinfo" id="TBusinfoResult">
         <result property="busid"    column="busId"    />
         <result property="busno"    column="busNo"    />
@@ -12,29 +12,61 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="busstate"    column="busState"    />
         <result property="attr1"    column="attr1"    />
         <result property="attr2"    column="attr2"    />
+        <result property="endtime"    column="endTime"    />
+        <result property="startime"    column="starTime"    />
+        <result property="timeinterval"    column="timeInterval"    />
     </resultMap>
 
     <sql id="selectTBusinfoVo">
--- select *from t_businfo
-select * from t_businfo left join t_param_bus on t_businfo.busParam=t_param_bus.busParam
+        select * from t_businfo left join t_param_bus on t_businfo.busParam=t_param_bus.busParam
     </sql>
 
     <select id="selectTBusinfoList" parameterType="TBusinfo" resultMap="TBusinfoResult">
         <include refid="selectTBusinfoVo"/>
-        <where>  
+        <where>
             <if test="busno != null  and busno != ''"> and busNo = #{busno}</if>
             <if test="licenseplate != null  and licenseplate != ''"> and licensePlate = #{licenseplate}</if>
-            <if test="busparam != null "> and busParam = #{busparam}</if>
-            <if test="busstate != null  and busstate != ''"> and busstate = #{busstate}</if>
+            <if test="busparam != null and busparam != ''"> and busParam = #{busparam}</if>
+            <if test="busstate != null  and busstate != ''"> and busState = #{busstate}</if>
             <if test="attr2 != null  and attr2 != ''"> and attr2 = #{attr2}</if>
         </where>
     </select>
-    
+<!--    <sql id="selectTBusschedulingList" >-->
+<!--        select busid, busNo, licensePlate, starTime from t_busscheduling-->
+<!--    </sql>-->
+<!--    <select id="selectTBusschedulingList" parameterType="TBusscheduling" resultMap="TBusinfoResult">-->
+<!--        select busid, busNo, licensePlate, starTime from t_busscheduling-->
+<!--&#45;&#45; select *from t_schedule-->
+<!--    </select>-->
+    <update id="updateTBusscheduling" parameterType="TBusscheduling">
+        update t_busscheduling
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="busno != null">busNo = #{busno},</if>
+            <if test="licenseplate != null">licensePlate = #{licenseplate},</if>
+            <if test="startime != null">starTime = #{startime},</if>
+        </trim>
+        where busid = #{busid}
+    </update>
+    <select id="selectTBusinfoList1" parameterType="TBusinfo" resultMap="TBusinfoResult">
+        select distinct busno from t_road where busno>=1
+-- select *from t_schedule
+    </select>
+    <select id="selectTBusinfoList2" parameterType="TBusinfo" resultMap="TBusinfoResult">
+        select busNo,timeInterval,starTime,endTime from t_schedule
+    </select>
+    <select id="selectTBusinfoList3" parameterType="TBusinfo" resultMap="TBusinfoResult">
+      select *from t_businfo where busParam="1"
+    </select>
+    <select id="selectTBusinfoList4" parameterType="TBusinfo" resultMap="TBusinfoResult">
+        select *from t_businfo where busParam="2"
+    </select>
+    <select id="selectTBusinfoList5" parameterType="TBusinfo" resultMap="TBusinfoResult">
+        select *from t_businfo where busParam="0"
+    </select>
     <select id="selectTBusinfoById" parameterType="Long" resultMap="TBusinfoResult">
         <include refid="selectTBusinfoVo"/>
         where busId = #{busid}
     </select>
-        
     <insert id="insertTBusinfo" parameterType="TBusinfo" useGeneratedKeys="true" keyProperty="busid">
         insert into t_businfo
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -43,16 +75,27 @@ select * from t_businfo left join t_param_bus on t_businfo.busParam=t_param_bus.
             <if test="busparam != null">busParam,</if>
             <if test="attr1 != null">attr1,</if>
             <if test="attr2 != null">attr2,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="busno != null">#{busno},</if>
             <if test="licenseplate != null">#{licenseplate},</if>
             <if test="busparam != null">#{busparam},</if>
             <if test="attr1 != null">#{attr1},</if>
             <if test="attr2 != null">#{attr2},</if>
-         </trim>
+        </trim>
     </insert>
+<!--    <insert id="insertTBusscheduling" parameterType="TBusscheduling">-->
+<!--        insert into t_busscheduling-->
+<!--        <trim prefix="(" suffix=")" suffixOverrides=",">-->
 
+<!--            <if test="licenseplate != null">licensePlate,</if>-->
+<!--        </trim>-->
+<!--        <trim prefix="values (" suffix=")" suffixOverrides=",">-->
+
+<!--            <if test="licenseplate != null">#{licenseplate},</if>-->
+
+<!--        </trim>-->
+<!--    </insert>-->
     <update id="updateTBusinfo" parameterType="TBusinfo">
         update t_businfo
         <trim prefix="SET" suffixOverrides=",">
@@ -70,7 +113,7 @@ select * from t_businfo left join t_param_bus on t_businfo.busParam=t_param_bus.
     </delete>
 
     <delete id="deleteTBusinfoByIds" parameterType="String">
-        delete from t_businfo where busId in 
+        delete from t_businfo where busId in
         <foreach item="busid" collection="array" open="(" separator="," close=")">
             #{busid}
         </foreach>
