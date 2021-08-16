@@ -59,7 +59,7 @@ public class ScheduledConfig {
     @Autowired
     private WxBusInfoService busInfoService;
 
-    @Scheduled(cron = "00 09 17 ? * *")
+    @Scheduled(cron = "00 05 15 ? * *")
     public void querySchedule() {
         List<WxSchedule> wxSchedules = scheduleService.queryScheduled();
         for (WxSchedule wxSchedule : wxSchedules) {
