@@ -1,12 +1,13 @@
+import {getResource} from "@/api/road/roads";
 
 const state={
   localSelect:{xPoint: '', yPoint: ''},
   oneRoadInfo: [{busNo:''}],
   oneSchedule:[],
   specificSchedule:[],
-  stationSelect:{xPoint:'',yPoint:'',stationName:'',stationId: ''},
-  stationSort:[{xPoint: '', yPoint: '', stationName: '', stationId: ''}],
-  returnSort:[{xPoint: '', yPoint: '', stationName: '', stationId: ''}],
+  stationSelect:{xPoint:'',yPoint:'',stationName:'',stationId: '', time: '', distance: ''},
+  stationSort:[{xPoint: '', yPoint: '', stationName: '', stationId: '', time: '', distance: ''}],
+  returnSort:[{xPoint: '', yPoint: '', stationName: '', stationId: '', time: '', distance: ''}],
   mapStationSort:[
     {
     geometry: {
@@ -37,6 +38,37 @@ const state={
 }
 
 const mutations={
+  //百度api获取两站点间的距离和时间
+  getResource:(state,type)=>{
+    console.log("当前站点集合", state.stationSort);
+    let location = {};
+    if (state.stationSort.length>=2){
+      if (type==-1){
+        location = {
+          startStation: state.stationSort[0].yPoint + "," + state.stationSort[0].xPoint,
+          endStation: state.stationSort[1].yPoint + "," + state.stationSort[1].xPoint
+        }
+        console.log("要获得地址的集合参数", location);
+      } else if (type>=0) {
+        location = {
+          startStation: state.stationSort[type].yPoint + "," + state.stationSort[type].xPoint,
+          endStation: state.stationSort[type+1].yPoint + "," + state.stationSort[type + 1].xPoint
+        }
+        console.log("要获得地址的集合参数中间站点", location);
+      }
+      getResource(location).then(res => {
+        console.log("获取百度api", res);
+        console.log("获取百度api获取距离", res.result[0].duration.text);
+        console.log("获取百度api获取距离", res.result[0].distance.text);
+        if (type>=0){
+          state.stationSelect.time = res.result[0].duration.text;
+          state.stationSelect.distance = res.result[0].distance.text;
+          console.log("当前选中的点", state.stationSelect);
+        }
+
+      })
+    }
+  },
   //查看某路线站点
   viewRoadStation:(state, roadList)=>{
     //界面显示启程
@@ -71,8 +103,8 @@ const mutations={
   },
   //初始化配置的路线
   clearRoadStation(state){
-    state.stationSort= [{xPoint: '', yPoint: '', stationName: '', stationId: ''}];
-    state.returnSort= [{xPoint: '', yPoint: '', stationName: '', stationId: ''}];
+    state.stationSort= [{xPoint: '', yPoint: '', stationName: '', stationId: '', time: '', distance: ''}];
+    state.returnSort= [{xPoint: '', yPoint: '', stationName: '', stationId: '', time: '', distance: ''}];
     state.mapStationSort=[];
     state.mapRoadSort=[];
   },
@@ -212,7 +244,7 @@ const mutations={
     },
   //鼠标选择的站点保存
   stationSelect:(state, e) =>{
-    state.stationSelect = {xPoint: '', yPoint: '', stationName: '', stationId: ''};
+    state.stationSelect = {xPoint: '', yPoint: '', stationName: '', stationId: '',time:'', distance:''};
     state.stationSelect.xPoint= e.dataItem.geometry.coordinates[0];
     state.stationSelect.yPoint= e.dataItem.geometry.coordinates[1];
     state.stationSelect.stationName= e.dataItem.properties.text;

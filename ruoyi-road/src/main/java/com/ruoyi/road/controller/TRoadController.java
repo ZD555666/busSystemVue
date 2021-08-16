@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.HttpClientUtil;
 import com.ruoyi.road.domain.TCity;
 import com.ruoyi.road.domain.TRoad;
 import com.ruoyi.road.domain.domains.AddRoadInfo;
@@ -12,6 +13,7 @@ import com.ruoyi.road.domain.domains.Station;
 import com.ruoyi.road.service.ITCityService;
 import com.ruoyi.road.service.impl.TCityServiceImpl;
 import com.ruoyi.road.tool.GetTimeByRate;
+import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.core.controller.BaseController;
@@ -35,6 +37,18 @@ public class TRoadController extends BaseController
     private ITRoadService tRoadService;
     @Autowired
     private ITCityService tCityService;
+
+    @GetMapping("/getResource")
+//  百度api获取行车距离和时间
+    public String getResource(@RequestParam("startStation") String startStation, @RequestParam("endStation") String endStation){
+        System.out.println("获取百度api距离");
+        System.out.println(startStation);
+        System.out.println(endStation);
+        String resource=HttpClientUtil.doGet("https://api.map.baidu.com/routematrix/v2/driving?output=json&ak=1wwimYfoUw2bdW4APuLfFalfPQpiPm9t&tactics=11&origins="+ startStation+"&destinations="+endStation);
+        System.out.println(resource);
+//        JSONObject jsonObject=new JSONObject();
+        return resource;
+    }
 //  线路表格
     @GetMapping("/list")
     public TableDataInfo list(RoadInfo roadInfo){

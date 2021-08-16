@@ -27,7 +27,7 @@
 import {createNamespacedHelpers} from 'vuex'
 
 const {mapState, mapActions} = createNamespacedHelpers('roadInfo')
-module.exports = {
+export default {
   name: 'showRoad',
   data() {
     return {
