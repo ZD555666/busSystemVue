@@ -5,7 +5,8 @@ export function getResource(param) {
   return request({
     url: '/road/roads/getResource',
     method: 'get',
-    params: param
+    params: param,
+    config: {headers: {'Content-Type': 'application/json;charset=UTF-8'}}
   })
 }
 

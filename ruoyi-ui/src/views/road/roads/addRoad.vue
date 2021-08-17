@@ -23,11 +23,11 @@
             <el-input v-model="form.cost" :disabled="inputAble.costAble"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
-          <el-form-item label="时长(分钟)：" id="time"  label-width="120px">
-            <el-input v-model="form.time" :disabled="inputAble.timeAble"></el-input>
-          </el-form-item>
-        </el-col>
+<!--        <el-col :span="10">-->
+<!--          <el-form-item label="时长(分钟)：" id="time"  label-width="120px">-->
+<!--            <el-input v-model="form.time"></el-input>-->
+<!--          </el-form-item>-->
+<!--        </el-col>-->
       </el-row>
       <el-row>
         <el-col :span="10">
@@ -87,16 +87,18 @@
                 <div style="height: 400px;border: black solid 1px;overflow-y:auto">
                   <!--返程      -->
                   <div v-for="(item, index) in returnSort" v-if="item.stationName!=''">
+                    <div v-if="index>0">
+                      <img src="../../../assets/images/arrow.png" alt="" class="arrowStyle"/>
+                      <span style="font-size: 18px;margin-right: 10px">{{ item.distance }}</span>
+                      <span style="font-size: 18px">预计时长：{{ item.time }}</span>
+                    </div>
                     <div>
                       <span class="fontStyle">{{ index + 1 }}、</span>
-                      <span class="fontStyle" style="margin-right: 20px">{{ item.stationName }}</span>
+                      <span class="fontStyle" style="margin-right: 5px">{{ item.stationName }}</span>
                       <el-button type="primary" plain icon="el-icon-circle-plus-outline" @click="addReturn(index)">添加
                       </el-button>
                       <el-button type="danger" plain icon="el-icon-circle-close" @click="deleteReturn(index)">删除
                       </el-button>
-                    </div>
-                    <div>
-                      <img src="@/assets/images/arrow.png" alt="" class="arrowStyle"/>
                     </div>
                   </div>
                 </div>
@@ -219,7 +221,9 @@ export default {
     ...mapState({
       stationSelect: state => state.stationSelect,
       stationSort: state => state.stationSort,
-      returnSort: state => state.returnSort
+      returnSort: state => state.returnSort,
+      timeCount: state => state.timeCount
+
     })
   }
   ,
@@ -251,7 +255,7 @@ export default {
         this.inputAble.cityAble = false;
         this.inputAble.roadNoAble = false;
         // this.inputAble.costAble = false;
-        this.inputAble.timeAble = false;
+        // this.inputAble.timeAble = false;
       } else if (type==1){
         this.dialogTitle='查看和修改线路';
         this.newVisible = false;
@@ -259,32 +263,28 @@ export default {
         this.inputAble.cityAble = true;
         this.inputAble.roadNoAble = true;
         // this.inputAble.costAble=true;
-        this.inputAble.timeAble = true;
+        // this.inputAble.timeAble = true;
         this.form.cityId= roadList.cityId;
         this.form.roadNo= roadList.busNo;
         this.form.cost= roadList.cost;
         this.form.time= roadList.travelTime;
         this.$store.commit("roadInfo/viewRoadStation", roadList);
+        this.$store.commit("roadInfo/getResource");
       }
+
       console.log("子页面", type);
       console.log("子页面", roadList);
     },
     /** 提交表单 */
     confirmSubmit(type){
-      // this.$refs["form"].validate(valid => {
-      //   if (valid) {
-
-      //   }
-      //
-      // });
-      if (this.form.cityId!=''&& this.form.roadNo != '' && this.form.time != '' && this.form.cost != ''){
+      if (this.form.cityId!=''&& this.form.roadNo != '' && this.form.cost != ''){
         this.form.stationPositive = JSON.stringify(this.$store.state.roadInfo.stationSort);
         this.form.stationReverse = JSON.stringify(this.$store.state.roadInfo.returnSort);
         let map = {
           cityId: this.form.cityId,
           roadNo: this.form.roadNo,
           cost: this.form.cost,
-          time: this.form.time,
+          time: this.timeCount,
           stationPositive: this.form.stationPositive,
           stationReverse: this.form.stationReverse,
           actionType: 0
@@ -293,7 +293,7 @@ export default {
           cityId: this.form.cityId,
           roadNo: this.form.roadNo,
           cost: this.form.cost,
-          time: this.form.time,
+          time: this.timeCount,
           stationPositive: this.form.stationPositive,
           stationReverse: this.form.stationReverse,
           actionType: 1
@@ -350,18 +350,21 @@ export default {
      * */
     deleteReturn(returnIndex){
       this.$store.commit('roadInfo/deleteReturn', returnIndex);
+      this.$store.commit('roadInfo/getResource');
     },
     /**
      * 生成反向路线
      * */
     createReturn(){
       this.$store.commit('roadInfo/createReturn');
+      this.$store.commit('roadInfo/getResource');
     },
     /**
      * 点击删除站点
      * */
     deleteStation(stationIndex){
       this.$store.commit('roadInfo/deleteStation', stationIndex);
+      this.$store.commit('roadInfo/getResource');
     },
     /**
      * 点击添加站点
@@ -377,14 +380,16 @@ export default {
     confirmChoice(){
       if (this.openMapType== 0){
         this.$store.commit('roadInfo/addLastStation');
-        // this.$store.commit('roadInfo/getResource',-1);
+        this.$store.commit('roadInfo/getResource');
       }else if (this.openMapType == 1){
         this.$store.commit('roadInfo/addFirstStation');
+        this.$store.commit('roadInfo/getResource');
       }else if (this.openMapType == 2){
         this.$store.commit('roadInfo/addStation',this.stationIndex);
-        this.$store.commit('roadInfo/getResource', this.stationIndex);
+        this.$store.commit('roadInfo/getResource');
       }else if (this.openMapType==3){
         this.$store.commit('roadInfo/addReturn', this.stationIndex);
+        this.$store.commit('roadInfo/getResource');
       }
       this.openStationSelect = false;
     },

@@ -20,4 +20,7 @@ public class Station {
     private String yPoint;
     private String stationName;
     private String stationId;
+    private String distance;
+    private String time;
+
 }
