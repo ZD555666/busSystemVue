@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wx.complaint.mapper.TWxComplaintMapper">
+    
+    <resultMap type="TWxComplaint" id="TWxComplaintResult">
+        <result property="complaintid"    column="complaintId"    />
+        <result property="phonenumber"    column="phoneNumber"    />
+        <result property="problem"    column="problem"    />
+        <result property="imagepath"    column="imagePath"    />
+    </resultMap>
+
+    <sql id="selectTWxComplaintVo">
+        select complaintId, phoneNumber, problem, imagePath from t_wx_complaint
+    </sql>
+
+    <select id="selectTWxComplaintList" parameterType="TWxComplaint" resultMap="TWxComplaintResult">
+        <include refid="selectTWxComplaintVo"/>
+        <where>  
+            <if test="phonenumber != null  and phonenumber != ''"> and phoneNumber = #{phonenumber}</if>
+            <if test="problem != null  and problem != ''"> and problem = #{problem}</if>
+            <if test="imagepath != null  and imagepath != ''"> and imagePath = #{imagepath}</if>
+        </where>
+    </select>
+    
+    <select id="selectTWxComplaintById" parameterType="Long" resultMap="TWxComplaintResult">
+        <include refid="selectTWxComplaintVo"/>
+        where complaintId = #{complaintid}
+    </select>
+        
+    <insert id="insertTWxComplaint" parameterType="TWxComplaint" useGeneratedKeys="true" keyProperty="complaintid">
+        insert into t_wx_complaint
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="phonenumber != null">phoneNumber,</if>
+            <if test="problem != null">problem,</if>
+            <if test="imagepath != null">imagePath,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="phonenumber != null">#{phonenumber},</if>
+            <if test="problem != null">#{problem},</if>
+            <if test="imagepath != null">#{imagepath},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTWxComplaint" parameterType="TWxComplaint">
+        update t_wx_complaint
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="phonenumber != null">phoneNumber = #{phonenumber},</if>
+            <if test="problem != null">problem = #{problem},</if>
+            <if test="imagepath != null">imagePath = #{imagepath},</if>
+        </trim>
+        where complaintId = #{complaintid}
+    </update>
+
+    <delete id="deleteTWxComplaintById" parameterType="Long">
+        delete from t_wx_complaint where complaintId = #{complaintid}
+    </delete>
+
+    <delete id="deleteTWxComplaintByIds" parameterType="String">
+        delete from t_wx_complaint where complaintId in 
+        <foreach item="complaintid" collection="array" open="(" separator="," close=")">
+            #{complaintid}
+        </foreach>
+    </delete>
+</mapper>

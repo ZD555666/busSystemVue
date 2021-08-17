@@ -9,6 +9,54 @@ export function listBusinfo(query) {
   })
 }
 
+export function getBusscheduling(busid) {
+  return request({
+    url: '/busManage/businfo/' + busid,
+    method: 'get'
+  })
+}
+export function updateBusscheduling(data) {
+  return request({
+    url: '/busManage/businfo',
+    method: 'put',
+    data: data
+  })
+}
+export function listBusinfo1(query) {
+  return request({
+    url: '/busManage/businfo/list1',
+    method: 'get',
+    params: query
+  })
+}
+export function listBusinfo2(query) {
+  return request({
+    url: '/busManage/businfo/list2',
+    method: 'get',
+    params: query
+  })
+}
+export function listBusinfo3(query) {
+  return request({
+    url: '/busManage/businfo/list3',
+    method: 'get',
+    params: query
+  })
+}
+export function listBusinfo4(query) {
+  return request({
+    url: '/busManage/businfo/list4',
+    method: 'get',
+    params: query
+  })
+}
+export function listBusinfo5(query) {
+  return request({
+    url: '/busManage/businfo/list5',
+    method: 'get',
+    params: query
+  })
+}
 // 查询车辆信息详细
 export function getBusinfo(busid) {
   return request({
@@ -19,6 +67,13 @@ export function getBusinfo(busid) {
 
 // 新增车辆信息
 export function addBusinfo(data) {
+  return request({
+    url: '/busManage/businfo',
+    method: 'post',
+    data: data
+  })
+}
+export function addBusscheduling(data) {
   return request({
     url: '/busManage/businfo',
     method: 'post',

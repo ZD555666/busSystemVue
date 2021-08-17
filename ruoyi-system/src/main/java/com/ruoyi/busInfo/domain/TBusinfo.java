@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 车辆信息对象 t_businfo
- * 
+ *
  * @author
  * @date 2021-07-23
  */
@@ -25,13 +25,49 @@ public class TBusinfo extends BaseEntity
     /** 车牌号 */
     @Excel(name = "车牌号")
     private String licenseplate;
-
+    
     /** 公交车参数 */
     @Excel(name = "公交车参数")
     private Long busparam;
 
     private String busstate;
+    private String timeinterval;
 
+    public String getTimeinterval() {
+        return timeinterval;
+    }
+
+    public void setTimeinterval(String timeinterval) {
+        this.timeinterval = timeinterval;
+    }
+
+    public String getStartime() {
+        return startime;
+    }
+
+    public void setStartime(String startime) {
+        this.startime = startime;
+    }
+
+    public String getEndtime() {
+        return endtime;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public void setEndtime(String endtime) {
+        this.endtime = endtime;
+    }
+
+    private String startime;
+    private String endtime;
+    private String time;
     public String getBusstate() {
         return busstate;
     }
@@ -48,57 +84,57 @@ public class TBusinfo extends BaseEntity
     @Excel(name = "公交车参数")
     private String attr2;
 
-    public void setBusid(Long busid) 
+    public void setBusid(Long busid)
     {
         this.busid = busid;
     }
 
-    public Long getBusid() 
+    public Long getBusid()
     {
         return busid;
     }
-    public void setBusno(String busno) 
+    public void setBusno(String busno)
     {
         this.busno = busno;
     }
 
-    public String getBusno() 
+    public String getBusno()
     {
         return busno;
     }
-    public void setLicenseplate(String licenseplate) 
+    public void setLicenseplate(String licenseplate)
     {
         this.licenseplate = licenseplate;
     }
 
-    public String getLicenseplate() 
+    public String getLicenseplate()
     {
         return licenseplate;
     }
-    public void setBusparam(Long busparam) 
+    public void setBusparam(Long busparam)
     {
         this.busparam = busparam;
     }
 
-    public Long getBusparam() 
+    public Long getBusparam()
     {
         return busparam;
     }
-    public void setAttr1(String attr1) 
+    public void setAttr1(String attr1)
     {
         this.attr1 = attr1;
     }
 
-    public String getAttr1() 
+    public String getAttr1()
     {
         return attr1;
     }
-    public void setAttr2(String attr2) 
+    public void setAttr2(String attr2)
     {
         this.attr2 = attr2;
     }
 
-    public String getAttr2() 
+    public String getAttr2()
     {
         return attr2;
     }
@@ -106,12 +142,16 @@ public class TBusinfo extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("busid", getBusid())
-            .append("busno", getBusno())
-            .append("licenseplate", getLicenseplate())
-            .append("busparam", getBusparam())
-            .append("attr1", getAttr1())
-            .append("attr2", getAttr2())
-            .toString();
+                .append("busid", getBusid())
+                .append("busno", getBusno())
+                .append("licenseplate", getLicenseplate())
+                .append("busparam", getBusparam())
+                .append("attr1", getAttr1())
+                .append("attr2", getAttr2())
+                .append("endtime", getEndtime())
+                .append("startime", getStartime())
+                .append("timeinterval",getTimeinterval())
+                .append("time",getTime())
+                .toString();
     }
 }

@@ -2,10 +2,10 @@
   <div>
     <h1>{{this.$route.query.licenseplate}}车辆排班</h1>
     <el-row>
-      <el-col :span="2"><div class="grid-content bg-purple">6:00~10:00<br>高峰期</div></el-col>
+      <el-col :span="2"><div class="grid-content bg-purple">7:00~10:00<br>高峰期</div></el-col>
       <el-col :span="10"><div class="grid-content bg-purple-light">10:00~16:00<br>正常客流量</div></el-col>
-      <el-col :span="2"><div class="grid-content bg-purple">16:00~20:00<br>高峰期</div></el-col>
-      <el-col :span="10"><div class="grid-content bg-purple-light">20:00~22:00<br>正常客流量</div></el-col>
+      <el-col :span="2"><div class="grid-content bg-purple">16:00~19:00<br>高峰期</div></el-col>
+      <el-col :span="10"><div class="grid-content bg-purple-light">19:00~23:00<br>正常客流量</div></el-col>
     </el-row>
     <br>
     <el-row>
@@ -32,18 +32,18 @@
     <br><br>
     <b>可选班次</b>
     <el-table
-      :data="tableData"
-      border
-      style="width: 30%">
+              :data="tableData"
+              style="width: 30%">
       <el-table-column
+
         fixed
-        prop="date"
         label="班次"
-        >
+        prop="busno"
+      >
       </el-table-column>
       <el-table-column
         label="操作"
-       >
+      >
         <template slot-scope="scope">
           <el-button @click="busScheduling(scope.row)"type="text" size="small">选择此班次</el-button>
         </template>
@@ -53,48 +53,45 @@
 </template>
 
 <script>
-
-
+import { listBusinfo1} from "@/api/busMax/busManage/businfo";
+import busScheduling from "@/views/busManage/businfo/busScheduling";
 export default {
   name: "busScheduling",
-methods:{
-    busScheduling(row) {
-      const date = row.date || this.date;
-      console.log(row.date)
-      this.$router.push('/busScheduling2?' + `licenseplate=${this.$route.query.licenseplate}&busno=${this.$route.query.busno}&date=${row.date}`)
-      // this.$router.push({
-      //   path:'/busScheduling2',
-      //   query:{
-      //     licenseplate:this.$route.query.licenseplate,
-      //     busno:this.$route.query.busno
-      //   }
-      // })
-      console.log(this.$route.query.licenseplate)
+  created() {
+    this.getList();
+  },
+  methods:{
 
+    busScheduling(row) {
+      const busno = row.busno || this.busno;
+      console.log(row.busno)
+      this.$router.push('/busScheduling2?' + `licenseplate=${this.$route.query.licenseplate}&busno=${this.$route.query.busno}&date=${row.busno}`)
+      console.log(this.$route.query.licenseplate)
       console.log(this.$route.query.busno)
       console.log(this.$route)
+    },
+    getList() {
+      listBusinfo1().then(response => {
+        this.tableData = response.rows;
+        this.total = response.total;
+        for (var i=0;i<this.tableData.length;i++){
+          this.bus= this.tableData[i].busno
+
+          console.log(this.bus)
+        }
+        this.loading = true;
+
+      });
     }
+
   },
 
   data() {
     return {
-      tableData: [{
-        date: '1路'
-
-      }, {
-        date: '2路'
-
-
-      }, {
-        date:  '3路'
-
-      }, {
-        date:  '4路'
-
-
-      }]
+      tableData:[]
     }
   },
+
 }
 </script>
 
