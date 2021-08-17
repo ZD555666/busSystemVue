@@ -34,40 +34,64 @@ const state={
         color: 'red'
       }
     }
-  ]
+  ],
+  timeCount:0
 }
 
 const mutations={
   //百度api获取两站点间的距离和时间
-  getResource:(state,type)=>{
-    console.log("当前站点集合", state.stationSort);
-    let location = {};
-    if (state.stationSort.length>=2){
-      if (type==-1){
-        location = {
-          startStation: state.stationSort[0].yPoint + "," + state.stationSort[0].xPoint,
-          endStation: state.stationSort[1].yPoint + "," + state.stationSort[1].xPoint
-        }
-        console.log("要获得地址的集合参数", location);
-      } else if (type>=0) {
-        location = {
-          startStation: state.stationSort[type].yPoint + "," + state.stationSort[type].xPoint,
-          endStation: state.stationSort[type+1].yPoint + "," + state.stationSort[type + 1].xPoint
-        }
-        console.log("要获得地址的集合参数中间站点", location);
-      }
+  getResource:(state)=>{
+    console.log("当前启程站点集合", state.stationSort);
+    console.log("当前返程站点集合", state.returnSort);
+    let location = {
+      stationSort: JSON.stringify(state.stationSort),
+      returnSort: JSON.stringify(state.returnSort)
+    };
       getResource(location).then(res => {
-        console.log("获取百度api", res);
-        console.log("获取百度api获取距离", res.result[0].duration.text);
-        console.log("获取百度api获取距离", res.result[0].distance.text);
-        if (type>=0){
-          state.stationSelect.time = res.result[0].duration.text;
-          state.stationSelect.distance = res.result[0].distance.text;
-          console.log("当前选中的点", state.stationSelect);
-        }
+        console.log("完成算距", res);
+        if (state.stationSort.length >= 2) {
+        console.log("正向线路", res.data.positiveList);
+        var posStations=[];
+        var timeCount=0;
+        for (let i = 0; i < res.data.positiveList.length; i++) {
+          var posStation= {
+            xPoint: res.data.positiveList[i].xpoint,
+            yPoint: res.data.positiveList[i].ypoint,
+            stationName: res.data.positiveList[i].stationName,
+            stationId: res.data.positiveList[i].stationId,
+            time: res.data.positiveList[i].time,
+            distance: res.data.positiveList[i].distance
+          }
+          posStations.push(posStation);
+          if (res.data.positiveList[i].time!=''&& res.data.positiveList[i].time != null){
+            timeCount += parseInt(res.data.positiveList[i].time);
+          }
+          // console.log("timeCount", timeCount);
 
+        }
+        state.stationSort = posStations;
+        state.timeCount= timeCount;
+        console.log("添加距离后的store中的数据启程", state.stationSort);
+        console.log("总时长", state.timeCount);
+        }
+        if (state.returnSort.length >= 2) {
+          console.log("反向线路", res.data.reverseList);
+          var revStations = [];
+          for (let i = 0; i < res.data.reverseList.length; i++) {
+            var revStation = {
+              xPoint: res.data.reverseList[i].xpoint,
+              yPoint: res.data.reverseList[i].ypoint,
+              stationName: res.data.reverseList[i].stationName,
+              stationId: res.data.reverseList[i].stationId,
+              time: res.data.reverseList[i].time,
+              distance: res.data.reverseList[i].distance
+            }
+            revStations.push(revStation);
+          }
+          state.returnSort = revStations;
+          console.log("添加距离后的store中的数据返程", state.returnSort);
+        }
       })
-    }
   },
   //查看某路线站点
   viewRoadStation:(state, roadList)=>{
@@ -219,23 +243,44 @@ const mutations={
   },
   //删除反向路线某站点
   deleteReturn:(state,returnIndex)=>{
-    state.returnSort.splice(returnIndex, 1);
+    if (state.stationSort.length == 1) {
+      state.returnSort = [{xPoint: '', yPoint: '', stationName: '', stationId: '', time: '', distance: ''}];
+    }else{
+      state.returnSort.splice(returnIndex, 1);
+    }
   },
   //生成反向路线
   createReturn:(state)=>{
     state.returnSort=[];
     for (const station of state.stationSort) {
       state.returnSort.unshift(station);
-      console.log("站点信息", state.returnSort);
     }
+    console.log("站点信息", state.returnSort);
   },
   //添加站点按钮
   addStation: (state, stationIndex) => {
-    state.stationSort.splice(stationIndex + 1, 0, state.stationSelect);
+    var flag = false;
+    for (let i = 0; i < state.stationSort.length; i++) {
+      if (state.stationSort[i].stationName == state.stationSelect.stationName) {
+        flag=true;
+      }
+    }
+    if (flag){
+      alert("您选择的站点已经在线路中了，请选择别的站点添加");
+    }else{
+      state.stationSort.splice(stationIndex + 1, 0, state.stationSelect);
+    }
+
   },
   //删除站点按钮
   deleteStation: (state, stationIndex) => {
-    state.stationSort.splice(stationIndex, 1);
+
+    if (state.stationSort.length==1){
+      state.stationSort= [{xPoint: '', yPoint: '', stationName: '', stationId: '', time: '', distance: ''}];
+    }else{
+      state.stationSort.splice(stationIndex, 1);
+    }
+
   },
   //一条线路的信息
   addOneRoadInfo: (state, oneRoadInfo) => {
